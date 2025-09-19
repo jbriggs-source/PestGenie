@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="JobEntity" representedClassName="JobEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="customerEmail" optional="YES" attributeType="String"/>
+        <attribute name="customerName" optional="YES" attributeType="String"/>
+        <attribute name="customerPhone" optional="YES" attributeType="String"/>
+        <attribute name="estimatedDuration" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="priority" optional="YES" attributeType="String"/>
+        <attribute name="reasonCode" optional="YES" attributeType="String"/>
+        <attribute name="scheduledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="serviceType" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="timeSpent" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="JobPhotoEntity" inverseName="job" inverseEntity="JobPhotoEntity"/>
+        <relationship name="route" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RouteEntity" inverseName="jobs" inverseEntity="RouteEntity"/>
+        <relationship name="signatures" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SignatureEntity" inverseName="job" inverseEntity="SignatureEntity"/>
+    </entity>
+    <entity name="JobPhotoEntity" representedClassName="JobPhotoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="caption" optional="YES" attributeType="String"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="photos" inverseEntity="JobEntity"/>
+    </entity>
+    <entity name="PendingActionEntity" representedClassName="PendingActionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="actionType" optional="YES" attributeType="String"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="entityId" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="parameters" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="retryCount" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="RouteEntity" representedClassName="RouteEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="technicianId" optional="YES" attributeType="String"/>
+        <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="JobEntity" inverseName="route" inverseEntity="JobEntity"/>
+    </entity>
+    <entity name="SignatureEntity" representedClassName="SignatureEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="signatureData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="signerName" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="signatures" inverseEntity="JobEntity"/>
+    </entity>
+</model>

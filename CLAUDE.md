@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PestGenie is an iOS SwiftUI application for pest control technicians managing daily routes. The app uses a **Server-Driven UI (SDUI)** architecture where the user interface is dynamically rendered from JSON configurations rather than hardcoded views.
+PestGenie is an enterprise-grade iOS SwiftUI application for pest control technicians managing daily routes. The app features a **Server-Driven UI (SDUI)** architecture where the user interface is dynamically rendered from JSON configurations, combined with comprehensive offline-first capabilities, push notifications, and App Store-ready compliance features.
 
 ## Build and Development Commands
 
@@ -50,11 +50,31 @@ The app's core innovation is its SDUI architecture that allows UI changes withou
 - `SDUIContentView.swift`: Loads JSON and renders SDUI screens
 - `SDUIRenderer.swift`: Core rendering engine (not shown but referenced)
 
-### Offline Support
-The app queues actions when offline and syncs them when connectivity returns:
-- `PendingAction` struct tracks offline operations
-- Network monitoring via `NWPathMonitor`
-- Automatic sync on connectivity restoration
+### Enterprise Features
+
+#### Offline-First Data Synchronization
+- **Core Data Stack**: Persistent storage with CloudKit integration
+- **Background Sync**: Automatic synchronization with conflict resolution
+- **Network Monitoring**: Intelligent sync based on connection quality
+- **Data Versioning**: Comprehensive migration and version management
+
+#### Push Notifications & Deep Linking
+- **Apple Push Notifications**: Full APNs integration with notification categories
+- **Deep Linking**: Universal links and custom URL schemes
+- **Background Tasks**: Scheduled background sync and maintenance
+- **Notification Actions**: Interactive notifications with job management
+
+#### Performance & Bundle Optimization
+- **Memory Management**: Intelligent caching and memory pressure handling
+- **Bundle Optimization**: On-demand resources and asset optimization
+- **Performance Monitoring**: Real-time metrics and diagnostics
+- **Battery Efficiency**: Network-aware operations and background task optimization
+
+#### App Store Compliance
+- **Privacy Compliance**: GDPR/CCPA data export and deletion
+- **Accessibility**: Full VoiceOver and Dynamic Type support
+- **Security**: Data encryption and privacy controls
+- **Submission Ready**: Complete App Store metadata and compliance checking
 
 ### Location Features
 - `LocationManager.swift`: CoreLocation integration for job site monitoring
@@ -66,11 +86,21 @@ The app queues actions when offline and syncs them when connectivity returns:
 
 ## Development Guidelines
 
+### Core Principles
 1. **SDUI First**: When adding new UI features, consider if they should be SDUI components rather than hardcoded SwiftUI views
-2. **JSON Versioning**: Use versioned JSON files (v2, v3, etc.) to maintain backward compatibility
-3. **Offline Awareness**: New features that modify data should queue actions when offline
-4. **Component Reusability**: New SDUI components should be generic and configurable via JSON properties
-5. **State Management**: Use `RouteViewModel` for domain state; avoid direct job manipulation in views
+2. **Offline First**: All data operations must work offline with automatic sync when connected
+3. **Performance Aware**: Monitor memory usage, battery consumption, and network efficiency
+4. **Privacy Compliant**: Implement proper data handling and user consent mechanisms
+5. **Accessible by Design**: Support VoiceOver, Dynamic Type, and inclusive design principles
+
+### Implementation Standards
+1. **JSON Versioning**: Use versioned JSON files (v2, v3, etc.) to maintain backward compatibility
+2. **Background Safe**: Ensure proper background task limits and state preservation
+3. **Component Reusability**: New SDUI components should be generic and configurable via JSON properties
+4. **State Management**: Use proper SwiftUI state management with @StateObject/@ObservedObject patterns
+5. **Error Handling**: Implement comprehensive error boundaries and user feedback
+6. **Security First**: Encrypt sensitive data and implement proper authentication
+7. **Testing Coverage**: Unit tests for business logic, UI tests for critical user flows
 
 ## SDUI Component Library
 
@@ -154,11 +184,35 @@ The project includes a specialized iOS SwiftUI Expert agent in `.claude/agents/`
 
 See `.claude/agents/README.md` for complete usage instructions.
 
+## Enterprise Architecture Files
+
+### Core Data & Persistence
+- `PersistenceController.swift`: Core Data stack with CloudKit integration
+- `SyncManager.swift`: Offline-first data synchronization with conflict resolution
+- `PestGenieDataModel.xcdatamodeld`: Complete data model for enterprise features
+
+### Push Notifications & Deep Linking
+- `NotificationManager.swift`: Comprehensive push notification and local notification handling
+- `DeepLinkManager.swift`: Universal links and custom URL scheme management
+- Background task scheduling and notification categories
+
+### Performance & Optimization
+- `PerformanceManager.swift`: Real-time performance monitoring and optimization
+- `BundleOptimizer.swift`: On-demand resources and bundle size management
+- `NetworkMonitor.swift`: Enhanced network monitoring with data usage optimization
+
+### App Store Compliance
+- `AppStoreCompliance.swift`: Privacy compliance, accessibility, and submission requirements
+- `BuildConfiguration.md`: Complete build settings and release configuration
+- Privacy manifest and data usage descriptions
+
 ## SDUI Component Extension
 To add new SDUI component types:
 1. Add case to `SDUIComponentType` enum in `SDUI.swift`
 2. Add properties to `SDUIComponent` class if needed
-3. Implement rendering logic in `SDUIRenderer.swift`
-4. Update RouteViewModel for input components
-5. Test with JSON examples
-6. **Use iOS SwiftUI Expert agent to review implementation**
+3. Implement rendering logic in appropriate renderer (performance-optimized)
+4. Update RouteViewModel for input components with offline support
+5. Test with JSON examples including edge cases
+6. **Use iOS SwiftUI Expert agent to review implementation for enterprise compliance**
+7. **Verify accessibility and performance implications**
+8. **Test offline functionality and data synchronization**
