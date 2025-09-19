@@ -22,6 +22,16 @@ final class RouteViewModel: ObservableObject {
     @Published var toggleValues: [String: Bool] = [:]
     /// Stores values for sliders keyed by a composite key.
     @Published var sliderValues: [String: Double] = [:]
+    /// Stores values for pickers keyed by a composite key.
+    @Published var pickerValues: [String: String] = [:]
+    /// Stores values for date pickers keyed by a composite key.
+    @Published var datePickerValues: [String: Date] = [:]
+    /// Stores values for steppers keyed by a composite key.
+    @Published var stepperValues: [String: Double] = [:]
+    /// Stores values for segmented controls keyed by a composite key.
+    @Published var segmentedValues: [String: Int] = [:]
+    /// Stores presentation state for sheets/alerts keyed by a composite key.
+    @Published var presentationStates: [String: Bool] = [:]
 
     // MARK: - Offline mode support
     /// Flag indicating whether the app is currently online. In a real app this
@@ -160,6 +170,47 @@ final class RouteViewModel: ObservableObject {
         }
     }
 
+    /// Sets a picker value for the given composite key and queues an action if offline.
+    func setPickerValue(forKey key: String, value: String) {
+        pickerValues[key] = value
+        if !isOnline {
+            let action = PendingAction(type: .pickerInput, jobId: nil, valueKey: key, value: value, timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// Sets a date picker value for the given composite key and queues an action if offline.
+    func setDatePickerValue(forKey key: String, value: Date) {
+        datePickerValues[key] = value
+        if !isOnline {
+            let action = PendingAction(type: .datePickerInput, jobId: nil, valueKey: key, value: ISO8601DateFormatter().string(from: value), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// Sets a stepper value for the given composite key and queues an action if offline.
+    func setStepperValue(forKey key: String, value: Double) {
+        stepperValues[key] = value
+        if !isOnline {
+            let action = PendingAction(type: .stepperInput, jobId: nil, valueKey: key, value: String(value), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// Sets a segmented control value for the given composite key and queues an action if offline.
+    func setSegmentedValue(forKey key: String, value: Int) {
+        segmentedValues[key] = value
+        if !isOnline {
+            let action = PendingAction(type: .segmentedInput, jobId: nil, valueKey: key, value: String(value), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// Sets a presentation state for the given composite key.
+    func setPresentationState(forKey key: String, value: Bool) {
+        presentationStates[key] = value
+    }
+
     // MARK: - Offline sync
 
     /// Attempts to synchronise any pending actions when coming back online. In a real app
@@ -186,6 +237,10 @@ struct PendingAction: CustomStringConvertible {
         case textInput
         case toggleInput
         case sliderInput
+        case pickerInput
+        case datePickerInput
+        case stepperInput
+        case segmentedInput
     }
     let type: ActionType
     let jobId: UUID?

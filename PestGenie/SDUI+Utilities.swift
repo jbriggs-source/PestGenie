@@ -1,0 +1,349 @@
+import SwiftUI
+
+// MARK: - Data Resolution Utilities
+
+struct SDUIDataResolver {
+    /// Resolves text content from component key or static text
+    static func resolveText(component: SDUIComponent, context: SDUIContext) -> String {
+        if let key = component.key, let job = context.currentJob {
+            return valueForKey(key: key, job: job) ?? ""
+        } else if let text = component.text {
+            return text
+        }
+        return ""
+    }
+
+    /// Resolves label text for buttons and inputs
+    static func resolveLabel(component: SDUIComponent, context: SDUIContext) -> String {
+        if let key = component.key, let job = context.currentJob {
+            return valueForKey(key: key, job: job) ?? component.label ?? ""
+        }
+        return component.label ?? ""
+    }
+
+    /// Creates a composite key for storing input values
+    static func makeContextKey(key: String, job: Job?) -> String {
+        let jobIdString: String = job?.id.uuidString ?? "global"
+        return key + "_" + jobIdString
+    }
+
+    /// Looks up a field on Job based on a key string
+    static func valueForKey(key: String, job: Job) -> String? {
+        switch key {
+        case "customerName": return job.customerName
+        case "address": return job.address
+        case "scheduledTime":
+            let formatter = DateFormatter()
+            formatter.dateStyle = .none
+            formatter.timeStyle = .short
+            return formatter.string(from: job.scheduledDate)
+        case "status": return job.status.rawValue.capitalized
+        case "pinnedNotes": return job.pinnedNotes
+        case "notes": return job.notes
+        default: return nil
+        }
+    }
+}
+
+// MARK: - Style Resolution Utilities
+
+struct SDUIStyleResolver {
+    /// Converts a font identifier string to a SwiftUI Font
+    static func resolveFont(_ fontName: String?) -> Font {
+        guard let name = fontName else { return .body }
+        switch name.lowercased() {
+        case "headline": return .headline
+        case "subheadline": return .subheadline
+        case "caption": return .caption
+        case "footnote": return .footnote
+        case "title": return .title
+        case "title2": return .title2
+        case "title3": return .title3
+        case "largetitle": return .largeTitle
+        case "callout": return .callout
+        default: return .body
+        }
+    }
+
+    /// Converts a color identifier string to a SwiftUI Color
+    static func resolveColor(_ colorName: String?, job: Job?) -> Color {
+        guard let name = colorName else { return .primary }
+        let lower = name.lowercased()
+
+        // Special case: map statusColor to job status
+        if lower == "statuscolor", let job = job {
+            switch job.status {
+            case .pending: return .gray
+            case .inProgress: return .blue
+            case .completed: return .green
+            case .skipped: return .orange
+            }
+        }
+
+        // Standard colors
+        switch lower {
+        case "red": return .red
+        case "blue": return .blue
+        case "green": return .green
+        case "gray": return .gray
+        case "black": return .black
+        case "white": return .white
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "purple": return .purple
+        case "pink": return .pink
+        case "secondary": return .secondary
+        case "primary": return .primary
+        default:
+            // Try to parse hex colors like #RRGGBB
+            if lower.hasPrefix("#"), let hexColor = Color(hexString: lower) {
+                return hexColor
+            }
+            return .primary
+        }
+    }
+
+    /// Resolves a font weight from a string name
+    static func resolveFontWeight(_ name: String) -> Font.Weight {
+        switch name.lowercased() {
+        case "bold": return .bold
+        case "semibold": return .semibold
+        case "light": return .light
+        case "medium": return .medium
+        case "heavy": return .heavy
+        case "thin": return .thin
+        case "ultralight": return .ultraLight
+        default: return .regular
+        }
+    }
+}
+
+// MARK: - Style Application Utilities
+
+struct SDUIStyleApplicator {
+    /// Applies comprehensive styling to any view
+    static func apply(styling component: SDUIComponent, to view: AnyView, job: Job?) -> AnyView {
+        var modified = view
+
+        // Basic styling
+        modified = applyBasicStyling(component: component, to: modified, job: job)
+
+        // Visual effects
+        modified = applyVisualEffects(component: component, to: modified, job: job)
+
+        // Transforms
+        modified = applyTransforms(component: component, to: modified)
+
+        return modified
+    }
+
+    private static func applyBasicStyling(component: SDUIComponent, to view: AnyView, job: Job?) -> AnyView {
+        var modified = view
+
+        // Padding
+        if let padding = component.padding {
+            modified = AnyView(modified.padding(padding))
+        }
+
+        // Background and corner radius
+        if let bgName = component.backgroundColor {
+            let bgColor = SDUIStyleResolver.resolveColor(bgName, job: job)
+            if let radius = component.cornerRadius {
+                modified = AnyView(modified
+                    .background(RoundedRectangle(cornerRadius: radius).fill(bgColor)))
+            } else {
+                modified = AnyView(modified.background(bgColor))
+            }
+        }
+
+        return modified
+    }
+
+    private static func applyVisualEffects(component: SDUIComponent, to view: AnyView, job: Job?) -> AnyView {
+        var modified = view
+
+        // Border
+        if let borderWidth = component.borderWidth {
+            let borderColor = SDUIStyleResolver.resolveColor(component.borderColor, job: job)
+            if let radius = component.cornerRadius {
+                modified = AnyView(modified.overlay(
+                    RoundedRectangle(cornerRadius: radius)
+                        .stroke(borderColor, lineWidth: borderWidth)
+                ))
+            } else {
+                modified = AnyView(modified.border(borderColor, width: borderWidth))
+            }
+        }
+
+        // Shadow
+        if let shadowRadius = component.shadowRadius {
+            let shadowColor = SDUIStyleResolver.resolveColor(component.shadowColor, job: job)
+            let offset = component.shadowOffset
+            modified = AnyView(modified.shadow(
+                color: shadowColor,
+                radius: shadowRadius,
+                x: offset?.x ?? 0,
+                y: offset?.y ?? 2
+            ))
+        }
+
+        // Opacity
+        if let opacity = component.opacity {
+            modified = AnyView(modified.opacity(opacity))
+        }
+
+        return modified
+    }
+
+    private static func applyTransforms(component: SDUIComponent, to view: AnyView) -> AnyView {
+        var modified = view
+
+        // Rotation
+        if let rotation = component.rotation {
+            modified = AnyView(modified.rotationEffect(.degrees(rotation)))
+        }
+
+        // Scale
+        if let scale = component.scale {
+            modified = AnyView(modified.scaleEffect(scale))
+        }
+
+        return modified
+    }
+}
+
+// MARK: - Animation Utilities
+
+struct SDUIAnimationApplicator {
+    /// Applies animation and transition effects to a view
+    static func apply(animation component: SDUIComponent, to view: AnyView) -> AnyView {
+        var modified = view
+
+        // Apply animation if defined
+        if let animConfig = component.animation, let animation = resolveAnimation(animConfig) {
+            modified = AnyView(modified.animation(animation, value: UUID()))
+        }
+
+        // Apply transition if defined
+        if let transitionConfig = component.transition {
+            let transition = resolveTransition(transitionConfig)
+            modified = AnyView(modified.transition(transition))
+        }
+
+        return modified
+    }
+
+    private static func resolveAnimation(_ anim: SDUIAnimation) -> Animation? {
+        let type = anim.type?.lowercased() ?? "easeinout"
+        let duration = anim.duration
+
+        switch type {
+        case "linear":
+            return duration != nil ? .linear(duration: duration!) : .linear
+        case "easein":
+            return duration != nil ? .easeIn(duration: duration!) : .easeIn
+        case "easeout":
+            return duration != nil ? .easeOut(duration: duration!) : .easeOut
+        case "easeinout":
+            return duration != nil ? .easeInOut(duration: duration!) : .easeInOut
+        case "spring":
+            return .spring(response: duration ?? 0.3, dampingFraction: 0.75)
+        default:
+            return nil
+        }
+    }
+
+    private static func resolveTransition(_ transition: SDUITransition) -> AnyTransition {
+        guard let type = transition.type?.lowercased() else { return .identity }
+        switch type {
+        case "slide": return .slide
+        case "opacity": return .opacity
+        case "scale": return .scale
+        case "movein": return .move(edge: .leading)
+        case "moveout": return .move(edge: .trailing)
+        default: return .identity
+        }
+    }
+}
+
+// MARK: - Error Handling Utilities
+
+struct SDUIErrorHandler {
+    /// Creates a user-friendly error view for rendering failures
+    static func createErrorView(message: String, component: SDUIComponent? = nil) -> AnyView {
+        AnyView(
+            VStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.orange)
+                Text("Rendering Error")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                if let component = component {
+                    Text("Component: \\(component.type.rawValue)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding()
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.orange, lineWidth: 1)
+            )
+        )
+    }
+
+    /// Validates component configuration and returns error if invalid
+    static func validateComponent(_ component: SDUIComponent) -> String? {
+        // Validate input components have required keys
+        if [.textField, .toggle, .slider, .picker, .datePicker, .stepper, .segmentedControl].contains(component.type) {
+            if component.valueKey == nil {
+                return "Input component missing required 'valueKey'"
+            }
+        }
+
+        // Validate picker has options
+        if component.type == .picker || component.type == .segmentedControl {
+            if component.options?.isEmpty != false {
+                return "Picker component missing 'options'"
+            }
+        }
+
+        // Validate slider has valid range
+        if component.type == .slider {
+            if let min = component.minValue, let max = component.maxValue, min >= max {
+                return "Slider minValue must be less than maxValue"
+            }
+        }
+
+        return nil
+    }
+}
+
+// MARK: - Version Management
+
+struct SDUIVersionManager {
+    static let supportedVersions: Set<Int> = [1, 2, 3, 4]
+    static let currentVersion = 4
+
+    /// Checks if a screen version is supported
+    static func isVersionSupported(_ version: Int) -> Bool {
+        return supportedVersions.contains(version)
+    }
+
+    /// Gets the appropriate renderer for a given version
+    static func getCompatibilityMode(for version: Int) -> String {
+        switch version {
+        case 1: return "Basic components only"
+        case 2: return "Added images and conditionals"
+        case 3: return "Form inputs and styling"
+        case 4: return "Full component library"
+        default: return "Unsupported version"
+        }
+    }
+}

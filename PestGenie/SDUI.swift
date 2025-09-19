@@ -10,19 +10,46 @@ struct SDUIScreen: Codable {
 /// Enumerates the kinds of components supported by the SDUI engine. New types
 /// can be added here to extend the renderer.
 enum SDUIComponentType: String, Codable {
+    // Layout containers
     case vstack
     case hstack
     case list
+    case scroll
+    case grid
+    case tabView
+    case section // grouped content with optional header/footer
+
+    // Basic UI elements
     case text
     case button
     case spacer
-    case conditional
-    // New primitive components
     case image
+    case divider
+    case progressView
+
+    // Form input components
     case textField
     case toggle
     case slider
-    case scroll // vertical scroll view
+    case picker
+    case datePicker
+    case stepper
+    case segmentedControl
+
+    // Navigation and presentation
+    case navigationLink
+    case actionSheet
+    case alert
+
+    // Logic and flow control
+    case conditional
+    case forEach
+
+    // Advanced components
+    case mapView
+    case webView
+    case chart
+    case gauge
 }
 
 /// Represents a component in the server‑driven UI. A component may have
@@ -89,6 +116,71 @@ class SDUIComponent: Codable, Identifiable {
     let step: Double?
     /// Whether to display the numeric value of the slider alongside the control.
     let showValue: Bool?
+
+    // MARK: - Grid layout properties
+    /// Number of columns for grid layouts.
+    let columns: Int?
+    /// Grid item size mode: "fixed", "flexible", "adaptive".
+    let gridItemSize: String?
+    /// Minimum size for adaptive grid items.
+    let gridItemMinSize: Double?
+
+    // MARK: - Picker properties
+    /// Array of picker options for picker components.
+    let options: [SDUIPickerOption]?
+    /// Selection mode: "single", "multiple".
+    let selectionMode: String?
+
+    // MARK: - Navigation properties
+    /// Destination screen identifier for navigation links.
+    let destination: String?
+    /// Alert/sheet presentation properties.
+    let isPresented: String? // key to bind presentation state
+    let title: String?
+    let message: String?
+
+    // MARK: - Progress and gauge properties
+    /// Current progress value (0.0 to 1.0).
+    let progress: Double?
+    /// Gauge range minimum value.
+    let gaugeMin: Double?
+    /// Gauge range maximum value.
+    let gaugeMax: Double?
+
+    // MARK: - Map properties
+    /// Initial map region center latitude.
+    let centerLatitude: Double?
+    /// Initial map region center longitude.
+    let centerLongitude: Double?
+    /// Map zoom level/span.
+    let span: Double?
+
+    // MARK: - Web view properties
+    /// URL to load in web view.
+    let webURL: String?
+
+    // MARK: - Chart properties
+    /// Chart type: "line", "bar", "pie".
+    let chartType: String?
+    /// Data source key for chart data.
+    let dataKey: String?
+
+    // MARK: - Advanced styling
+    /// Border width in points.
+    let borderWidth: Double?
+    /// Border color.
+    let borderColor: String?
+    /// Shadow properties.
+    let shadowRadius: Double?
+    let shadowColor: String?
+    let shadowOffset: SDUIShadowOffset?
+    /// Opacity (0.0 to 1.0).
+    let opacity: Double?
+    /// Rotation angle in degrees.
+    let rotation: Double?
+    /// Scale factor.
+    let scale: Double?
+
     // MARK: - Animation and transitions
     /// Optional animation definition to apply to the component's appearance.
     let animation: SDUIAnimation?
@@ -99,7 +191,11 @@ class SDUIComponent: Codable, Identifiable {
         case id, type, key, text, label, actionId, font, color, children, itemView, conditionKey,
              padding, spacing, foregroundColor, backgroundColor, cornerRadius, fontWeight,
              imageName, url, valueKey, placeholder, minValue, maxValue, step, showValue,
-             animation, transition
+             columns, gridItemSize, gridItemMinSize, options, selectionMode,
+             destination, isPresented, title, message, progress, gaugeMin, gaugeMax,
+             centerLatitude, centerLongitude, span, webURL, chartType, dataKey,
+             borderWidth, borderColor, shadowRadius, shadowColor, shadowOffset,
+             opacity, rotation, scale, animation, transition
     }
 
     /// Memberwise initializer. If `id` is nil, a UUID will be generated.
@@ -130,6 +226,40 @@ class SDUIComponent: Codable, Identifiable {
          maxValue: Double? = nil,
          step: Double? = nil,
          showValue: Bool? = nil,
+         // Grid properties
+         columns: Int? = nil,
+         gridItemSize: String? = nil,
+         gridItemMinSize: Double? = nil,
+         // Picker properties
+         options: [SDUIPickerOption]? = nil,
+         selectionMode: String? = nil,
+         // Navigation properties
+         destination: String? = nil,
+         isPresented: String? = nil,
+         title: String? = nil,
+         message: String? = nil,
+         // Progress/gauge properties
+         progress: Double? = nil,
+         gaugeMin: Double? = nil,
+         gaugeMax: Double? = nil,
+         // Map properties
+         centerLatitude: Double? = nil,
+         centerLongitude: Double? = nil,
+         span: Double? = nil,
+         // Web view properties
+         webURL: String? = nil,
+         // Chart properties
+         chartType: String? = nil,
+         dataKey: String? = nil,
+         // Advanced styling
+         borderWidth: Double? = nil,
+         borderColor: String? = nil,
+         shadowRadius: Double? = nil,
+         shadowColor: String? = nil,
+         shadowOffset: SDUIShadowOffset? = nil,
+         opacity: Double? = nil,
+         rotation: Double? = nil,
+         scale: Double? = nil,
          animation: SDUIAnimation? = nil,
          transition: SDUITransition? = nil
     ) {
@@ -158,6 +288,32 @@ class SDUIComponent: Codable, Identifiable {
         self.maxValue = maxValue
         self.step = step
         self.showValue = showValue
+        self.columns = columns
+        self.gridItemSize = gridItemSize
+        self.gridItemMinSize = gridItemMinSize
+        self.options = options
+        self.selectionMode = selectionMode
+        self.destination = destination
+        self.isPresented = isPresented
+        self.title = title
+        self.message = message
+        self.progress = progress
+        self.gaugeMin = gaugeMin
+        self.gaugeMax = gaugeMax
+        self.centerLatitude = centerLatitude
+        self.centerLongitude = centerLongitude
+        self.span = span
+        self.webURL = webURL
+        self.chartType = chartType
+        self.dataKey = dataKey
+        self.borderWidth = borderWidth
+        self.borderColor = borderColor
+        self.shadowRadius = shadowRadius
+        self.shadowColor = shadowColor
+        self.shadowOffset = shadowOffset
+        self.opacity = opacity
+        self.rotation = rotation
+        self.scale = scale
         self.animation = animation
         self.transition = transition
     }
@@ -192,6 +348,32 @@ class SDUIComponent: Codable, Identifiable {
         self.maxValue = try container.decodeIfPresent(Double.self, forKey: .maxValue)
         self.step = try container.decodeIfPresent(Double.self, forKey: .step)
         self.showValue = try container.decodeIfPresent(Bool.self, forKey: .showValue)
+        self.columns = try container.decodeIfPresent(Int.self, forKey: .columns)
+        self.gridItemSize = try container.decodeIfPresent(String.self, forKey: .gridItemSize)
+        self.gridItemMinSize = try container.decodeIfPresent(Double.self, forKey: .gridItemMinSize)
+        self.options = try container.decodeIfPresent([SDUIPickerOption].self, forKey: .options)
+        self.selectionMode = try container.decodeIfPresent(String.self, forKey: .selectionMode)
+        self.destination = try container.decodeIfPresent(String.self, forKey: .destination)
+        self.isPresented = try container.decodeIfPresent(String.self, forKey: .isPresented)
+        self.title = try container.decodeIfPresent(String.self, forKey: .title)
+        self.message = try container.decodeIfPresent(String.self, forKey: .message)
+        self.progress = try container.decodeIfPresent(Double.self, forKey: .progress)
+        self.gaugeMin = try container.decodeIfPresent(Double.self, forKey: .gaugeMin)
+        self.gaugeMax = try container.decodeIfPresent(Double.self, forKey: .gaugeMax)
+        self.centerLatitude = try container.decodeIfPresent(Double.self, forKey: .centerLatitude)
+        self.centerLongitude = try container.decodeIfPresent(Double.self, forKey: .centerLongitude)
+        self.span = try container.decodeIfPresent(Double.self, forKey: .span)
+        self.webURL = try container.decodeIfPresent(String.self, forKey: .webURL)
+        self.chartType = try container.decodeIfPresent(String.self, forKey: .chartType)
+        self.dataKey = try container.decodeIfPresent(String.self, forKey: .dataKey)
+        self.borderWidth = try container.decodeIfPresent(Double.self, forKey: .borderWidth)
+        self.borderColor = try container.decodeIfPresent(String.self, forKey: .borderColor)
+        self.shadowRadius = try container.decodeIfPresent(Double.self, forKey: .shadowRadius)
+        self.shadowColor = try container.decodeIfPresent(String.self, forKey: .shadowColor)
+        self.shadowOffset = try container.decodeIfPresent(SDUIShadowOffset.self, forKey: .shadowOffset)
+        self.opacity = try container.decodeIfPresent(Double.self, forKey: .opacity)
+        self.rotation = try container.decodeIfPresent(Double.self, forKey: .rotation)
+        self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
         self.animation = try container.decodeIfPresent(SDUIAnimation.self, forKey: .animation)
         self.transition = try container.decodeIfPresent(SDUITransition.self, forKey: .transition)
     }
@@ -227,6 +409,32 @@ class SDUIComponent: Codable, Identifiable {
         try container.encodeIfPresent(maxValue, forKey: .maxValue)
         try container.encodeIfPresent(step, forKey: .step)
         try container.encodeIfPresent(showValue, forKey: .showValue)
+        try container.encodeIfPresent(columns, forKey: .columns)
+        try container.encodeIfPresent(gridItemSize, forKey: .gridItemSize)
+        try container.encodeIfPresent(gridItemMinSize, forKey: .gridItemMinSize)
+        try container.encodeIfPresent(options, forKey: .options)
+        try container.encodeIfPresent(selectionMode, forKey: .selectionMode)
+        try container.encodeIfPresent(destination, forKey: .destination)
+        try container.encodeIfPresent(isPresented, forKey: .isPresented)
+        try container.encodeIfPresent(title, forKey: .title)
+        try container.encodeIfPresent(message, forKey: .message)
+        try container.encodeIfPresent(progress, forKey: .progress)
+        try container.encodeIfPresent(gaugeMin, forKey: .gaugeMin)
+        try container.encodeIfPresent(gaugeMax, forKey: .gaugeMax)
+        try container.encodeIfPresent(centerLatitude, forKey: .centerLatitude)
+        try container.encodeIfPresent(centerLongitude, forKey: .centerLongitude)
+        try container.encodeIfPresent(span, forKey: .span)
+        try container.encodeIfPresent(webURL, forKey: .webURL)
+        try container.encodeIfPresent(chartType, forKey: .chartType)
+        try container.encodeIfPresent(dataKey, forKey: .dataKey)
+        try container.encodeIfPresent(borderWidth, forKey: .borderWidth)
+        try container.encodeIfPresent(borderColor, forKey: .borderColor)
+        try container.encodeIfPresent(shadowRadius, forKey: .shadowRadius)
+        try container.encodeIfPresent(shadowColor, forKey: .shadowColor)
+        try container.encodeIfPresent(shadowOffset, forKey: .shadowOffset)
+        try container.encodeIfPresent(opacity, forKey: .opacity)
+        try container.encodeIfPresent(rotation, forKey: .rotation)
+        try container.encodeIfPresent(scale, forKey: .scale)
         try container.encodeIfPresent(animation, forKey: .animation)
         try container.encodeIfPresent(transition, forKey: .transition)
     }
@@ -244,4 +452,41 @@ struct SDUIAnimation: Codable {
 /// built‑in transition identifiers ("slide", "opacity", "scale", etc.).
 struct SDUITransition: Codable {
     let type: String?
+}
+
+/// Represents a picker option with display text and value.
+struct SDUIPickerOption: Codable, Identifiable {
+    let id: String
+    let text: String
+    let value: String
+
+    init(id: String? = nil, text: String, value: String) {
+        self.id = id ?? UUID().uuidString
+        self.text = text
+        self.value = value
+    }
+}
+
+/// Represents shadow offset for advanced styling.
+struct SDUIShadowOffset: Codable {
+    let x: Double
+    let y: Double
+
+    init(x: Double = 0, y: Double = 2) {
+        self.x = x
+        self.y = y
+    }
+}
+
+/// Represents chart data point for chart components.
+struct SDUIChartData: Codable {
+    let label: String
+    let value: Double
+    let color: String?
+
+    init(label: String, value: Double, color: String? = nil) {
+        self.label = label
+        self.value = value
+        self.color = color
+    }
 }

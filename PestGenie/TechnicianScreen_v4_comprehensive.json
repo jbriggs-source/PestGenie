@@ -1,0 +1,437 @@
+{
+  "version": 4,
+  "component": {
+    "type": "scroll",
+    "padding": 8,
+    "children": [
+      {
+        "type": "section",
+        "title": "🐛 PestGenie Dashboard",
+        "children": [
+          {
+            "type": "text",
+            "text": "Advanced SDUI Demo - All Components",
+            "font": "headline",
+            "fontWeight": "bold",
+            "foregroundColor": "#2E8B57",
+            "padding": 8,
+            "backgroundColor": "#F0F8F0",
+            "cornerRadius": 12,
+            "shadowRadius": 3,
+            "shadowColor": "gray",
+            "shadowOffset": {"x": 0, "y": 2}
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "📊 Progress & Analytics",
+        "children": [
+          {
+            "type": "hstack",
+            "spacing": 16,
+            "children": [
+              {
+                "type": "vstack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Jobs Progress",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "type": "progressView",
+                    "progress": 0.75,
+                    "foregroundColor": "green",
+                    "padding": 4
+                  },
+                  {
+                    "type": "text",
+                    "text": "75% Complete",
+                    "font": "caption",
+                    "foregroundColor": "green"
+                  }
+                ]
+              },
+              {
+                "type": "vstack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Customer Rating",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "type": "slider",
+                    "valueKey": "customerRating",
+                    "minValue": 1,
+                    "maxValue": 5,
+                    "step": 1,
+                    "showValue": true,
+                    "padding": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "🎛️ Advanced Controls",
+        "children": [
+          {
+            "type": "grid",
+            "columns": 2,
+            "spacing": 12,
+            "children": [
+              {
+                "type": "vstack",
+                "padding": 12,
+                "backgroundColor": "#F8F9FA",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#E9ECEF",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Service Type",
+                    "font": "headline",
+                    "fontWeight": "medium"
+                  },
+                  {
+                    "type": "picker",
+                    "valueKey": "serviceType",
+                    "label": "Select Service",
+                    "options": [
+                      {"text": "Inspection", "value": "inspection"},
+                      {"text": "Treatment", "value": "treatment"},
+                      {"text": "Follow-up", "value": "followup"}
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "vstack",
+                "padding": 12,
+                "backgroundColor": "#F8F9FA",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#E9ECEF",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Priority Level",
+                    "font": "headline",
+                    "fontWeight": "medium"
+                  },
+                  {
+                    "type": "segmentedControl",
+                    "valueKey": "priority",
+                    "options": [
+                      {"text": "Low", "value": "low"},
+                      {"text": "Medium", "value": "medium"},
+                      {"text": "High", "value": "high"}
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "vstack",
+                "padding": 12,
+                "backgroundColor": "#F8F9FA",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#E9ECEF",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Visit Date",
+                    "font": "headline",
+                    "fontWeight": "medium"
+                  },
+                  {
+                    "type": "datePicker",
+                    "valueKey": "visitDate",
+                    "label": "Schedule"
+                  }
+                ]
+              },
+              {
+                "type": "vstack",
+                "padding": 12,
+                "backgroundColor": "#F8F9FA",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#E9ECEF",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Chemical Amount (oz)",
+                    "font": "headline",
+                    "fontWeight": "medium"
+                  },
+                  {
+                    "type": "stepper",
+                    "valueKey": "chemicalAmount",
+                    "minValue": 0,
+                    "maxValue": 50,
+                    "step": 0.5,
+                    "label": "Amount"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "📝 Job Details",
+        "children": [
+          {
+            "type": "vstack",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "textField",
+                "valueKey": "notes",
+                "placeholder": "Enter detailed service notes...",
+                "padding": 12,
+                "backgroundColor": "white",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#D1D5DB"
+              },
+              {
+                "type": "hstack",
+                "spacing": 16,
+                "children": [
+                  {
+                    "type": "toggle",
+                    "valueKey": "pestFound",
+                    "label": "Pest Activity Detected"
+                  },
+                  {
+                    "type": "toggle",
+                    "valueKey": "followupRequired",
+                    "label": "Follow-up Required"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "foregroundColor": "#D1D5DB",
+        "padding": 8
+      },
+      {
+        "type": "section",
+        "title": "📱 Interactive Elements",
+        "children": [
+          {
+            "type": "hstack",
+            "spacing": 16,
+            "children": [
+              {
+                "type": "button",
+                "label": "Show Alert",
+                "actionId": "showAlert",
+                "backgroundColor": "#3B82F6",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 12,
+                "animation": {"type": "spring", "duration": 0.3}
+              },
+              {
+                "type": "button",
+                "label": "Action Sheet",
+                "actionId": "showActionSheet",
+                "backgroundColor": "#10B981",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 12,
+                "scale": 1.05,
+                "shadowRadius": 2,
+                "shadowColor": "#10B981"
+              },
+              {
+                "type": "navigationLink",
+                "label": "Navigate",
+                "destination": "DetailScreen",
+                "backgroundColor": "#8B5CF6",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 12
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "🗺️ Advanced Components (Placeholders)",
+        "children": [
+          {
+            "type": "vstack",
+            "spacing": 8,
+            "children": [
+              {
+                "type": "mapView",
+                "centerLatitude": 40.2783,
+                "centerLongitude": -111.7227,
+                "span": 0.01,
+                "padding": 12,
+                "backgroundColor": "#E5E7EB",
+                "cornerRadius": 8
+              },
+              {
+                "type": "chart",
+                "chartType": "bar",
+                "dataKey": "monthlyStats",
+                "padding": 12,
+                "backgroundColor": "#E5E7EB",
+                "cornerRadius": 8
+              },
+              {
+                "type": "webView",
+                "webURL": "https://example.com",
+                "padding": 12,
+                "backgroundColor": "#E5E7EB",
+                "cornerRadius": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "📋 Current Jobs",
+        "children": [
+          {
+            "type": "list",
+            "itemView": {
+              "type": "hstack",
+              "padding": 12,
+              "backgroundColor": "white",
+              "cornerRadius": 12,
+              "borderWidth": 1,
+              "borderColor": "#E5E7EB",
+              "shadowRadius": 2,
+              "shadowColor": "gray",
+              "shadowOffset": {"x": 0, "y": 1},
+              "children": [
+                {
+                  "type": "vstack",
+                  "spacing": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "key": "customerName",
+                      "font": "headline",
+                      "fontWeight": "semibold"
+                    },
+                    {
+                      "type": "text",
+                      "key": "address",
+                      "font": "subheadline",
+                      "foregroundColor": "gray"
+                    },
+                    {
+                      "type": "text",
+                      "key": "scheduledTime",
+                      "font": "caption",
+                      "foregroundColor": "blue"
+                    }
+                  ]
+                },
+                {
+                  "type": "spacer"
+                },
+                {
+                  "type": "vstack",
+                  "spacing": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "key": "status",
+                      "font": "caption",
+                      "fontWeight": "bold",
+                      "color": "statusColor",
+                      "padding": 6,
+                      "backgroundColor": "#F3F4F6",
+                      "cornerRadius": 6
+                    },
+                    {
+                      "type": "conditional",
+                      "conditionKey": "pinnedNotes",
+                      "children": [
+                        {
+                          "type": "text",
+                          "key": "pinnedNotes",
+                          "font": "caption",
+                          "foregroundColor": "red",
+                          "fontWeight": "medium"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "🎯 Action Buttons",
+        "children": [
+          {
+            "type": "hstack",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "button",
+                "label": "🟢 Start Job",
+                "actionId": "startJob",
+                "backgroundColor": "#22C55E",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 16,
+                "fontWeight": "semibold",
+                "animation": {"type": "easeInOut", "duration": 0.2}
+              },
+              {
+                "type": "button",
+                "label": "✅ Complete",
+                "actionId": "completeJob",
+                "backgroundColor": "#3B82F6",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 16,
+                "fontWeight": "semibold",
+                "transition": {"type": "scale"}
+              },
+              {
+                "type": "button",
+                "label": "⏭️ Skip",
+                "actionId": "skipJob",
+                "backgroundColor": "#F59E0B",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "padding": 16,
+                "fontWeight": "semibold",
+                "opacity": 0.9
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
