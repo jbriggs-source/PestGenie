@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "component": {
+    "type": "list",
+    "itemView": {
+      "type": "vstack",
+      "children": [
+        {
+          "type": "hstack",
+          "children": [
+            {
+              "type": "vstack",
+              "children": [
+                { "type": "text", "key": "customerName", "font": "headline" },
+                { "type": "text", "key": "address", "font": "subheadline" },
+                { "type": "text", "key": "scheduledTime", "font": "caption" }
+              ]
+            },
+            { "type": "spacer" },
+            { "type": "text", "key": "status", "font": "caption", "color": "statusColor" }
+          ]
+        },
+        {
+          "type": "conditional",
+          "conditionKey": "pinnedNotes",
+          "children": [
+            { "type": "text", "key": "pinnedNotes", "font": "caption", "color": "red" }
+          ]
+        },
+        {
+          "type": "hstack",
+          "children": [
+            { "type": "button", "label": "Start", "actionId": "startJob" },
+            { "type": "button", "label": "Complete", "actionId": "completeJob" },
+            { "type": "button", "label": "Skip", "actionId": "skipJob" }
+          ]
+        }
+      ]
+    }
+  }
+}

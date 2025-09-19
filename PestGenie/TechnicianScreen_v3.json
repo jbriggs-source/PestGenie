@@ -1,0 +1,90 @@
+{
+  "version": 3,
+  "component": {
+    "type": "scroll",
+    "children": [
+      {
+        "type": "text",
+        "text": "Today's Route Overview",
+        "font": "headline",
+        "padding": 8
+      },
+      {
+        "type": "list",
+        "itemView": {
+          "type": "vstack",
+          "padding": 8,
+          "children": [
+            {
+              "type": "image",
+              "url": "https://picsum.photos/seed/bug/200",
+              "cornerRadius": 8
+            },
+            {
+              "type": "text",
+              "key": "customerName",
+              "font": "headline",
+              "padding": 4
+            },
+            {
+              "type": "text",
+              "key": "address",
+              "font": "subheadline",
+              "padding": 2
+            },
+            {
+              "type": "text",
+              "text": "Notes:",
+              "fontWeight": "bold"
+            },
+            {
+              "type": "textField",
+              "valueKey": "notes",
+              "placeholder": "Enter notes",
+              "padding": 4
+            },
+            {
+              "type": "toggle",
+              "label": "Job Completed?",
+              "valueKey": "completedToggle",
+              "padding": 4
+            },
+            {
+              "type": "slider",
+              "valueKey": "rating",
+              "minValue": 0,
+              "maxValue": 5,
+              "step": 1,
+              "showValue": true,
+              "padding": 4
+            },
+            {
+              "type": "hstack",
+              "spacing": 8,
+              "children": [
+                {
+                  "type": "button",
+                  "label": "Start",
+                  "actionId": "startJob",
+                  "padding": 4
+                },
+                {
+                  "type": "button",
+                  "label": "Complete",
+                  "actionId": "completeJob",
+                  "padding": 4
+                },
+                {
+                  "type": "button",
+                  "label": "Skip",
+                  "actionId": "skipJob",
+                  "padding": 4
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
