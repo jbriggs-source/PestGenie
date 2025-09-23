@@ -21,14 +21,21 @@ final class SyncManager: ObservableObject {
 
     init(persistenceController: PersistenceController = .shared) {
         self.persistenceController = persistenceController
-        setupPeriodicSync()
-        registerBackgroundTask()
+        // Defer setup until first sync is requested
+        // setupPeriodicSync()
+        // registerBackgroundTask()
     }
 
     // MARK: - Public API
 
     /// Triggers immediate sync if network is available
     func syncNow() async {
+        // Initialize sync infrastructure on first use
+        if syncTimer == nil {
+            setupPeriodicSync()
+            registerBackgroundTask()
+        }
+        
         guard networkMonitor.isConnected else {
             print("Sync skipped: No network connection")
             return
@@ -48,7 +55,7 @@ final class SyncManager: ObservableObject {
         // Sync every 5 minutes when connected
         syncTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
             Task {
-                if self.networkMonitor.isConnected {
+                if await self.networkMonitor.isConnected {
                     await self.performSync()
                 }
             }
@@ -147,6 +154,28 @@ final class SyncManager: ObservableObject {
                     }
                 }
 
+                // Upload chemicals
+                let chemicalRequest: NSFetchRequest<ChemicalEntity> = ChemicalEntity.fetchRequest()
+                chemicalRequest.predicate = NSPredicate(format: "syncStatus == %@", SyncStatus.pending.rawValue)
+                let pendingChemicals = try context.fetch(chemicalRequest)
+
+                for chemical in pendingChemicals {
+                    Task {
+                        await self.uploadChemical(chemical)
+                    }
+                }
+
+                // Upload chemical treatments
+                let treatmentRequest: NSFetchRequest<ChemicalTreatmentEntity> = ChemicalTreatmentEntity.fetchRequest()
+                treatmentRequest.predicate = NSPredicate(format: "syncStatus == %@", SyncStatus.pending.rawValue)
+                let pendingTreatments = try context.fetch(treatmentRequest)
+
+                for treatment in pendingTreatments {
+                    Task {
+                        await self.uploadChemicalTreatment(treatment)
+                    }
+                }
+
             } catch {
                 print("Error fetching pending entities: \(error)")
             }
@@ -160,7 +189,6 @@ final class SyncManager: ObservableObject {
             let response = try await APIService.shared.uploadJob(jobData)
 
             await MainActor.run {
-                let context = persistenceController.container.viewContext
                 job.serverId = response.serverId
                 job.syncStatus = SyncStatus.synced.rawValue
                 job.lastModified = Date()
@@ -198,6 +226,48 @@ final class SyncManager: ObservableObject {
         }
     }
 
+    private func uploadChemical(_ chemical: ChemicalEntity) async {
+        // Upload chemical data to server
+        do {
+            let chemicalData = ChemicalUploadData(from: chemical)
+            let response = try await APIService.shared.uploadChemical(chemicalData)
+
+            await MainActor.run {
+                chemical.serverId = response.serverId
+                chemical.syncStatus = SyncStatus.synced.rawValue
+                chemical.lastModified = Date()
+                persistenceController.save()
+            }
+
+        } catch {
+            await MainActor.run {
+                chemical.syncStatus = SyncStatus.failed.rawValue
+                persistenceController.save()
+            }
+        }
+    }
+
+    private func uploadChemicalTreatment(_ treatment: ChemicalTreatmentEntity) async {
+        // Upload chemical treatment data to server
+        do {
+            let treatmentData = ChemicalTreatmentUploadData(from: treatment)
+            let response = try await APIService.shared.uploadChemicalTreatment(treatmentData)
+
+            await MainActor.run {
+                treatment.serverId = response.serverId
+                treatment.syncStatus = SyncStatus.synced.rawValue
+                treatment.lastModified = Date()
+                persistenceController.save()
+            }
+
+        } catch {
+            await MainActor.run {
+                treatment.syncStatus = SyncStatus.failed.rawValue
+                persistenceController.save()
+            }
+        }
+    }
+
     // MARK: - Download Server Updates
 
     private func downloadServerUpdates() async throws {
@@ -213,6 +283,14 @@ final class SyncManager: ObservableObject {
 
             for update in updates.routes {
                 self.processRouteUpdate(update, in: context)
+            }
+
+            for update in updates.chemicals {
+                self.processChemicalUpdate(update, in: context)
+            }
+
+            for update in updates.chemicalTreatments {
+                self.processChemicalTreatmentUpdate(update, in: context)
             }
 
             do {
@@ -273,6 +351,56 @@ final class SyncManager: ObservableObject {
 
         } catch {
             print("Error processing route update: \(error)")
+        }
+    }
+
+    private func processChemicalUpdate(_ update: ChemicalUpdateData, in context: NSManagedObjectContext) {
+        let request: NSFetchRequest<ChemicalEntity> = ChemicalEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "serverId == %@", update.serverId)
+        request.fetchLimit = 1
+
+        do {
+            let existingChemicals = try context.fetch(request)
+
+            if let existingChemical = existingChemicals.first {
+                if update.lastModified > existingChemical.lastModified ?? Date.distantPast {
+                    updateChemicalEntity(existingChemical, with: update)
+                } else {
+                    existingChemical.syncStatus = SyncStatus.conflict.rawValue
+                }
+            } else {
+                let newChemical = ChemicalEntity(context: context)
+                updateChemicalEntity(newChemical, with: update)
+                newChemical.syncStatus = SyncStatus.synced.rawValue
+            }
+
+        } catch {
+            print("Error processing chemical update: \(error)")
+        }
+    }
+
+    private func processChemicalTreatmentUpdate(_ update: ChemicalTreatmentUpdateData, in context: NSManagedObjectContext) {
+        let request: NSFetchRequest<ChemicalTreatmentEntity> = ChemicalTreatmentEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "serverId == %@", update.serverId)
+        request.fetchLimit = 1
+
+        do {
+            let existingTreatments = try context.fetch(request)
+
+            if let existingTreatment = existingTreatments.first {
+                if update.lastModified > existingTreatment.lastModified ?? Date.distantPast {
+                    updateChemicalTreatmentEntity(existingTreatment, with: update)
+                } else {
+                    existingTreatment.syncStatus = SyncStatus.conflict.rawValue
+                }
+            } else {
+                let newTreatment = ChemicalTreatmentEntity(context: context)
+                updateChemicalTreatmentEntity(newTreatment, with: update)
+                newTreatment.syncStatus = SyncStatus.synced.rawValue
+            }
+
+        } catch {
+            print("Error processing chemical treatment update: \(error)")
         }
     }
 
@@ -341,6 +469,45 @@ final class SyncManager: ObservableObject {
         route.technicianId = update.technicianId
         route.lastModified = update.lastModified
     }
+
+    private func updateChemicalEntity(_ chemical: ChemicalEntity, with update: ChemicalUpdateData) {
+        chemical.serverId = update.serverId
+        chemical.name = update.name
+        chemical.activeIngredient = update.activeIngredient
+        chemical.manufacturerName = update.manufacturerName
+        chemical.epaRegistrationNumber = update.epaRegistrationNumber
+        chemical.concentration = update.concentration
+        chemical.unitOfMeasure = update.unitOfMeasure
+        chemical.quantityInStock = update.quantityInStock
+        chemical.expirationDate = update.expirationDate
+        chemical.batchNumber = update.batchNumber
+        chemical.targetPests = update.targetPests
+        chemical.signalWord = update.signalWord
+        chemical.hazardCategory = update.hazardCategory
+        chemical.pphiDays = Int32(update.pphiDays)
+        chemical.reentryInterval = Int32(update.reentryInterval)
+        chemical.siteOfAction = update.siteOfAction
+        chemical.storageRequirements = update.storageRequirements
+        chemical.lastModified = update.lastModified
+    }
+
+    private func updateChemicalTreatmentEntity(_ treatment: ChemicalTreatmentEntity, with update: ChemicalTreatmentUpdateData) {
+        treatment.serverId = update.serverId
+        treatment.applicatorName = update.applicatorName
+        treatment.applicationDate = update.applicationDate
+        treatment.applicationMethod = update.applicationMethod
+        treatment.targetPests = update.targetPests
+        treatment.treatmentLocation = update.treatmentLocation
+        treatment.areaTreated = update.areaTreated
+        treatment.quantityUsed = update.quantityUsed
+        treatment.dosageRate = update.dosageRate
+        treatment.concentrationUsed = update.concentrationUsed
+        treatment.dilutionRatio = update.dilutionRatio
+        treatment.weatherConditions = update.weatherConditions
+        treatment.environmentalConditions = update.environmentalConditions
+        treatment.notes = update.notes
+        treatment.lastModified = update.lastModified
+    }
 }
 
 // MARK: - Supporting Types
@@ -352,7 +519,7 @@ struct SyncError: Identifiable {
     let retryable: Bool
 }
 
-struct JobUploadData {
+struct JobUploadData: Codable {
     let id: UUID
     let customerName: String
     let address: String
@@ -368,7 +535,7 @@ struct JobUploadData {
     }
 }
 
-struct JobUpdateData {
+struct JobUpdateData: Codable {
     let serverId: String
     let customerName: String
     let address: String
@@ -377,7 +544,7 @@ struct JobUpdateData {
     let lastModified: Date
 }
 
-struct RouteUpdateData {
+struct RouteUpdateData: Codable {
     let serverId: String
     let name: String
     let date: Date
@@ -385,15 +552,146 @@ struct RouteUpdateData {
     let lastModified: Date
 }
 
-struct ServerUpdates {
+struct ServerUpdates: Codable {
     let jobs: [JobUpdateData]
     let routes: [RouteUpdateData]
+    let chemicals: [ChemicalUpdateData]
+    let chemicalTreatments: [ChemicalTreatmentUpdateData]
 }
 
-struct UploadResponse {
-    let serverId: String
+struct UploadResponse: Codable {
+    let success: Bool
+    let jobId: String
+    let serverId: String?
+    let message: String?
 }
 
-struct PhotoUploadResponse {
+struct PhotoUploadResponse: Codable {
+    let success: Bool
     let photoId: String
+    let url: String?
+    let message: String?
+}
+
+// MARK: - Chemical Sync Data Structures
+
+struct ChemicalUploadData: Codable {
+    let id: UUID
+    let name: String
+    let activeIngredient: String
+    let manufacturerName: String
+    let epaRegistrationNumber: String
+    let concentration: Double
+    let unitOfMeasure: String
+    let quantityInStock: Double
+    let expirationDate: Date
+    let batchNumber: String?
+    let targetPests: String
+    let signalWord: String
+    let hazardCategory: String
+    let pphiDays: Int
+    let reentryInterval: Int
+    let siteOfAction: String
+    let storageRequirements: String
+    let lastModified: Date
+
+    init(from chemical: ChemicalEntity) {
+        self.id = chemical.id ?? UUID()
+        self.name = chemical.name ?? ""
+        self.activeIngredient = chemical.activeIngredient ?? ""
+        self.manufacturerName = chemical.manufacturerName ?? ""
+        self.epaRegistrationNumber = chemical.epaRegistrationNumber ?? ""
+        self.concentration = chemical.concentration
+        self.unitOfMeasure = chemical.unitOfMeasure ?? "oz"
+        self.quantityInStock = chemical.quantityInStock
+        self.expirationDate = chemical.expirationDate ?? Date()
+        self.batchNumber = chemical.batchNumber
+        self.targetPests = chemical.targetPests ?? ""
+        self.signalWord = chemical.signalWord ?? "CAUTION"
+        self.hazardCategory = chemical.hazardCategory ?? "Category III"
+        self.pphiDays = Int(chemical.pphiDays)
+        self.reentryInterval = Int(chemical.reentryInterval)
+        self.siteOfAction = chemical.siteOfAction ?? ""
+        self.storageRequirements = chemical.storageRequirements ?? ""
+        self.lastModified = chemical.lastModified ?? Date()
+    }
+}
+
+struct ChemicalUpdateData: Codable {
+    let serverId: String
+    let name: String
+    let activeIngredient: String
+    let manufacturerName: String
+    let epaRegistrationNumber: String
+    let concentration: Double
+    let unitOfMeasure: String
+    let quantityInStock: Double
+    let expirationDate: Date
+    let batchNumber: String?
+    let targetPests: String
+    let signalWord: String
+    let hazardCategory: String
+    let pphiDays: Int
+    let reentryInterval: Int
+    let siteOfAction: String
+    let storageRequirements: String
+    let lastModified: Date
+}
+
+struct ChemicalTreatmentUploadData: Codable {
+    let id: UUID
+    let jobId: UUID?
+    let chemicalId: UUID?
+    let applicatorName: String
+    let applicationDate: Date
+    let applicationMethod: String
+    let targetPests: String
+    let treatmentLocation: String
+    let areaTreated: Double
+    let quantityUsed: Double
+    let dosageRate: Double
+    let concentrationUsed: Double
+    let dilutionRatio: String
+    let weatherConditions: String?
+    let environmentalConditions: String
+    let notes: String?
+    let lastModified: Date
+
+    init(from treatment: ChemicalTreatmentEntity) {
+        self.id = treatment.id ?? UUID()
+        self.jobId = treatment.job?.id
+        self.chemicalId = treatment.chemical?.id
+        self.applicatorName = treatment.applicatorName ?? ""
+        self.applicationDate = treatment.applicationDate ?? Date()
+        self.applicationMethod = treatment.applicationMethod ?? "spray"
+        self.targetPests = treatment.targetPests ?? ""
+        self.treatmentLocation = treatment.treatmentLocation ?? ""
+        self.areaTreated = treatment.areaTreated
+        self.quantityUsed = treatment.quantityUsed
+        self.dosageRate = treatment.dosageRate
+        self.concentrationUsed = treatment.concentrationUsed
+        self.dilutionRatio = treatment.dilutionRatio ?? "1:1"
+        self.weatherConditions = treatment.weatherConditions
+        self.environmentalConditions = treatment.environmentalConditions ?? ""
+        self.notes = treatment.notes
+        self.lastModified = treatment.lastModified ?? Date()
+    }
+}
+
+struct ChemicalTreatmentUpdateData: Codable {
+    let serverId: String
+    let applicatorName: String
+    let applicationDate: Date
+    let applicationMethod: String
+    let targetPests: String
+    let treatmentLocation: String
+    let areaTreated: Double
+    let quantityUsed: Double
+    let dosageRate: Double
+    let concentrationUsed: Double
+    let dilutionRatio: String
+    let weatherConditions: String?
+    let environmentalConditions: String
+    let notes: String?
+    let lastModified: Date
 }

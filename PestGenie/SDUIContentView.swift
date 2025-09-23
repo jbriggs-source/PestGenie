@@ -27,9 +27,10 @@ struct SDUIContentView: View {
         }
         .onAppear {
             loadScreen()
-            // Update location manager with current jobs from the route view model.
-            locationManager.monitoredJobs = routeViewModel.jobs
-            locationManager.startMonitoring()
+            // Defer heavy initialization until after UI appears
+            Task {
+                await initializeServices()
+            }
         }
         // When the connectivity status flips to online, synchronise any queued actions.
         .onChange(of: routeViewModel.isOnline) { online in
@@ -74,7 +75,7 @@ struct SDUIContentView: View {
         actions["skipJob"] = { job in
             if let job = job { routeViewModel.skip(job: job) }
         }
-        return SDUIContext(jobs: routeViewModel.jobs, routeViewModel: routeViewModel, actions: actions, currentJob: nil)
+        return SDUIContext(jobs: routeViewModel.jobs, routeViewModel: routeViewModel, actions: actions, currentJob: nil, persistenceController: PersistenceController.shared)
     }
     /// Loads the screen definition from the bundled JSON file. In a real app
     /// this could fetch from a remote service and cache it. This method
@@ -99,5 +100,35 @@ struct SDUIContentView: View {
             }
         }
         print("No screen JSON found in bundle")
+    }
+    
+    /// Initialize heavy services after UI appears
+    private func initializeServices() async {
+        // Update location manager with current jobs from the route view model
+        locationManager.monitoredJobs = routeViewModel.jobs
+        
+        // Start network monitoring
+        routeViewModel.startNetworkMonitoring()
+        
+        // Start location monitoring in background
+        await MainActor.run {
+            locationManager.startMonitoring()
+        }
+        
+        // Initialize other services asynchronously
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask {
+                // Initialize maintenance system
+                _ = MaintenanceSchedulingManager.shared
+            }
+            group.addTask {
+                // Initialize calibration system  
+                _ = CalibrationTrackingManager.shared
+            }
+            group.addTask {
+                // Initialize sync manager
+                _ = SyncManager.shared
+            }
+        }
     }
 }

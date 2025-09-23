@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import Combine
+import UIKit
 
 /// Enhanced network monitoring for offline-first architecture
 /// Provides detailed connection information and automatic sync triggers
@@ -39,7 +40,9 @@ final class NetworkMonitor: ObservableObject {
     }
 
     deinit {
-        stopMonitoring()
+        Task { @MainActor in
+            stopMonitoring()
+        }
     }
 
     private func startMonitoring() {
@@ -198,6 +201,54 @@ final class APIService {
         return updates
     }
 
+    // MARK: - Chemical Operations
+    
+    func uploadChemical(_ chemical: ChemicalUploadData) async throws -> UploadResponse {
+        let url = baseURL.appendingPathComponent("chemicals")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let jsonData = try JSONEncoder().encode(chemical)
+        request.httpBody = jsonData
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard 200...299 ~= httpResponse.statusCode else {
+            throw APIError.serverError(httpResponse.statusCode)
+        }
+        
+        let uploadResponse = try JSONDecoder().decode(UploadResponse.self, from: data)
+        return uploadResponse
+    }
+    
+    func uploadChemicalTreatment(_ treatment: ChemicalTreatmentUploadData) async throws -> UploadResponse {
+        let url = baseURL.appendingPathComponent("chemical-treatments")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let jsonData = try JSONEncoder().encode(treatment)
+        request.httpBody = jsonData
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        guard 200...299 ~= httpResponse.statusCode else {
+            throw APIError.serverError(httpResponse.statusCode)
+        }
+        
+        let uploadResponse = try JSONDecoder().decode(UploadResponse.self, from: data)
+        return uploadResponse
+    }
+
     // MARK: - Push Notification Registration
 
     func registerDeviceToken(_ token: Data) async throws {
@@ -287,6 +338,9 @@ actor ImageCompressionService {
         }
     }
 }
+
+// MARK: - Response Types
+// Note: Response types are defined in SyncManager.swift
 
 extension UIImage {
     func resized(to size: CGSize) -> UIImage {

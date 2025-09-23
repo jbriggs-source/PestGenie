@@ -1,0 +1,234 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    # Ensure we're on the latest version of fastlane
+    ensure_bundler
+    
+    # Set up environment variables
+    setup_ci if ENV['CI']
+    
+    # Install dependencies
+    cocoapods(repo_update: true) if File.exist?("Podfile")
+  end
+
+  desc "Run all tests"
+  lane :test do
+    run_tests(
+      scheme: "PestGenie",
+      device: "iPhone 15 Pro",
+      clean: true,
+      code_coverage: true,
+      output_directory: "./test_output",
+      output_types: "html,junit",
+      fail_build: true
+    )
+  end
+
+  desc "Build the app for development"
+  lane :build_dev do
+    build_app(
+      scheme: "PestGenie",
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build",
+      output_name: "PestGenie-Dev.ipa",
+      clean: true,
+      include_symbols: true,
+      include_bitcode: false
+    )
+  end
+
+  desc "Build the app for distribution"
+  lane :build_release do
+    # Increment build number
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1
+    )
+    
+    # Build the app
+    build_app(
+      scheme: "PestGenie",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "PestGenie-Release.ipa",
+      clean: true,
+      include_symbols: true,
+      include_bitcode: false
+    )
+  end
+
+  desc "Upload to TestFlight"
+  lane :beta do
+    # Build and upload to TestFlight
+    build_release
+    
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      notify_external_testers: false,
+      changelog: "Automated build from CI/CD pipeline"
+    )
+    
+    # Send notification
+    slack(
+      message: "🚀 PestGenie beta build uploaded to TestFlight!",
+      channel: "#ios-releases",
+      success: true
+    )
+  end
+
+  desc "Deploy to App Store"
+  lane :release do
+    # Ensure we're on main branch
+    ensure_git_branch(branch: 'main')
+    
+    # Ensure working directory is clean
+    ensure_git_status_clean
+    
+    # Run tests first
+    test
+    
+    # Build release version
+    build_release
+    
+    # Upload to App Store Connect
+    upload_to_app_store(
+      force: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: false,
+      automatic_release: false
+    )
+    
+    # Create git tag
+    add_git_tag(
+      tag: "v#{get_version_number}"
+    )
+    
+    # Push tag to remote
+    push_git_tags
+    
+    # Send notification
+    slack(
+      message: "🎉 PestGenie v#{get_version_number} submitted to App Store!",
+      channel: "#ios-releases",
+      success: true
+    )
+  end
+
+  desc "Run code quality checks"
+  lane :quality do
+    # Run SwiftLint
+    swiftlint(
+      mode: :lint,
+      executable: "swiftlint",
+      config_file: ".swiftlint.yml",
+      raise_if_swiftlint_error: true
+    )
+    
+    # Run security scan
+    sh("semgrep --config=auto .")
+    
+    # Run dependency check
+    sh("brew install swift-dependency-analyzer")
+    sh("swift-dependency-analyzer --project PestGenie.xcodeproj")
+  end
+
+  desc "Generate screenshots for App Store"
+  lane :screenshots do
+    # This would typically use UI tests to generate screenshots
+    # For now, we'll just ensure the screenshot directory exists
+    sh("mkdir -p fastlane/screenshots")
+    
+    # You would run your UI tests here to generate screenshots
+    # run_tests(
+    #   scheme: "PestGenieUITests",
+    #   device: "iPhone 15 Pro",
+    #   only_testing: ["PestGenieUITests/ScreenshotTests"]
+    # )
+  end
+
+  desc "Setup code signing"
+  lane :setup_signing do
+    # Import certificates
+    import_certificate(
+      certificate_path: "certs/distribution.p12",
+      certificate_password: ENV["CERTIFICATE_PASSWORD"],
+      keychain_name: "fastlane_tmp_keychain",
+      keychain_password: "temp_password"
+    )
+    
+    # Import provisioning profile
+    import_certificate(
+      certificate_path: "certs/AdHoc.mobileprovision",
+      keychain_name: "fastlane_tmp_keychain",
+      keychain_password: "temp_password"
+    )
+  end
+
+  desc "Clean up build artifacts"
+  lane :clean do
+    clean_build_artifacts
+    
+    # Clean derived data
+    sh("rm -rf ~/Library/Developer/Xcode/DerivedData")
+    
+    # Clean build directory
+    sh("rm -rf ./build")
+    
+    # Clean test output
+    sh("rm -rf ./test_output")
+  end
+
+  desc "Update dependencies"
+  lane :update_deps do
+    # Update CocoaPods if Podfile exists
+    if File.exist?("Podfile")
+      cocoapods(
+        repo_update: true,
+        podfile: "./Podfile"
+      )
+    end
+    
+    # Update Swift Package Manager dependencies
+    sh("xcodebuild -resolvePackageDependencies -project PestGenie.xcodeproj")
+  end
+
+  desc "Generate documentation"
+  lane :docs do
+    # Generate Swift documentation using SwiftDoc
+    sh("brew install swift-doc")
+    sh("swift-doc generate PestGenie --output Documentation --format html")
+  end
+
+  error do |lane, exception|
+    # Send error notification
+    slack(
+      message: "❌ Fastlane lane '#{lane}' failed: #{exception.message}",
+      channel: "#ios-releases",
+      success: false
+    )
+  end
+
+  after_all do |lane|
+    # Clean up temporary files
+    clean_build_artifacts
+  end
+end

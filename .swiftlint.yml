@@ -1,0 +1,96 @@
+# SwiftLint Configuration for PestGenie
+
+# Paths to include/exclude
+included:
+  - PestGenie
+  - PestGenieTests
+  - PestGenieUITests
+
+excluded:
+  - Pods
+  - build
+  - archives
+  - Documentation
+  - .github
+
+# Rules to disable
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - function_body_length
+  - file_length
+  - type_body_length
+  - identifier_name
+
+# Rules to enable
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - overridden_super_call
+  - prohibited_interface_builder
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - unused_closure_parameter
+  - unused_optional_binding
+  - vertical_parameter_alignment_on_call
+  - yoda_condition
+
+# Custom rules
+custom_rules:
+  # Prevent force unwrapping
+  no_force_unwrapping:
+    name: "No Force Unwrapping"
+    regex: '!\s*$'
+    message: "Force unwrapping should be avoided"
+    severity: warning
+
+  # Prevent print statements in production code
+  no_print_statements:
+    name: "No Print Statements"
+    regex: '\bprint\s*\('
+    message: "Use proper logging instead of print statements"
+    severity: warning
+    excluded: ".*Test.*"
+
+# Line length configuration
+line_length:
+  warning: 120
+  error: 150
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_comments: true
+
+# File length configuration
+file_length:
+  warning: 500
+  error: 1000
+
+# Function body length configuration
+function_body_length:
+  warning: 50
+  error: 100
+
+# Type body length configuration
+type_body_length:
+  warning: 300
+  error: 500
+
+# Identifier name configuration
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 40
+    error: 60
+  excluded:
+    - id
+    - url
+    - api
+    - ui
+    - db
+    - ok
+    - no
+    - yes

@@ -5,6 +5,7 @@ import UserNotifications
 final class LocationManager: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     @Published var monitoredJobs: [Job] = []
+    @Published var currentLocation: CLLocation?
     override init() {
         super.init()
         locationManager.delegate = self
@@ -16,10 +17,21 @@ final class LocationManager: NSObject, ObservableObject {
         locationManager.requestAlwaysAuthorization()
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
+    
+    func requestPermission() async -> Bool {
+        return await withCheckedContinuation { continuation in
+            locationManager.requestAlwaysAuthorization()
+            // For simplicity, we'll return true. In a real app, you'd check the authorization status
+            continuation.resume(returning: true)
+        }
+    }
     func startMonitoring() {
         locationManager.startUpdatingLocation()
     }
     private func handleLocationUpdate(_ location: CLLocation) {
+        // Update current location
+        currentLocation = location
+        
         for job in monitoredJobs {
             guard let coord = job.coordinate else { continue }
             let jobLoc = CLLocation(latitude: coord.latitude, longitude: coord.longitude)

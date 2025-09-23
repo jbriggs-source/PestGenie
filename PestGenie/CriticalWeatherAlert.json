@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "component": {
+    "id": "critical_weather_alert",
+    "type": "vstack",
+    "spacing": 16,
+    "padding": 20,
+    "backgroundColor": "#FF3B30",
+    "cornerRadius": 12,
+    "children": [
+      {
+        "id": "alert_header",
+        "type": "hstack",
+        "spacing": 12,
+        "children": [
+          {
+            "id": "alert_icon",
+            "type": "image",
+            "imageName": "exclamationmark.triangle.fill",
+            "foregroundColor": "#FFFFFF"
+          },
+          {
+            "id": "alert_title",
+            "type": "text",
+            "text": "CRITICAL WEATHER ALERT",
+            "font": "headline",
+            "fontWeight": "bold",
+            "foregroundColor": "#FFFFFF"
+          }
+        ]
+      },
+      {
+        "id": "alert_content",
+        "type": "weatherAlert",
+        "alertPriorityFilter": "critical",
+        "weatherDisplayMode": "detailed",
+        "foregroundColor": "#FFFFFF"
+      },
+      {
+        "id": "alert_actions",
+        "type": "hstack",
+        "spacing": 12,
+        "children": [
+          {
+            "id": "stop_work_button",
+            "type": "button",
+            "text": "Stop Work",
+            "actionId": "stop_current_treatment",
+            "backgroundColor": "#FFFFFF",
+            "foregroundColor": "#FF3B30",
+            "cornerRadius": 8,
+            "padding": 12,
+            "fontWeight": "semibold"
+          },
+          {
+            "id": "view_details_button",
+            "type": "button",
+            "text": "View Details",
+            "actionId": "view_weather_details",
+            "backgroundColor": "transparent",
+            "foregroundColor": "#FFFFFF",
+            "borderWidth": 2,
+            "borderColor": "#FFFFFF",
+            "cornerRadius": 8,
+            "padding": 12,
+            "fontWeight": "semibold"
+          }
+        ]
+      },
+      {
+        "id": "safety_recommendations",
+        "type": "treatmentConditions",
+        "treatmentType": "spray",
+        "weatherDisplayMode": "detailed",
+        "foregroundColor": "#FFFFFF",
+        "backgroundColor": "rgba(255, 255, 255, 0.1)",
+        "cornerRadius": 8,
+        "padding": 12
+      }
+    ]
+  }
+}

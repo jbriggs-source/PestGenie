@@ -1,0 +1,56 @@
+# Fastlane Match Configuration for PestGenie
+
+# Storage mode (git, s3, google_cloud)
+storage_mode("git")
+
+# Git URL for storing certificates
+# Replace with your actual repository URL
+git_url("https://github.com/your-org/pestgenie-certificates.git")
+
+# Git branch for certificates
+git_branch("main")
+
+# App identifier
+app_identifier("Greenix.PestGenie")
+
+# Username for Apple Developer Portal
+username("your-apple-id@example.com")
+
+# Team ID
+team_id("YOUR_TEAM_ID")
+
+# Keychain name
+keychain_name("PestGenie.keychain")
+
+# Keychain password
+keychain_password("PestGenieKeychain123")
+
+# Readonly mode (set to true for CI/CD)
+readonly(false)
+
+# Skip confirmation
+skip_confirmation(true)
+
+# Skip dependency validation
+skip_dependency_validation(true)
+
+# Shallow clone
+shallow_clone(true)
+
+# Additional options
+force_for_new_devices(true)
+force_for_new_certificates(true)
+
+# Certificate types to generate
+type("development")
+type("adhoc")
+type("appstore")
+
+# Provisioning profile types
+profile_type("development")
+profile_type("adhoc")
+profile_type("appstore")
+
+# Additional app identifiers (if you have multiple apps)
+# app_identifier("com.yourcompany.pestgenie.staging")
+# app_identifier("com.yourcompany.pestgenie.beta")

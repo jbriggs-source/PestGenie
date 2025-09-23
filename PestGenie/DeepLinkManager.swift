@@ -36,7 +36,7 @@ final class DeepLinkManager: ObservableObject {
         }
     }
 
-    init(routeViewModel: RouteViewModel = RouteViewModel.shared) {
+    init(routeViewModel: RouteViewModel = RouteViewModel()) {
         self.routeViewModel = routeViewModel
         setupNotificationObservers()
     }
@@ -49,6 +49,7 @@ final class DeepLinkManager: ObservableObject {
         case customer(id: String)
         case settings(section: SettingsSection?)
         case emergency(type: EmergencyType)
+        case equipment(id: String, action: EquipmentAction?)
 
         enum JobAction: String {
             case start = "start"
@@ -68,6 +69,14 @@ final class DeepLinkManager: ObservableObject {
             case pestOutbreak = "pest_outbreak"
             case equipmentFailure = "equipment_failure"
             case customerComplaint = "customer_complaint"
+        }
+
+        enum EquipmentAction: String {
+            case inspect = "inspect"
+            case maintain = "maintain"
+            case calibrate = "calibrate"
+            case view = "view"
+            case assign = "assign"
         }
     }
 
@@ -105,6 +114,8 @@ final class DeepLinkManager: ObservableObject {
             return handleSettingsLink(components)
         case "emergency":
             return handleEmergencyLink(components)
+        case "equipment":
+            return handleEquipmentLink(components)
         default:
             return false
         }
@@ -126,6 +137,8 @@ final class DeepLinkManager: ObservableObject {
             return handleRouteUniversalLink(pathComponents, queryItems: components.queryItems)
         case "share":
             return handleShareLink(pathComponents, queryItems: components.queryItems)
+        case "equipment":
+            return handleEquipmentUniversalLink(pathComponents, queryItems: components.queryItems)
         default:
             return false
         }
@@ -181,6 +194,18 @@ final class DeepLinkManager: ObservableObject {
         return true
     }
 
+    private func handleEquipmentLink(_ components: URLComponents) -> Bool {
+        let pathComponents = components.path.components(separatedBy: "/").filter { !$0.isEmpty }
+        guard let equipmentId = pathComponents.first else { return false }
+
+        let action = components.queryItems?.first(where: { $0.name == "action" })?.value
+        let equipmentAction = action.flatMap { DeepLink.EquipmentAction(rawValue: $0) }
+
+        let deepLink = DeepLink.equipment(id: equipmentId, action: equipmentAction)
+        navigate(to: deepLink)
+        return true
+    }
+
     private func handleJobUniversalLink(_ pathComponents: [String], queryItems: [URLQueryItem]?) -> Bool {
         guard pathComponents.count >= 2 else { return false }
         let jobId = pathComponents[1]
@@ -202,6 +227,18 @@ final class DeepLinkManager: ObservableObject {
         return true
     }
 
+    private func handleEquipmentUniversalLink(_ pathComponents: [String], queryItems: [URLQueryItem]?) -> Bool {
+        guard pathComponents.count >= 2 else { return false }
+        let equipmentId = pathComponents[1]
+
+        let action = queryItems?.first(where: { $0.name == "action" })?.value
+        let equipmentAction = action.flatMap { DeepLink.EquipmentAction(rawValue: $0) }
+
+        let deepLink = DeepLink.equipment(id: equipmentId, action: equipmentAction)
+        navigate(to: deepLink)
+        return true
+    }
+
     private func handleShareLink(_ pathComponents: [String], queryItems: [URLQueryItem]?) -> Bool {
         // Handle shared links from other users
         guard pathComponents.count >= 2 else { return false }
@@ -215,6 +252,11 @@ final class DeepLinkManager: ObservableObject {
         case "route":
             guard pathComponents.count >= 3 else { return false }
             let deepLink = DeepLink.route(id: pathComponents[2])
+            navigate(to: deepLink)
+            return true
+        case "equipment":
+            guard pathComponents.count >= 3 else { return false }
+            let deepLink = DeepLink.equipment(id: pathComponents[2], action: nil)
             navigate(to: deepLink)
             return true
         default:
@@ -241,6 +283,8 @@ final class DeepLinkManager: ObservableObject {
             navigateToSettings(section: section)
         case .emergency(let type):
             handleEmergency(type: type)
+        case .equipment(let id, let action):
+            navigateToEquipment(id: id, action: action)
         }
     }
 
@@ -257,11 +301,11 @@ final class DeepLinkManager: ObservableObject {
         if let action = action {
             switch action {
             case .start:
-                routeViewModel.startJob(job)
+                routeViewModel.start(job: job)
             case .complete:
-                routeViewModel.completeJob(job, reasonCode: nil)
+                routeViewModel.complete(job: job, signature: Data())
             case .skip:
-                routeViewModel.skipJob(job, reasonCode: ReasonCode.customerNotHome)
+                routeViewModel.skip(job: job)
             case .reschedule:
                 // Open reschedule dialog
                 break
@@ -316,6 +360,39 @@ final class DeepLinkManager: ObservableObject {
         )
     }
 
+    private func navigateToEquipment(id: String, action: DeepLink.EquipmentAction?) {
+        // Navigate to equipment tab or view
+        currentTab = .routes // For now, we'll use routes tab for equipment
+
+        // Execute action if specified
+        if let action = action {
+            switch action {
+            case .inspect:
+                // Open equipment inspection interface
+                break
+            case .maintain:
+                // Open maintenance scheduler
+                break
+            case .calibrate:
+                // Open calibration interface
+                break
+            case .view:
+                // Just view equipment details
+                break
+            case .assign:
+                // Open equipment assignment interface
+                break
+            }
+        }
+
+        // Post navigation notification
+        NotificationCenter.default.post(
+            name: .navigateToEquipmentDetail,
+            object: nil,
+            userInfo: ["equipmentId": id, "action": action?.rawValue ?? ""]
+        )
+    }
+
     // MARK: - URL Generation
 
     func generateJobURL(for job: Job, action: DeepLink.JobAction? = nil) -> URL {
@@ -362,6 +439,32 @@ final class DeepLinkManager: ObservableObject {
         return components.url!
     }
 
+    func generateEquipmentURL(equipmentId: String, action: DeepLink.EquipmentAction? = nil) -> URL {
+        var components = URLComponents()
+        components.scheme = "pestgenie"
+        components.host = "equipment"
+        components.path = "/\(equipmentId)"
+
+        if let action = action {
+            components.queryItems = [URLQueryItem(name: "action", value: action.rawValue)]
+        }
+
+        return components.url!
+    }
+
+    func generateUniversalEquipmentURL(equipmentId: String, action: DeepLink.EquipmentAction? = nil) -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "pestgenie.com"
+        components.path = "/equipment/\(equipmentId)"
+
+        if let action = action {
+            components.queryItems = [URLQueryItem(name: "action", value: action.rawValue)]
+        }
+
+        return components.url!
+    }
+
     // MARK: - Notification Observers
 
     private func setupNotificationObservers() {
@@ -372,7 +475,9 @@ final class DeepLinkManager: ObservableObject {
         ) { [weak self] notification in
             guard let jobId = notification.userInfo?["jobId"] as? String else { return }
             let action = (notification.userInfo?["action"] as? String).flatMap { DeepLink.JobAction(rawValue: $0) }
-            self?.navigateToJob(id: jobId, action: action)
+            Task { @MainActor in
+                self?.navigateToJob(id: jobId, action: action)
+            }
         }
 
         NotificationCenter.default.addObserver(
@@ -381,7 +486,9 @@ final class DeepLinkManager: ObservableObject {
             queue: .main
         ) { [weak self] notification in
             guard let routeId = notification.userInfo?["routeId"] as? String else { return }
-            self?.navigateToRoute(id: routeId)
+            Task { @MainActor in
+                self?.navigateToRoute(id: routeId)
+            }
         }
     }
 
@@ -400,6 +507,7 @@ extension Notification.Name {
     static let navigateToCustomerDetail = Notification.Name("navigateToCustomerDetail")
     static let navigateToSettingsSection = Notification.Name("navigateToSettingsSection")
     static let handleEmergencyAlert = Notification.Name("handleEmergencyAlert")
+    static let navigateToEquipmentDetail = Notification.Name("navigateToEquipmentDetail")
 }
 
 // MARK: - SwiftUI Integration
@@ -412,7 +520,7 @@ struct DeepLinkHandler: ViewModifier {
             .onOpenURL { url in
                 _ = deepLinkManager.handle(url: url)
             }
-            .onChange(of: deepLinkManager.pendingDeepLink) { deepLink in
+            .onChange(of: deepLinkManager.pendingDeepLink) { _, deepLink in
                 if let deepLink = deepLink {
                     // Handle deep link in UI
                     handleDeepLinkInUI(deepLink)

@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "component": {
+    "id": "compact_weather_widget",
+    "type": "hstack",
+    "spacing": 12,
+    "padding": 12,
+    "backgroundColor": "#FFFFFF",
+    "cornerRadius": 8,
+    "shadowRadius": 1,
+    "shadowColor": "#000000",
+    "shadowOffset": {
+      "x": 0,
+      "y": 1
+    },
+    "children": [
+      {
+        "id": "current_temp_display",
+        "type": "vstack",
+        "spacing": 2,
+        "children": [
+          {
+            "id": "temperature_value",
+            "type": "weatherMetrics",
+            "weatherMetrics": ["temperature"],
+            "weatherDisplayMode": "minimal"
+          },
+          {
+            "id": "condition_text",
+            "type": "text",
+            "text": "Clear",
+            "font": "caption",
+            "foregroundColor": "#8E8E93"
+          }
+        ]
+      },
+      {
+        "type": "spacer"
+      },
+      {
+        "id": "safety_status",
+        "type": "safetyIndicator",
+        "treatmentType": "spray",
+        "weatherDisplayMode": "compact"
+      },
+      {
+        "type": "spacer"
+      },
+      {
+        "id": "wind_speed_display",
+        "type": "weatherMetrics",
+        "weatherMetrics": ["wind_speed"],
+        "weatherDisplayMode": "compact"
+      }
+    ]
+  }
+}

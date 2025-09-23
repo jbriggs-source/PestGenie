@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import StoreKit
+import CoreData
 
 /// Manages App Store compliance including privacy, accessibility, and submission requirements
 @MainActor
@@ -32,7 +33,7 @@ final class AppStoreComplianceManager: ObservableObject {
     }
 
     func requestLocationPermission() async -> Bool {
-        return await LocationManager.shared.requestPermission()
+        return await LocationManager().requestPermission()
     }
 
     func requestNotificationPermission() async -> Bool {

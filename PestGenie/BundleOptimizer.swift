@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import os.log
 
 /// Manages bundle size optimization through on-demand resources and lazy loading
 final class BundleOptimizer {

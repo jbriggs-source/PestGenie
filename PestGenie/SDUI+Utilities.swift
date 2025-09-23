@@ -282,7 +282,7 @@ struct SDUIErrorHandler {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
-                if let component = component {
+                if component != nil {
                     Text("Component: \\(component.type.rawValue)")
                         .font(.caption2)
                         .foregroundColor(.secondary)

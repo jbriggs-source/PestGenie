@@ -84,13 +84,7 @@ final class PersistenceController: ObservableObject {
     }
 }
 
-/// Enum representing sync status for offline-first architecture
-enum SyncStatus: String, CaseIterable {
-    case synced = "synced"           // Data is synchronized with server
-    case pending = "pending"         // Waiting to be sent to server
-    case failed = "failed"           // Sync failed, needs retry
-    case conflict = "conflict"       // Merge conflict needs resolution
-}
+// Note: SyncStatus enum is defined in Models.swift
 
 /// Protocol for entities that support offline sync
 protocol SyncableEntity {

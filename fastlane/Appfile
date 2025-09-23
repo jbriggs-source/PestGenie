@@ -1,0 +1,133 @@
+# The Appfile is a configuration file for fastlane. It's usually placed in the root of the project.
+# It contains metadata about your app that can be used by fastlane.
+# If you want to get a list of all available options run `fastlane docs`
+
+# The bundle identifier of your app
+app_identifier("Greenix.PestGenie")
+
+# Your Apple Developer Portal username
+apple_id("your-apple-id@example.com")
+
+# Your Apple Developer Portal team ID
+team_id("YOUR_TEAM_ID")
+
+# The name of your app
+app_name("PestGenie")
+
+# The display name of your app
+display_name("PestGenie")
+
+# The version of your app
+version("1.0")
+
+# The build number of your app
+build_number("1")
+
+# The platform of your app
+platform("ios")
+
+# The language of your app
+language("en")
+
+# The country code of your app
+country_code("US")
+
+# The category of your app
+category("business")
+
+# The content rating of your app
+content_rating("4+")
+
+# The privacy policy URL of your app
+privacy_url("https://pestgenie.com/privacy")
+
+# The support URL of your app
+support_url("https://pestgenie.com/support")
+
+# The marketing URL of your app
+marketing_url("https://pestgenie.com")
+
+# The description of your app
+description("Professional pest control management app for technicians and field workers.")
+
+# The keywords of your app
+keywords("pest control,exterminator,route management,job tracking,field service")
+
+# The copyright of your app
+copyright("© 2024 Greenix. All rights reserved.")
+
+# The license of your app
+license("Commercial")
+
+# The minimum iOS version
+minimum_ios_version("15.0")
+
+# The target iOS version
+target_ios_version("18.2")
+
+# The supported device families
+device_families(["iPhone", "iPad"])
+
+# The supported interface orientations
+interface_orientations(["UIInterfaceOrientationPortrait", "UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"])
+
+# The background modes
+background_modes(["background-app-refresh", "location", "remote-notification"])
+
+# The required device capabilities
+required_device_capabilities(["location-services", "gps"])
+
+# The app transport security settings
+app_transport_security({
+  "NSAllowsArbitraryLoads" => false,
+  "NSExceptionDomains" => {
+    "api.pestgenie.com" => {
+      "NSExceptionRequiresForwardSecrecy" => false,
+      "NSTemporaryExceptionAllowsInsecureHTTPLoads" => false
+    }
+  }
+})
+
+# The privacy manifest settings
+privacy_manifest({
+  "NSPrivacyTracking" => false,
+  "NSPrivacyTrackingDomains" => [],
+  "NSPrivacyCollectedDataTypes" => [
+    {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypeLocation",
+      "NSPrivacyCollectedDataTypeLinked" => true,
+      "NSPrivacyCollectedDataTypeTracking" => false,
+      "NSPrivacyCollectedDataTypePurposes" => ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+    },
+    {
+      "NSPrivacyCollectedDataType" => "NSPrivacyCollectedDataTypePhotos",
+      "NSPrivacyCollectedDataTypeLinked" => true,
+      "NSPrivacyCollectedDataTypeTracking" => false,
+      "NSPrivacyCollectedDataTypePurposes" => ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+    }
+  ]
+})
+
+# The entitlements
+entitlements({
+  "aps-environment" => "production",
+  "com.apple.developer.associated-domains" => ["applinks:pestgenie.com", "applinks:www.pestgenie.com"],
+  "com.apple.developer.background-modes" => ["background-app-refresh", "location", "remote-notification"],
+  "com.apple.developer.icloud-container-identifiers" => ["iCloud.com.yourcompany.pestgenie"],
+  "com.apple.developer.ubiquity-kvstore-identifier" => "$(TeamIdentifierPrefix)com.yourcompany.pestgenie"
+})
+
+# The URL schemes
+url_schemes(["pestgenie"])
+
+# The associated domains
+associated_domains(["applinks:pestgenie.com", "applinks:www.pestgenie.com"])
+
+# The usage descriptions
+usage_descriptions({
+  "NSLocationWhenInUseUsageDescription" => "PestGenie needs location access to navigate to job sites and track service areas for accurate pest control services.",
+  "NSLocationAlwaysAndWhenInUseUsageDescription" => "PestGenie needs location access to provide background job notifications and optimize route planning for pest control services.",
+  "NSCameraUsageDescription" => "PestGenie uses the camera to capture before and after photos of pest control treatments for service documentation.",
+  "NSPhotoLibraryUsageDescription" => "PestGenie accesses your photo library to attach existing photos to service reports and job documentation.",
+  "NSContactsUsageDescription" => "PestGenie accesses contacts to easily add customer information and streamline job scheduling."
+})

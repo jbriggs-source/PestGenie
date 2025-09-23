@@ -18,7 +18,8 @@ final class PerformanceManager: ObservableObject {
     private var memoryPressureSource: DispatchSourceMemoryPressure?
 
     init() {
-        setupMemoryPressureMonitoring()
+        // Defer memory monitoring setup until monitoring is started
+        // setupMemoryPressureMonitoring()
     }
 
     // MARK: - Performance Monitoring
@@ -28,6 +29,9 @@ final class PerformanceManager: ObservableObject {
 
         isMonitoring = true
         logger.info("Started performance monitoring")
+        
+        // Setup memory monitoring when monitoring starts
+        setupMemoryPressureMonitoring()
 
         // Update metrics every 30 seconds
         metricsTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
@@ -183,6 +187,106 @@ final class PerformanceManager: ObservableObject {
     deinit {
         memoryPressureSource?.cancel()
     }
+
+    // MARK: - Weather Performance Tracking
+
+    private var weatherMetrics = WeatherPerformanceMetrics()
+
+    func trackWeatherAPICall(success: Bool, dataUsage: Int, responseTime: TimeInterval) async {
+        weatherMetrics.totalAPICall += 1
+        if success {
+            weatherMetrics.successfulAPICall += 1
+        }
+        weatherMetrics.totalDataUsage += dataUsage
+        weatherMetrics.totalResponseTime += responseTime
+
+        // Log performance data
+        if !success {
+            logger.warning("Weather API call failed")
+        }
+
+        if dataUsage > 50000 { // 50KB
+            logger.info("Large weather API response: \(dataUsage) bytes")
+        }
+
+        if responseTime > 5.0 { // 5 seconds
+            logger.warning("Slow weather API response: \(responseTime) seconds")
+        }
+
+        // Update metrics for monitoring
+        await updateWeatherMetrics()
+    }
+
+    func trackWeatherCacheHit() async {
+        weatherMetrics.cacheHits += 1
+        await updateWeatherMetrics()
+    }
+
+    func trackWeatherCacheMiss() async {
+        weatherMetrics.cacheMisses += 1
+        await updateWeatherMetrics()
+    }
+
+    func trackWeatherValidation() async {
+        weatherMetrics.validationCount += 1
+        await updateWeatherMetrics()
+    }
+
+    func trackWeatherAlertSent() async {
+        weatherMetrics.alertsSent += 1
+        await updateWeatherMetrics()
+    }
+
+    private func updateWeatherMetrics() async {
+        let successRate = weatherMetrics.totalAPICall > 0 ?
+            Double(weatherMetrics.successfulAPICall) / Double(weatherMetrics.totalAPICall) : 1.0
+
+        let cacheHitRate = (weatherMetrics.cacheHits + weatherMetrics.cacheMisses) > 0 ?
+            Double(weatherMetrics.cacheHits) / Double(weatherMetrics.cacheHits + weatherMetrics.cacheMisses) : 0.0
+
+        // Update the main metrics with weather data
+        metrics = PerformanceMetrics(
+            memoryUsage: metrics.memoryUsage,
+            memoryPressure: metrics.memoryPressure,
+            energyImpact: metrics.energyImpact,
+            diskUsage: metrics.diskUsage,
+            networkBytesIn: metrics.networkBytesIn,
+            networkBytesOut: metrics.networkBytesOut,
+            timestamp: Date(),
+            weatherAPICallsCount: weatherMetrics.totalAPICall,
+            weatherAPISuccessRate: successRate,
+            weatherDataCacheHitRate: cacheHitRate,
+            weatherValidationCount: weatherMetrics.validationCount
+        )
+    }
+
+    func getWeatherPerformanceReport() -> WeatherPerformanceReport {
+        let avgResponseTime = weatherMetrics.totalAPICall > 0 ?
+            weatherMetrics.totalResponseTime / Double(weatherMetrics.totalAPICall) : 0.0
+
+        let avgDataUsage = weatherMetrics.totalAPICall > 0 ?
+            weatherMetrics.totalDataUsage / weatherMetrics.totalAPICall : 0
+
+        return WeatherPerformanceReport(
+            totalAPICalls: weatherMetrics.totalAPICall,
+            successfulCalls: weatherMetrics.successfulAPICall,
+            failedCalls: weatherMetrics.totalAPICall - weatherMetrics.successfulAPICall,
+            successRate: metrics.weatherAPISuccessRate,
+            averageResponseTime: avgResponseTime,
+            totalDataUsage: weatherMetrics.totalDataUsage,
+            averageDataUsage: avgDataUsage,
+            cacheHits: weatherMetrics.cacheHits,
+            cacheMisses: weatherMetrics.cacheMisses,
+            cacheHitRate: metrics.weatherDataCacheHitRate,
+            validationCount: weatherMetrics.validationCount,
+            alertsSent: weatherMetrics.alertsSent,
+            reportGeneratedAt: Date()
+        )
+    }
+
+    func resetWeatherMetrics() {
+        weatherMetrics = WeatherPerformanceMetrics()
+    }
 }
 
 // MARK: - Performance Metrics
@@ -195,6 +299,10 @@ struct PerformanceMetrics {
     let networkBytesIn: Double
     let networkBytesOut: Double
     let timestamp: Date
+    let weatherAPICallsCount: Int
+    let weatherAPISuccessRate: Double
+    let weatherDataCacheHitRate: Double
+    let weatherValidationCount: Int
 
     init(
         memoryUsage: Double = 0,
@@ -203,7 +311,11 @@ struct PerformanceMetrics {
         diskUsage: Double = 0,
         networkBytesIn: Double = 0,
         networkBytesOut: Double = 0,
-        timestamp: Date = Date()
+        timestamp: Date = Date(),
+        weatherAPICallsCount: Int = 0,
+        weatherAPISuccessRate: Double = 1.0,
+        weatherDataCacheHitRate: Double = 0.0,
+        weatherValidationCount: Int = 0
     ) {
         self.memoryUsage = memoryUsage
         self.memoryPressure = memoryPressure
@@ -212,6 +324,10 @@ struct PerformanceMetrics {
         self.networkBytesIn = networkBytesIn
         self.networkBytesOut = networkBytesOut
         self.timestamp = timestamp
+        self.weatherAPICallsCount = weatherAPICallsCount
+        self.weatherAPISuccessRate = weatherAPISuccessRate
+        self.weatherDataCacheHitRate = weatherDataCacheHitRate
+        self.weatherValidationCount = weatherValidationCount
     }
 
     var memoryUsageFormatted: String {
@@ -410,7 +526,7 @@ struct BatteryOptimizedView<Content: View>: View {
             .onReceive(NotificationCenter.default.publisher(for: .memoryPressureDetected)) { _ in
                 // Reduce animation complexity during memory pressure
             }
-            .onChange(of: scenePhase) { phase in
+            .onChange(of: scenePhase) { _, phase in
                 switch phase {
                 case .background:
                     performanceManager.stopMonitoring()
@@ -435,6 +551,67 @@ extension View {
     func optimizeForBattery() -> some View {
         BatteryOptimizedView {
             self
+        }
+    }
+}
+
+// MARK: - Weather Performance Types
+
+struct WeatherPerformanceMetrics {
+    var totalAPICall: Int = 0
+    var successfulAPICall: Int = 0
+    var totalDataUsage: Int = 0
+    var totalResponseTime: TimeInterval = 0.0
+    var cacheHits: Int = 0
+    var cacheMisses: Int = 0
+    var validationCount: Int = 0
+    var alertsSent: Int = 0
+}
+
+struct WeatherPerformanceReport {
+    let totalAPICalls: Int
+    let successfulCalls: Int
+    let failedCalls: Int
+    let successRate: Double
+    let averageResponseTime: TimeInterval
+    let totalDataUsage: Int
+    let averageDataUsage: Int
+    let cacheHits: Int
+    let cacheMisses: Int
+    let cacheHitRate: Double
+    let validationCount: Int
+    let alertsSent: Int
+    let reportGeneratedAt: Date
+
+    var successRateFormatted: String {
+        String(format: "%.1f%%", successRate * 100)
+    }
+
+    var averageResponseTimeFormatted: String {
+        String(format: "%.2f seconds", averageResponseTime)
+    }
+
+    var totalDataUsageFormatted: String {
+        if totalDataUsage > 1_000_000 {
+            return String(format: "%.1f MB", Double(totalDataUsage) / 1_000_000)
+        } else {
+            return String(format: "%.1f KB", Double(totalDataUsage) / 1_000)
+        }
+    }
+
+    var cacheHitRateFormatted: String {
+        String(format: "%.1f%%", cacheHitRate * 100)
+    }
+
+    var performanceSummary: String {
+        if successRate > 0.95 && averageResponseTime < 2.0 {
+            return "Excellent weather service performance"
+        } else if successRate > 0.90 && averageResponseTime < 5.0 {
+            return "Good weather service performance"
+        } else if successRate > 0.80 {
+            return "Fair weather service performance - some issues detected"
+        } else {
+            return "Poor weather service performance - investigation needed"
         }
     }
 }

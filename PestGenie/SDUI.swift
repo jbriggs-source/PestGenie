@@ -50,6 +50,32 @@ enum SDUIComponentType: String, Codable {
     case webView
     case chart
     case gauge
+
+    // Equipment management components
+    case equipmentInspector
+    case equipmentSelector
+    case qrScanner
+    case digitalChecklist
+    case maintenanceScheduler
+    case calibrationTracker
+
+    // Weather and environmental components
+    case weatherDashboard
+    case weatherAlert
+    case weatherForecast
+    case weatherMetrics
+    case safetyIndicator
+    case treatmentConditions
+
+    // Chemical management components
+    case chemicalSelector
+    case dosageCalculator
+    case chemicalInventory
+    case treatmentLogger
+    case epaCompliance
+    case mixingInstructions
+    case applicationTracker
+    case chemicalSearch
 }
 
 /// Represents a component in the server‑driven UI. A component may have
@@ -136,8 +162,8 @@ class SDUIComponent: Codable, Identifiable {
     let destination: String?
     /// Alert/sheet presentation properties.
     let isPresented: String? // key to bind presentation state
-    let title: String?
-    let message: String?
+    var title: String?
+    var message: String?
 
     // MARK: - Progress and gauge properties
     /// Current progress value (0.0 to 1.0).
@@ -181,6 +207,81 @@ class SDUIComponent: Codable, Identifiable {
     /// Scale factor.
     let scale: Double?
 
+    // MARK: - Equipment management properties
+    /// Equipment type filter for selector: "sprayer", "backpack", "probe", etc.
+    let equipmentType: String?
+    /// Equipment category for grouping: "spray_equipment", "detection", "calibration".
+    let equipmentCategory: String?
+    /// QR code value for equipment identification.
+    let qrCodeValue: String?
+    /// Inspection checklist template identifier.
+    let checklistTemplate: String?
+    /// Equipment ID for specific equipment operations.
+    let equipmentId: String?
+    /// Maintenance type: "routine", "repair", "calibration".
+    let maintenanceType: String?
+    /// Allow multiple equipment selection in selector.
+    let allowMultipleSelection: Bool?
+    /// Show only available/active equipment.
+    let showOnlyAvailable: Bool?
+    /// Equipment status filter: "active", "maintenance", "calibration".
+    let statusFilter: String?
+
+    // MARK: - Weather component properties
+    /// Weather data source: "current", "forecast", "historical".
+    let weatherDataSource: String?
+    /// Weather location mode: "current", "job_location", "manual".
+    let weatherLocationMode: String?
+    /// Manual weather coordinates when using manual location mode.
+    let weatherLatitude: Double?
+    let weatherLongitude: Double?
+    /// Weather display mode: "compact", "detailed", "minimal".
+    let weatherDisplayMode: String?
+    /// Weather metrics to show: array of "temperature", "humidity", "wind", etc.
+    let weatherMetrics: [String]?
+    /// Show weather alerts in dashboard.
+    let showWeatherAlerts: Bool?
+    /// Weather safety threshold configuration.
+    let safetyThresholds: SDUIWeatherThresholds?
+    /// Auto-refresh interval for weather data in seconds.
+    let weatherRefreshInterval: Double?
+    /// Weather alert priority filter: "low", "normal", "high", "critical".
+    let alertPriorityFilter: String?
+    /// Treatment type for safety validation: "liquid", "granular", "spray".
+    let treatmentType: String?
+
+    // MARK: - Chemical management properties
+    /// Chemical ID for specific chemical operations.
+    let chemicalId: String?
+    /// Chemical category filter: "insecticide", "herbicide", "fungicide", "rodenticide".
+    let chemicalCategory: String?
+    /// Signal word filter: "DANGER", "WARNING", "CAUTION".
+    let signalWordFilter: String?
+    /// Hazard category filter: "Category I", "Category II", "Category III", "Category IV".
+    let hazardCategoryFilter: String?
+    /// Target area for dosage calculation in square feet.
+    let targetArea: Double?
+    /// Application method: "spray", "bait", "dust", "granular", etc.
+    let applicationMethod: String?
+    /// Target pest for chemical selection and dosage calculation.
+    let targetPest: String?
+    /// Chemical search query for filtering.
+    let searchQuery: String?
+    /// EPA registration number for specific chemical lookup.
+    let epaRegistrationNumber: String?
+    /// Inventory threshold for low stock warnings.
+    let inventoryThreshold: Double?
+    /// Show expired chemicals in inventory.
+    let showExpiredChemicals: Bool?
+    /// Treatment location for application tracking.
+    let treatmentLocation: String?
+    /// Dosage calculation mode: "automatic", "manual", "custom".
+    let dosageCalculationMode: String?
+    /// Chemical mixing ratio format: "1:1", "percentage", "parts_per_million".
+    let mixingRatioFormat: String?
+    /// Treatment validation rules for EPA compliance.
+    let validationRules: [String]?
+
     // MARK: - Animation and transitions
     /// Optional animation definition to apply to the component's appearance.
     let animation: SDUIAnimation?
@@ -195,7 +296,16 @@ class SDUIComponent: Codable, Identifiable {
              destination, isPresented, title, message, progress, gaugeMin, gaugeMax,
              centerLatitude, centerLongitude, span, webURL, chartType, dataKey,
              borderWidth, borderColor, shadowRadius, shadowColor, shadowOffset,
-             opacity, rotation, scale, animation, transition
+             opacity, rotation, scale, equipmentType, equipmentCategory, qrCodeValue,
+             checklistTemplate, equipmentId, maintenanceType, allowMultipleSelection,
+             showOnlyAvailable, statusFilter, weatherDataSource, weatherLocationMode,
+             weatherLatitude, weatherLongitude, weatherDisplayMode, weatherMetrics,
+             showWeatherAlerts, safetyThresholds, weatherRefreshInterval,
+             alertPriorityFilter, treatmentType, chemicalId, chemicalCategory,
+             signalWordFilter, hazardCategoryFilter, targetArea, applicationMethod,
+             targetPest, searchQuery, epaRegistrationNumber, inventoryThreshold,
+             showExpiredChemicals, treatmentLocation, dosageCalculationMode,
+             mixingRatioFormat, validationRules, animation, transition
     }
 
     /// Memberwise initializer. If `id` is nil, a UUID will be generated.
@@ -260,6 +370,44 @@ class SDUIComponent: Codable, Identifiable {
          opacity: Double? = nil,
          rotation: Double? = nil,
          scale: Double? = nil,
+         // Equipment properties
+         equipmentType: String? = nil,
+         equipmentCategory: String? = nil,
+         qrCodeValue: String? = nil,
+         checklistTemplate: String? = nil,
+         equipmentId: String? = nil,
+         maintenanceType: String? = nil,
+         allowMultipleSelection: Bool? = nil,
+         showOnlyAvailable: Bool? = nil,
+         statusFilter: String? = nil,
+         // Weather properties
+         weatherDataSource: String? = nil,
+         weatherLocationMode: String? = nil,
+         weatherLatitude: Double? = nil,
+         weatherLongitude: Double? = nil,
+         weatherDisplayMode: String? = nil,
+         weatherMetrics: [String]? = nil,
+         showWeatherAlerts: Bool? = nil,
+         safetyThresholds: SDUIWeatherThresholds? = nil,
+         weatherRefreshInterval: Double? = nil,
+         alertPriorityFilter: String? = nil,
+         treatmentType: String? = nil,
+         // Chemical properties
+         chemicalId: String? = nil,
+         chemicalCategory: String? = nil,
+         signalWordFilter: String? = nil,
+         hazardCategoryFilter: String? = nil,
+         targetArea: Double? = nil,
+         applicationMethod: String? = nil,
+         targetPest: String? = nil,
+         searchQuery: String? = nil,
+         epaRegistrationNumber: String? = nil,
+         inventoryThreshold: Double? = nil,
+         showExpiredChemicals: Bool? = nil,
+         treatmentLocation: String? = nil,
+         dosageCalculationMode: String? = nil,
+         mixingRatioFormat: String? = nil,
+         validationRules: [String]? = nil,
          animation: SDUIAnimation? = nil,
          transition: SDUITransition? = nil
     ) {
@@ -314,6 +462,41 @@ class SDUIComponent: Codable, Identifiable {
         self.opacity = opacity
         self.rotation = rotation
         self.scale = scale
+        self.equipmentType = equipmentType
+        self.equipmentCategory = equipmentCategory
+        self.qrCodeValue = qrCodeValue
+        self.checklistTemplate = checklistTemplate
+        self.equipmentId = equipmentId
+        self.maintenanceType = maintenanceType
+        self.allowMultipleSelection = allowMultipleSelection
+        self.showOnlyAvailable = showOnlyAvailable
+        self.statusFilter = statusFilter
+        self.weatherDataSource = weatherDataSource
+        self.weatherLocationMode = weatherLocationMode
+        self.weatherLatitude = weatherLatitude
+        self.weatherLongitude = weatherLongitude
+        self.weatherDisplayMode = weatherDisplayMode
+        self.weatherMetrics = weatherMetrics
+        self.showWeatherAlerts = showWeatherAlerts
+        self.safetyThresholds = safetyThresholds
+        self.weatherRefreshInterval = weatherRefreshInterval
+        self.alertPriorityFilter = alertPriorityFilter
+        self.treatmentType = treatmentType
+        self.chemicalId = chemicalId
+        self.chemicalCategory = chemicalCategory
+        self.signalWordFilter = signalWordFilter
+        self.hazardCategoryFilter = hazardCategoryFilter
+        self.targetArea = targetArea
+        self.applicationMethod = applicationMethod
+        self.targetPest = targetPest
+        self.searchQuery = searchQuery
+        self.epaRegistrationNumber = epaRegistrationNumber
+        self.inventoryThreshold = inventoryThreshold
+        self.showExpiredChemicals = showExpiredChemicals
+        self.treatmentLocation = treatmentLocation
+        self.dosageCalculationMode = dosageCalculationMode
+        self.mixingRatioFormat = mixingRatioFormat
+        self.validationRules = validationRules
         self.animation = animation
         self.transition = transition
     }
@@ -376,6 +559,44 @@ class SDUIComponent: Codable, Identifiable {
         self.scale = try container.decodeIfPresent(Double.self, forKey: .scale)
         self.animation = try container.decodeIfPresent(SDUIAnimation.self, forKey: .animation)
         self.transition = try container.decodeIfPresent(SDUITransition.self, forKey: .transition)
+        // Equipment properties
+        self.equipmentType = try container.decodeIfPresent(String.self, forKey: .equipmentType)
+        self.equipmentCategory = try container.decodeIfPresent(String.self, forKey: .equipmentCategory)
+        self.qrCodeValue = try container.decodeIfPresent(String.self, forKey: .qrCodeValue)
+        self.checklistTemplate = try container.decodeIfPresent(String.self, forKey: .checklistTemplate)
+        self.equipmentId = try container.decodeIfPresent(String.self, forKey: .equipmentId)
+        self.maintenanceType = try container.decodeIfPresent(String.self, forKey: .maintenanceType)
+        self.allowMultipleSelection = try container.decodeIfPresent(Bool.self, forKey: .allowMultipleSelection)
+        self.showOnlyAvailable = try container.decodeIfPresent(Bool.self, forKey: .showOnlyAvailable)
+        self.statusFilter = try container.decodeIfPresent(String.self, forKey: .statusFilter)
+        // Weather properties
+        self.weatherDataSource = try container.decodeIfPresent(String.self, forKey: .weatherDataSource)
+        self.weatherLocationMode = try container.decodeIfPresent(String.self, forKey: .weatherLocationMode)
+        self.weatherLatitude = try container.decodeIfPresent(Double.self, forKey: .weatherLatitude)
+        self.weatherLongitude = try container.decodeIfPresent(Double.self, forKey: .weatherLongitude)
+        self.weatherDisplayMode = try container.decodeIfPresent(String.self, forKey: .weatherDisplayMode)
+        self.weatherMetrics = try container.decodeIfPresent([String].self, forKey: .weatherMetrics)
+        self.showWeatherAlerts = try container.decodeIfPresent(Bool.self, forKey: .showWeatherAlerts)
+        self.safetyThresholds = try container.decodeIfPresent(SDUIWeatherThresholds.self, forKey: .safetyThresholds)
+        self.weatherRefreshInterval = try container.decodeIfPresent(Double.self, forKey: .weatherRefreshInterval)
+        self.alertPriorityFilter = try container.decodeIfPresent(String.self, forKey: .alertPriorityFilter)
+        self.treatmentType = try container.decodeIfPresent(String.self, forKey: .treatmentType)
+        // Chemical properties
+        self.chemicalId = try container.decodeIfPresent(String.self, forKey: .chemicalId)
+        self.chemicalCategory = try container.decodeIfPresent(String.self, forKey: .chemicalCategory)
+        self.signalWordFilter = try container.decodeIfPresent(String.self, forKey: .signalWordFilter)
+        self.hazardCategoryFilter = try container.decodeIfPresent(String.self, forKey: .hazardCategoryFilter)
+        self.targetArea = try container.decodeIfPresent(Double.self, forKey: .targetArea)
+        self.applicationMethod = try container.decodeIfPresent(String.self, forKey: .applicationMethod)
+        self.targetPest = try container.decodeIfPresent(String.self, forKey: .targetPest)
+        self.searchQuery = try container.decodeIfPresent(String.self, forKey: .searchQuery)
+        self.epaRegistrationNumber = try container.decodeIfPresent(String.self, forKey: .epaRegistrationNumber)
+        self.inventoryThreshold = try container.decodeIfPresent(Double.self, forKey: .inventoryThreshold)
+        self.showExpiredChemicals = try container.decodeIfPresent(Bool.self, forKey: .showExpiredChemicals)
+        self.treatmentLocation = try container.decodeIfPresent(String.self, forKey: .treatmentLocation)
+        self.dosageCalculationMode = try container.decodeIfPresent(String.self, forKey: .dosageCalculationMode)
+        self.mixingRatioFormat = try container.decodeIfPresent(String.self, forKey: .mixingRatioFormat)
+        self.validationRules = try container.decodeIfPresent([String].self, forKey: .validationRules)
     }
 
     /// Custom encoding to ensure all properties, including the generated id,
@@ -437,6 +658,44 @@ class SDUIComponent: Codable, Identifiable {
         try container.encodeIfPresent(scale, forKey: .scale)
         try container.encodeIfPresent(animation, forKey: .animation)
         try container.encodeIfPresent(transition, forKey: .transition)
+        // Equipment properties
+        try container.encodeIfPresent(equipmentType, forKey: .equipmentType)
+        try container.encodeIfPresent(equipmentCategory, forKey: .equipmentCategory)
+        try container.encodeIfPresent(qrCodeValue, forKey: .qrCodeValue)
+        try container.encodeIfPresent(checklistTemplate, forKey: .checklistTemplate)
+        try container.encodeIfPresent(equipmentId, forKey: .equipmentId)
+        try container.encodeIfPresent(maintenanceType, forKey: .maintenanceType)
+        try container.encodeIfPresent(allowMultipleSelection, forKey: .allowMultipleSelection)
+        try container.encodeIfPresent(showOnlyAvailable, forKey: .showOnlyAvailable)
+        try container.encodeIfPresent(statusFilter, forKey: .statusFilter)
+        // Weather properties
+        try container.encodeIfPresent(weatherDataSource, forKey: .weatherDataSource)
+        try container.encodeIfPresent(weatherLocationMode, forKey: .weatherLocationMode)
+        try container.encodeIfPresent(weatherLatitude, forKey: .weatherLatitude)
+        try container.encodeIfPresent(weatherLongitude, forKey: .weatherLongitude)
+        try container.encodeIfPresent(weatherDisplayMode, forKey: .weatherDisplayMode)
+        try container.encodeIfPresent(weatherMetrics, forKey: .weatherMetrics)
+        try container.encodeIfPresent(showWeatherAlerts, forKey: .showWeatherAlerts)
+        try container.encodeIfPresent(safetyThresholds, forKey: .safetyThresholds)
+        try container.encodeIfPresent(weatherRefreshInterval, forKey: .weatherRefreshInterval)
+        try container.encodeIfPresent(alertPriorityFilter, forKey: .alertPriorityFilter)
+        try container.encodeIfPresent(treatmentType, forKey: .treatmentType)
+        // Chemical properties
+        try container.encodeIfPresent(chemicalId, forKey: .chemicalId)
+        try container.encodeIfPresent(chemicalCategory, forKey: .chemicalCategory)
+        try container.encodeIfPresent(signalWordFilter, forKey: .signalWordFilter)
+        try container.encodeIfPresent(hazardCategoryFilter, forKey: .hazardCategoryFilter)
+        try container.encodeIfPresent(targetArea, forKey: .targetArea)
+        try container.encodeIfPresent(applicationMethod, forKey: .applicationMethod)
+        try container.encodeIfPresent(targetPest, forKey: .targetPest)
+        try container.encodeIfPresent(searchQuery, forKey: .searchQuery)
+        try container.encodeIfPresent(epaRegistrationNumber, forKey: .epaRegistrationNumber)
+        try container.encodeIfPresent(inventoryThreshold, forKey: .inventoryThreshold)
+        try container.encodeIfPresent(showExpiredChemicals, forKey: .showExpiredChemicals)
+        try container.encodeIfPresent(treatmentLocation, forKey: .treatmentLocation)
+        try container.encodeIfPresent(dosageCalculationMode, forKey: .dosageCalculationMode)
+        try container.encodeIfPresent(mixingRatioFormat, forKey: .mixingRatioFormat)
+        try container.encodeIfPresent(validationRules, forKey: .validationRules)
     }
 }
 
@@ -490,3 +749,5 @@ struct SDUIChartData: Codable {
         self.color = color
     }
 }
+
+// Note: SDUIWeatherThresholds is defined in WeatherSDUIComponents.swift

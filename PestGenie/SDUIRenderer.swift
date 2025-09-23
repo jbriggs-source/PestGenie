@@ -12,13 +12,19 @@ struct SDUIContext {
     let routeViewModel: RouteViewModel
     let actions: [String: (Job?) -> Void]
     var currentJob: Job?
+    /// Core Data persistence controller for data operations
+    let persistenceController: PersistenceController
 
     /// Returns a new context with the current job set to the provided job.
     /// This helps avoid state mutation inside SwiftUI view builder closures.
     func withCurrentJob(_ job: Job?) -> SDUIContext {
-        var newContext = self
-        newContext.currentJob = job
-        return newContext
+        SDUIContext(
+            jobs: jobs,
+            routeViewModel: routeViewModel,
+            actions: actions,
+            currentJob: job,
+            persistenceController: persistenceController
+        )
     }
 }
 
@@ -86,6 +92,22 @@ struct SDUIScreenRenderer {
             return renderList(component: component, context: context)
         case .conditional:
             return renderConditional(component: component, context: context)
+
+        // Chemical management components
+        case .chemicalSelector, .dosageCalculator, .chemicalInventory, .treatmentLogger,
+             .epaCompliance, .mixingInstructions, .applicationTracker, .chemicalSearch:
+            return SDUIChemicalRenderer.render(component: component, context: context)
+
+        // Weather components
+        case .weatherDashboard, .weatherAlert, .weatherForecast, .weatherMetrics,
+             .safetyIndicator, .treatmentConditions:
+            return SDUIWeatherRenderer.render(component: component, context: context)
+
+        // Equipment management components
+        case .equipmentInspector, .equipmentSelector, .qrScanner, .digitalChecklist,
+             .maintenanceScheduler, .calibrationTracker:
+            // TODO: Re-implement equipment renderers
+            return AnyView(Text("Equipment features temporarily disabled"))
 
         // Advanced placeholder components
         case .section, .tabView, .navigationLink, .alert, .actionSheet:

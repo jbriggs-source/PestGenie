@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "component": {
+    "id": "weather_dashboard_main",
+    "type": "vstack",
+    "spacing": 16,
+    "padding": 16,
+    "backgroundColor": "#F5F5F7",
+    "children": [
+      {
+        "id": "weather_dashboard_header",
+        "type": "hstack",
+        "children": [
+          {
+            "id": "dashboard_title",
+            "type": "text",
+            "text": "Environmental Conditions",
+            "font": "title2",
+            "fontWeight": "bold",
+            "foregroundColor": "#1D1D1F"
+          },
+          {
+            "type": "spacer"
+          },
+          {
+            "id": "last_updated",
+            "type": "text",
+            "text": "Updated 5 min ago",
+            "font": "caption",
+            "foregroundColor": "#8E8E93"
+          }
+        ]
+      },
+      {
+        "id": "current_weather_card",
+        "type": "weatherDashboard",
+        "weatherDataSource": "current",
+        "weatherLocationMode": "current",
+        "weatherDisplayMode": "detailed",
+        "showWeatherAlerts": true,
+        "weatherRefreshInterval": 300,
+        "safetyThresholds": {
+          "maxWindSpeed": 15,
+          "minTemperature": 45,
+          "maxTemperature": 90,
+          "maxHumidity": 85,
+          "maxPrecipitationProbability": 30,
+          "maxUVIndex": 8,
+          "minVisibility": 1000
+        },
+        "backgroundColor": "#FFFFFF",
+        "cornerRadius": 12,
+        "padding": 16,
+        "shadowRadius": 2,
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "x": 0,
+          "y": 1
+        },
+        "opacity": 1.0
+      },
+      {
+        "id": "weather_metrics_grid",
+        "type": "weatherMetrics",
+        "weatherMetrics": [
+          "temperature",
+          "humidity",
+          "wind_speed",
+          "precipitation",
+          "uv_index",
+          "visibility"
+        ],
+        "weatherLocationMode": "current",
+        "backgroundColor": "#FFFFFF",
+        "cornerRadius": 12,
+        "padding": 16,
+        "shadowRadius": 2,
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      {
+        "id": "safety_indicator_section",
+        "type": "hstack",
+        "spacing": 12,
+        "children": [
+          {
+            "id": "treatment_safety",
+            "type": "safetyIndicator",
+            "treatmentType": "spray",
+            "backgroundColor": "#FFFFFF",
+            "cornerRadius": 12,
+            "padding": 16,
+            "shadowRadius": 2,
+            "shadowColor": "#000000",
+            "shadowOffset": {
+              "x": 0,
+              "y": 1
+            }
+          },
+          {
+            "id": "treatment_conditions",
+            "type": "treatmentConditions",
+            "treatmentType": "spray",
+            "backgroundColor": "#FFFFFF",
+            "cornerRadius": 12,
+            "padding": 16,
+            "shadowRadius": 2,
+            "shadowColor": "#000000",
+            "shadowOffset": {
+              "x": 0,
+              "y": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "weather_alerts_section",
+        "type": "weatherAlert",
+        "alertPriorityFilter": "high",
+        "backgroundColor": "#FFFFFF",
+        "cornerRadius": 12,
+        "padding": 16,
+        "shadowRadius": 2,
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      {
+        "id": "weather_forecast_section",
+        "type": "weatherForecast",
+        "weatherLocationMode": "current",
+        "backgroundColor": "#FFFFFF",
+        "cornerRadius": 12,
+        "padding": 16,
+        "shadowRadius": 2,
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "x": 0,
+          "y": 1
+        }
+      }
+    ]
+  }
+}

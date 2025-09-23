@@ -24,6 +24,9 @@
         <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="JobPhotoEntity" inverseName="job" inverseEntity="JobPhotoEntity"/>
         <relationship name="route" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RouteEntity" inverseName="jobs" inverseEntity="RouteEntity"/>
         <relationship name="signatures" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="SignatureEntity" inverseName="job" inverseEntity="SignatureEntity"/>
+        <relationship name="chemicalTreatments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChemicalTreatmentEntity" inverseName="job" inverseEntity="ChemicalTreatmentEntity"/>
+        <relationship name="equipmentUsed" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="EquipmentEntity" inverseName="jobs" inverseEntity="EquipmentEntity"/>
+        <relationship name="equipmentInspections" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentInspectionEntity" inverseName="job" inverseEntity="EquipmentInspectionEntity"/>
     </entity>
     <entity name="JobPhotoEntity" representedClassName="JobPhotoEntity" syncable="YES" codeGenerationType="class">
         <attribute name="caption" optional="YES" attributeType="String"/>
@@ -64,5 +67,151 @@
         <attribute name="syncStatus" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="signatures" inverseEntity="JobEntity"/>
+    </entity>
+    <entity name="ChemicalEntity" representedClassName="ChemicalEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="activeIngredient" optional="YES" attributeType="String"/>
+        <attribute name="batchNumber" optional="YES" attributeType="String"/>
+        <attribute name="concentration" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="epaRegistrationNumber" optional="YES" attributeType="String"/>
+        <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hazardCategory" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="manufacturerName" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="pphiDays" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+        <attribute name="quantityInStock" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="reentryInterval" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="signalWord" optional="YES" attributeType="String"/>
+        <attribute name="siteOfAction" optional="YES" attributeType="String"/>
+        <attribute name="storageRequirements" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="targetPests" optional="YES" attributeType="String"/>
+        <attribute name="unitOfMeasure" optional="YES" attributeType="String"/>
+        <relationship name="treatments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChemicalTreatmentEntity" inverseName="chemical" inverseEntity="ChemicalTreatmentEntity"/>
+    </entity>
+    <entity name="ChemicalTreatmentEntity" representedClassName="ChemicalTreatmentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="applicationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="applicationMethod" optional="YES" attributeType="String"/>
+        <attribute name="applicatorName" optional="YES" attributeType="String"/>
+        <attribute name="areaTreated" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="concentrationUsed" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="dilutionRatio" optional="YES" attributeType="String"/>
+        <attribute name="dosageRate" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="environmentalConditions" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="quantityUsed" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="targetPests" optional="YES" attributeType="String"/>
+        <attribute name="treatmentLocation" optional="YES" attributeType="String"/>
+        <attribute name="weatherConditions" optional="YES" attributeType="String"/>
+        <relationship name="chemical" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChemicalEntity" inverseName="treatments" inverseEntity="ChemicalEntity"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="chemicalTreatments" inverseEntity="JobEntity"/>
+    </entity>
+    <entity name="EquipmentEntity" representedClassName="EquipmentEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="brand" optional="YES" attributeType="String"/>
+        <attribute name="calibrationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" optional="YES" attributeType="Boolean" defaultValue="YES" usesScalarValueType="YES"/>
+        <attribute name="lastCalibrationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastInspectionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastMaintenanceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="location" optional="YES" attributeType="String"/>
+        <attribute name="maintenanceIntervalDays" optional="YES" attributeType="Integer 32" defaultValue="30" usesScalarValueType="YES"/>
+        <attribute name="model" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="nextCalibrationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="nextMaintenanceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="purchaseDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="qrCode" optional="YES" attributeType="String"/>
+        <attribute name="serialNumber" optional="YES" attributeType="String"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="warrantyExpiration" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="inspections" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentInspectionEntity" inverseName="equipment" inverseEntity="EquipmentInspectionEntity"/>
+        <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="equipmentUsed" inverseEntity="JobEntity"/>
+        <relationship name="maintenanceRecords" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentMaintenanceEntity" inverseName="equipment" inverseEntity="EquipmentMaintenanceEntity"/>
+        <relationship name="performanceMetrics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentPerformanceEntity" inverseName="equipment" inverseEntity="EquipmentPerformanceEntity"/>
+    </entity>
+    <entity name="EquipmentInspectionEntity" representedClassName="EquipmentInspectionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="checklistData" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="inspectionType" optional="YES" attributeType="String"/>
+        <attribute name="inspectorId" optional="YES" attributeType="String"/>
+        <attribute name="inspectorName" optional="YES" attributeType="String"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="passed" optional="YES" attributeType="Boolean" defaultValue="NO" usesScalarValueType="YES"/>
+        <attribute name="result" optional="YES" attributeType="String"/>
+        <attribute name="scheduledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <relationship name="equipment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EquipmentEntity" inverseName="inspections" inverseEntity="EquipmentEntity"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="JobEntity" inverseName="equipmentInspections" inverseEntity="JobEntity"/>
+        <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentInspectionPhotoEntity" inverseName="inspection" inverseEntity="EquipmentInspectionPhotoEntity"/>
+    </entity>
+    <entity name="EquipmentMaintenanceEntity" representedClassName="EquipmentMaintenanceEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="cost" optional="YES" attributeType="Decimal" defaultValue="0.0"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="duration" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="maintenanceDescription" optional="YES" attributeType="String"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="maintenanceType" optional="YES" attributeType="String"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="performedBy" optional="YES" attributeType="String"/>
+        <attribute name="performedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="priority" optional="YES" attributeType="String"/>
+        <attribute name="scheduledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serviceNotes" optional="YES" attributeType="String"/>
+        <attribute name="tolerance" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="nextCalibrationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="nextServiceDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="partsReplaced" optional="YES" attributeType="String"/>
+        <attribute name="photos" optional="YES" attributeType="String"/>
+        <attribute name="preCalibrationData" optional="YES" attributeType="String"/>
+        <attribute name="postCalibrationData" optional="YES" attributeType="String"/>
+        <attribute name="environmentalData" optional="YES" attributeType="String"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <relationship name="equipment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EquipmentEntity" inverseName="maintenanceRecords" inverseEntity="EquipmentEntity"/>
+    </entity>
+    <entity name="EquipmentPerformanceEntity" representedClassName="EquipmentPerformanceEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="metricName" optional="YES" attributeType="String"/>
+        <attribute name="metricValue" optional="YES" attributeType="Double" defaultValue="0.0" usesScalarValueType="YES"/>
+        <attribute name="recordedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <attribute name="unit" optional="YES" attributeType="String"/>
+        <relationship name="equipment" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EquipmentEntity" inverseName="performanceMetrics" inverseEntity="EquipmentEntity"/>
+    </entity>
+    <entity name="EquipmentInspectionPhotoEntity" representedClassName="EquipmentInspectionPhotoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="caption" optional="YES" attributeType="String"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="imageData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="serverId" optional="YES" attributeType="String"/>
+        <attribute name="syncStatus" optional="YES" attributeType="String"/>
+        <relationship name="inspection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EquipmentInspectionEntity" inverseName="photos" inverseEntity="EquipmentInspectionEntity"/>
     </entity>
 </model>

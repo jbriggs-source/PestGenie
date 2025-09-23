@@ -32,6 +32,8 @@ final class RouteViewModel: ObservableObject {
     @Published var segmentedValues: [String: Int] = [:]
     /// Stores presentation state for sheets/alerts keyed by a composite key.
     @Published var presentationStates: [String: Bool] = [:]
+    /// Stores multi-select values for components that allow multiple selection.
+    @Published var multiSelectValues: [String: [String]] = [:]
 
     // MARK: - Offline mode support
     /// Flag indicating whether the app is currently online. In a real app this
@@ -45,6 +47,14 @@ final class RouteViewModel: ObservableObject {
 
 
     init() {
+        // Preload sample jobs immediately
+        loadSampleData()
+        
+        // Defer network monitoring until first access
+        // setupNetworkMonitoring()
+    }
+    
+    private func setupNetworkMonitoring() {
         // Start monitoring network connectivity. This uses NWPathMonitor to set
         // the `isOnline` flag based on whether a network path is satisfied.
         let monitor = NWPathMonitor()
@@ -64,8 +74,11 @@ final class RouteViewModel: ObservableObject {
         }
         let queue = DispatchQueue(label: "RouteViewModelNetworkMonitor")
         monitor.start(queue: queue)
-        // Preload sample jobs.
-        loadSampleData()
+    }
+    
+    /// Start network monitoring (call when needed)
+    func startNetworkMonitoring() {
+        setupNetworkMonitoring()
     }
 
     private func loadSampleData() {
@@ -211,6 +224,15 @@ final class RouteViewModel: ObservableObject {
         presentationStates[key] = value
     }
 
+    /// Sets multi-select values for the given composite key and queues an action if offline.
+    func setMultiSelectValues(forKey key: String, values: [String]) {
+        multiSelectValues[key] = values
+        if !isOnline {
+            let action = PendingAction(type: .multiSelectInput, jobId: nil, valueKey: key, value: values.joined(separator: ","), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
     // MARK: - Offline sync
 
     /// Attempts to synchronise any pending actions when coming back online. In a real app
@@ -241,6 +263,7 @@ struct PendingAction: CustomStringConvertible {
         case datePickerInput
         case stepperInput
         case segmentedInput
+        case multiSelectInput
     }
     let type: ActionType
     let jobId: UUID?
