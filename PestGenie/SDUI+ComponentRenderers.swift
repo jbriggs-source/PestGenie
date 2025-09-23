@@ -312,8 +312,8 @@ struct SDUIInputRenderer: SDUIComponentRenderer {
             set: { context.routeViewModel.setStepperValue(forKey: contextKey, value: $0) }
         )
 
-        let _ = component.label ?? "Value"
-        let stepperView = AnyView(Stepper("\\(label): \\(Int(binding.wrappedValue))", value: binding, in: minValue...maxValue, step: step))
+        let label = component.label ?? "Value"
+        let stepperView = AnyView(Stepper("\(label): \(Int(binding.wrappedValue))", value: binding, in: minValue...maxValue, step: step))
 
         return SDUIStyleApplicator.apply(styling: component, to: stepperView, job: context.currentJob)
     }

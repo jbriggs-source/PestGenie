@@ -1,0 +1,448 @@
+{
+  "version": 5,
+  "component": {
+    "id": "complete-demo",
+    "type": "scroll",
+    "padding": 16,
+    "children": [
+      {
+        "id": "header-section",
+        "type": "section",
+        "title": "🎯 Complete SDUI Demo",
+        "children": [
+          {
+            "id": "header-text",
+            "type": "text",
+            "text": "All Core Components Working",
+            "font": "title",
+            "fontWeight": "bold",
+            "foregroundColor": "#2E8B57",
+            "padding": 12,
+            "backgroundColor": "#F0F8F0",
+            "cornerRadius": 12,
+            "shadowRadius": 3,
+            "shadowColor": "gray"
+          }
+        ]
+      },
+      {
+        "id": "layout-demo",
+        "type": "section",
+        "title": "📐 Layout Components",
+        "children": [
+          {
+            "id": "layout-grid",
+            "type": "grid",
+            "columns": 2,
+            "spacing": 12,
+            "children": [
+              {
+                "id": "vstack-demo",
+                "type": "vstack",
+                "padding": 12,
+                "backgroundColor": "#F8F9FA",
+                "cornerRadius": 8,
+                "children": [
+                  {
+                    "id": "vstack-title",
+                    "type": "text",
+                    "text": "VStack Demo",
+                    "font": "headline",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "id": "vstack-item1",
+                    "type": "text",
+                    "text": "Item 1",
+                    "font": "body"
+                  },
+                  {
+                    "id": "vstack-item2",
+                    "type": "text",
+                    "text": "Item 2",
+                    "font": "body"
+                  }
+                ]
+              },
+              {
+                "id": "hstack-demo",
+                "type": "hstack",
+                "padding": 12,
+                "backgroundColor": "#E3F2FD",
+                "cornerRadius": 8,
+                "children": [
+                  {
+                    "id": "hstack-item1",
+                    "type": "text",
+                    "text": "Left",
+                    "font": "body"
+                  },
+                  {
+                    "id": "hstack-spacer",
+                    "type": "spacer"
+                  },
+                  {
+                    "id": "hstack-item2",
+                    "type": "text",
+                    "text": "Right",
+                    "font": "body"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "form-demo",
+        "type": "section",
+        "title": "📝 Form Input Components",
+        "children": [
+          {
+            "id": "form-grid",
+            "type": "grid",
+            "columns": 2,
+            "spacing": 12,
+            "children": [
+              {
+                "id": "textfield-demo",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "textfield-label",
+                    "type": "text",
+                    "text": "Text Field",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "id": "textfield-input",
+                    "type": "textField",
+                    "valueKey": "demoTextField",
+                    "placeholder": "Enter text here",
+                    "padding": 8,
+                    "backgroundColor": "white",
+                    "cornerRadius": 6,
+                    "borderWidth": 1,
+                    "borderColor": "#E0E0E0"
+                  }
+                ]
+              },
+              {
+                "id": "toggle-demo",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "toggle-label",
+                    "type": "text",
+                    "text": "Toggle Switch",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "id": "toggle-input",
+                    "type": "toggle",
+                    "valueKey": "demoToggle",
+                    "label": "Enable Feature"
+                  }
+                ]
+              },
+              {
+                "id": "slider-demo",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "slider-label",
+                    "type": "text",
+                    "text": "Slider Control",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "id": "slider-input",
+                    "type": "slider",
+                    "valueKey": "demoSlider",
+                    "minValue": 0,
+                    "maxValue": 100,
+                    "step": 1,
+                    "showValue": true
+                  }
+                ]
+              },
+              {
+                "id": "stepper-demo",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "stepper-label",
+                    "type": "text",
+                    "text": "Stepper Control",
+                    "font": "caption",
+                    "fontWeight": "semibold"
+                  },
+                  {
+                    "id": "stepper-input",
+                    "type": "stepper",
+                    "valueKey": "demoStepper",
+                    "label": "Count",
+                    "minValue": 0,
+                    "maxValue": 10,
+                    "step": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "picker-demo",
+            "type": "vstack",
+            "spacing": 8,
+            "padding": 12,
+            "backgroundColor": "#FFF3E0",
+            "cornerRadius": 8,
+            "children": [
+              {
+                "id": "picker-label",
+                "type": "text",
+                "text": "Picker Selection",
+                "font": "caption",
+                "fontWeight": "semibold"
+              },
+              {
+                "id": "picker-input",
+                "type": "picker",
+                "valueKey": "demoPicker",
+                "label": "Choose Option",
+                "options": [
+                  {
+                    "id": "opt1",
+                    "text": "Option 1",
+                    "value": "option1"
+                  },
+                  {
+                    "id": "opt2",
+                    "text": "Option 2",
+                    "value": "option2"
+                  },
+                  {
+                    "id": "opt3",
+                    "text": "Option 3",
+                    "value": "option3"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "segmented-demo",
+            "type": "vstack",
+            "spacing": 8,
+            "padding": 12,
+            "backgroundColor": "#E8F5E8",
+            "cornerRadius": 8,
+            "children": [
+              {
+                "id": "segmented-label",
+                "type": "text",
+                "text": "Segmented Control",
+                "font": "caption",
+                "fontWeight": "semibold"
+              },
+              {
+                "id": "segmented-input",
+                "type": "segmentedControl",
+                "valueKey": "demoSegmented",
+                "options": [
+                  {
+                    "id": "seg1",
+                    "text": "First",
+                    "value": "first"
+                  },
+                  {
+                    "id": "seg2",
+                    "text": "Second",
+                    "value": "second"
+                  },
+                  {
+                    "id": "seg3",
+                    "text": "Third",
+                    "value": "third"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ui-elements-demo",
+        "type": "section",
+        "title": "🎨 UI Elements",
+        "children": [
+          {
+            "id": "buttons-demo",
+            "type": "hstack",
+            "spacing": 12,
+            "children": [
+              {
+                "id": "primary-button",
+                "type": "button",
+                "label": "Primary",
+                "actionId": "primaryAction",
+                "padding": 12,
+                "backgroundColor": "#007AFF",
+                "foregroundColor": "white",
+                "cornerRadius": 8,
+                "fontWeight": "semibold"
+              },
+              {
+                "id": "secondary-button",
+                "type": "button",
+                "label": "Secondary",
+                "actionId": "secondaryAction",
+                "padding": 12,
+                "backgroundColor": "#F2F2F7",
+                "foregroundColor": "#007AFF",
+                "cornerRadius": 8,
+                "borderWidth": 1,
+                "borderColor": "#007AFF"
+              }
+            ]
+          },
+          {
+            "id": "progress-demo",
+            "type": "vstack",
+            "spacing": 8,
+            "padding": 12,
+            "backgroundColor": "#F0F0F0",
+            "cornerRadius": 8,
+            "children": [
+              {
+                "id": "progress-label",
+                "type": "text",
+                "text": "Progress Indicator",
+                "font": "caption",
+                "fontWeight": "semibold"
+              },
+              {
+                "id": "progress-view",
+                "type": "progressView",
+                "progress": 0.65,
+                "foregroundColor": "green"
+              },
+              {
+                "id": "progress-text",
+                "type": "text",
+                "text": "65% Complete",
+                "font": "caption",
+                "foregroundColor": "green"
+              }
+            ]
+          },
+          {
+            "id": "divider-demo",
+            "type": "vstack",
+            "spacing": 8,
+            "children": [
+              {
+                "id": "divider-text1",
+                "type": "text",
+                "text": "Above Divider",
+                "font": "body"
+              },
+              {
+                "id": "divider-line",
+                "type": "divider",
+                "foregroundColor": "gray"
+              },
+              {
+                "id": "divider-text2",
+                "type": "text",
+                "text": "Below Divider",
+                "font": "body"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "conditional-demo",
+        "type": "section",
+        "title": "🔀 Conditional Rendering",
+        "children": [
+          {
+            "id": "conditional-toggle",
+            "type": "toggle",
+            "valueKey": "showConditional",
+            "label": "Show Conditional Content"
+          },
+          {
+            "id": "conditional-content",
+            "type": "conditional",
+            "conditionKey": "showConditional",
+            "children": [
+              {
+                "id": "conditional-text",
+                "type": "text",
+                "text": "This content appears when the toggle is ON!",
+                "font": "body",
+                "foregroundColor": "green",
+                "padding": 12,
+                "backgroundColor": "#E8F5E8",
+                "cornerRadius": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "data-binding-demo",
+        "type": "section",
+        "title": "🔗 Data Binding Demo",
+        "children": [
+          {
+            "id": "job-info",
+            "type": "vstack",
+            "spacing": 8,
+            "padding": 12,
+            "backgroundColor": "#FFF8E1",
+            "cornerRadius": 8,
+            "children": [
+              {
+                "id": "customer-name",
+                "type": "text",
+                "key": "customerName",
+                "font": "headline",
+                "fontWeight": "bold"
+              },
+              {
+                "id": "job-address",
+                "type": "text",
+                "key": "address",
+                "font": "subheadline",
+                "foregroundColor": "secondary"
+              },
+              {
+                "id": "job-time",
+                "type": "text",
+                "key": "scheduledTime",
+                "font": "caption"
+              },
+              {
+                "id": "job-status",
+                "type": "text",
+                "key": "status",
+                "font": "caption",
+                "foregroundColor": "statusColor"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

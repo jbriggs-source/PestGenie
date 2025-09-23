@@ -83,7 +83,7 @@ struct SDUIContentView: View {
     /// falling back to earlier versions if newer ones are unavailable. If
     /// decoding fails, the app prints an error and leaves `screen` nil.
     private func loadScreen() {
-        let candidateNames = ["TechnicianScreen_v3", "TechnicianScreen_v2", "TechnicianScreen"]
+        let candidateNames = ["TechnicianScreen_v5_complete", "TechnicianScreen_v4_comprehensive", "TechnicianScreen_v3", "TechnicianScreen_v2", "TechnicianScreen"]
         for name in candidateNames {
             if let url = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: nil) {
                 do {

@@ -37,9 +37,25 @@ struct SDUIDataResolver {
             formatter.dateStyle = .none
             formatter.timeStyle = .short
             return formatter.string(from: job.scheduledDate)
+        case "scheduledDate":
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .none
+            return formatter.string(from: job.scheduledDate)
+        case "scheduledDateTime":
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter.string(from: job.scheduledDate)
         case "status": return job.status.rawValue.capitalized
+        case "statusColor": return job.status.rawValue.lowercased()
         case "pinnedNotes": return job.pinnedNotes
         case "notes": return job.notes
+        case "id": return job.id.uuidString
+        case "isActive": return job.status == .inProgress ? "true" : "false"
+        case "isCompleted": return job.status == .completed ? "true" : "false"
+        case "isPending": return job.status == .pending ? "true" : "false"
+        case "isSkipped": return job.status == .skipped ? "true" : "false"
         default: return nil
         }
     }
@@ -85,15 +101,22 @@ struct SDUIStyleResolver {
         case "red": return .red
         case "blue": return .blue
         case "green": return .green
-        case "gray": return .gray
+        case "gray", "grey": return .gray
         case "black": return .black
         case "white": return .white
         case "orange": return .orange
         case "yellow": return .yellow
         case "purple": return .purple
         case "pink": return .pink
+        case "cyan": return .cyan
+        case "mint": return .mint
+        case "teal": return .teal
+        case "indigo": return .indigo
+        case "brown": return .brown
         case "secondary": return .secondary
         case "primary": return .primary
+        case "accent": return .accentColor
+        case "clear": return .clear
         default:
             // Try to parse hex colors like #RRGGBB
             if lower.hasPrefix("#"), let hexColor = Color(hexString: lower) {
@@ -300,6 +323,11 @@ struct SDUIErrorHandler {
 
     /// Validates component configuration and returns error if invalid
     static func validateComponent(_ component: SDUIComponent) -> String? {
+        // Validate required ID
+        if component.id.isEmpty {
+            return "Component missing required 'id'"
+        }
+
         // Validate input components have required keys
         if [.textField, .toggle, .slider, .picker, .datePicker, .stepper, .segmentedControl].contains(component.type) {
             if component.valueKey == nil {
@@ -321,6 +349,46 @@ struct SDUIErrorHandler {
             }
         }
 
+        // Validate stepper has valid range
+        if component.type == .stepper {
+            if let min = component.minValue, let max = component.maxValue, min >= max {
+                return "Stepper minValue must be less than maxValue"
+            }
+        }
+
+        // Validate container components have children
+        if [.vstack, .hstack, .scroll, .grid, .section].contains(component.type) {
+            if component.children?.isEmpty != false {
+                return "Container component missing 'children'"
+            }
+        }
+
+        // Validate list component has itemView
+        if component.type == .list && component.itemView == nil {
+            return "List component missing 'itemView'"
+        }
+
+        // Validate navigation components
+        if component.type == .navigationLink && component.destination == nil {
+            return "NavigationLink missing 'destination'"
+        }
+
+        if [.alert, .actionSheet].contains(component.type) && component.isPresented == nil {
+            return "\(component.type.rawValue) missing 'isPresented' key"
+        }
+
+        // Validate image components
+        if component.type == .image && component.imageName == nil && component.url == nil {
+            return "Image component missing 'imageName' or 'url'"
+        }
+
+        // Validate progress view
+        if component.type == .progressView {
+            if let progress = component.progress, (progress < 0 || progress > 1) {
+                return "ProgressView progress must be between 0 and 1"
+            }
+        }
+
         return nil
     }
 }
@@ -328,8 +396,8 @@ struct SDUIErrorHandler {
 // MARK: - Version Management
 
 struct SDUIVersionManager {
-    static let supportedVersions: Set<Int> = [1, 2, 3, 4]
-    static let currentVersion = 4
+    static let supportedVersions: Set<Int> = [1, 2, 3, 4, 5]
+    static let currentVersion = 5
 
     /// Checks if a screen version is supported
     static func isVersionSupported(_ version: Int) -> Bool {
@@ -343,6 +411,7 @@ struct SDUIVersionManager {
         case 2: return "Added images and conditionals"
         case 3: return "Form inputs and styling"
         case 4: return "Full component library"
+        case 5: return "Complete core components with enhanced validation"
         default: return "Unsupported version"
         }
     }

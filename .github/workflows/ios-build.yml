@@ -19,7 +19,7 @@ on:
 
 env:
   XCODE_VERSION: '16.2'
-  IOS_SIMULATOR: 'iPhone 15 Pro'
+  IOS_SIMULATOR: 'iPhone 16 Pro'
   IOS_VERSION: '18.2'
 
 jobs:
@@ -59,21 +59,12 @@ jobs:
 
     - name: Run unit tests
       run: |
-        xcodebuild test \
-          -project PestGenie.xcodeproj \
-          -scheme PestGenie \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
-          -resultBundlePath TestResults.xcresult \
-          -enableCodeCoverage YES
+        chmod +x scripts/run-tests.sh
+        ./scripts/run-tests.sh unit
 
     - name: Run UI tests
       run: |
-        xcodebuild test \
-          -project PestGenie.xcodeproj \
-          -scheme PestGenie \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
-          -only-testing:PestGenieUITests \
-          -resultBundlePath UITestResults.xcresult
+        ./scripts/run-tests.sh ui
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -122,11 +113,7 @@ jobs:
 
     - name: Build for iOS Simulator
       run: |
-        xcodebuild build \
-          -project PestGenie.xcodeproj \
-          -scheme PestGenie \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
-          -configuration Debug
+        ./scripts/run-tests.sh build
 
     - name: Build for iOS Device
       run: |
@@ -201,12 +188,7 @@ jobs:
 
     - name: Run performance tests
       run: |
-        xcodebuild test \
-          -project PestGenie.xcodeproj \
-          -scheme PestGenie \
-          -destination "platform=iOS Simulator,name=${{ env.IOS_SIMULATOR }},OS=${{ env.IOS_VERSION }}" \
-          -only-testing:PestGenieTests/PerformanceTests \
-          -resultBundlePath PerformanceTestResults.xcresult
+        ./scripts/run-tests.sh performance
 
     - name: Upload performance test results
       uses: actions/upload-artifact@v4
