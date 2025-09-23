@@ -1,0 +1,671 @@
+{
+  "version": 1,
+  "component": {
+    "type": "scroll",
+    "padding": {
+      "top": 10,
+      "bottom": 90,
+      "leading": 16,
+      "trailing": 16
+    },
+    "children": [
+      {
+        "type": "vstack",
+        "alignment": "leading",
+        "spacing": 20,
+        "children": [
+          {
+            "type": "hstack",
+            "alignment": "center",
+            "spacing": 12,
+            "padding": {
+              "top": 16,
+              "bottom": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "leading",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Welcome back, {{technician.name}}",
+                    "font": "title2",
+                    "weight": "bold",
+                    "foregroundColor": "#2C3E50"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Ready to tackle today's routes?",
+                    "font": "subheadline",
+                    "foregroundColor": "#7F8C8D"
+                  }
+                ]
+              },
+              {
+                "type": "spacer"
+              },
+              {
+                "type": "image",
+                "imageName": "person.circle.fill",
+                "width": 44,
+                "height": 44,
+                "foregroundColor": "#3498DB"
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 16,
+            "padding": {
+              "top": 20,
+              "bottom": 20,
+              "leading": 16,
+              "trailing": 16
+            },
+            "backgroundColor": "#E8F4FD",
+            "cornerRadius": 16,
+            "children": [
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 12,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "calendar.badge.clock",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "#2980B9"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Today's Schedule",
+                    "font": "headline",
+                    "weight": "semibold",
+                    "foregroundColor": "#2C3E50"
+                  },
+                  {
+                    "type": "spacer"
+                  },
+                  {
+                    "type": "text",
+                    "text": "{{today.date}}",
+                    "font": "caption",
+                    "foregroundColor": "#7F8C8D"
+                  }
+                ]
+              },
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 20,
+                "children": [
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{route.totalJobs}}",
+                        "font": "title",
+                        "weight": "bold",
+                        "foregroundColor": "#27AE60"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Total Jobs",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "foregroundColor": "#BDC3C7"
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{route.completedJobs}}",
+                        "font": "title",
+                        "weight": "bold",
+                        "foregroundColor": "#3498DB"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Completed",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "foregroundColor": "#BDC3C7"
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{route.remainingJobs}}",
+                        "font": "title",
+                        "weight": "bold",
+                        "foregroundColor": "#E74C3C"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Remaining",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "progressView",
+                "progress": "{{route.completionPercentage}}",
+                "backgroundColor": "#D5DBDB",
+                "foregroundColor": "#27AE60",
+                "height": 8,
+                "cornerRadius": 4
+              }
+            ]
+          },
+          {
+            "type": "weatherDashboard",
+            "compact": true,
+            "padding": {
+              "top": 16,
+              "bottom": 16,
+              "leading": 16,
+              "trailing": 16
+            },
+            "backgroundColor": "#FEF9E7",
+            "cornerRadius": 16
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "text",
+                "text": "Quick Actions",
+                "font": "headline",
+                "weight": "semibold",
+                "foregroundColor": "#2C3E50"
+              },
+              {
+                "type": "grid",
+                "columns": 2,
+                "spacing": 12,
+                "children": [
+                  {
+                    "type": "button",
+                    "title": "Start Route",
+                    "action": "start_route",
+                    "backgroundColor": "#27AE60",
+                    "foregroundColor": "#FFFFFF",
+                    "cornerRadius": 12,
+                    "padding": {
+                      "top": 16,
+                      "bottom": 16,
+                      "leading": 12,
+                      "trailing": 12
+                    },
+                    "icon": "play.circle.fill",
+                    "font": "headline",
+                    "weight": "semibold"
+                  },
+                  {
+                    "type": "button",
+                    "title": "Emergency Call",
+                    "action": "emergency_call",
+                    "backgroundColor": "#E74C3C",
+                    "foregroundColor": "#FFFFFF",
+                    "cornerRadius": 12,
+                    "padding": {
+                      "top": 16,
+                      "bottom": 16,
+                      "leading": 12,
+                      "trailing": 12
+                    },
+                    "icon": "phone.fill",
+                    "font": "headline",
+                    "weight": "semibold"
+                  },
+                  {
+                    "type": "button",
+                    "title": "Equipment Check",
+                    "action": "equipment_check",
+                    "backgroundColor": "#8E44AD",
+                    "foregroundColor": "#FFFFFF",
+                    "cornerRadius": 12,
+                    "padding": {
+                      "top": 16,
+                      "bottom": 16,
+                      "leading": 12,
+                      "trailing": 12
+                    },
+                    "icon": "wrench.and.screwdriver.fill",
+                    "font": "headline",
+                    "weight": "semibold"
+                  },
+                  {
+                    "type": "button",
+                    "title": "QR Scanner",
+                    "action": "qr_scanner",
+                    "backgroundColor": "#F39C12",
+                    "foregroundColor": "#FFFFFF",
+                    "cornerRadius": 12,
+                    "padding": {
+                      "top": 16,
+                      "bottom": 16,
+                      "leading": 12,
+                      "trailing": 12
+                    },
+                    "icon": "qrcode.viewfinder",
+                    "font": "headline",
+                    "weight": "semibold"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 12,
+            "padding": {
+              "top": 20,
+              "bottom": 20,
+              "leading": 16,
+              "trailing": 16
+            },
+            "backgroundColor": "#F8F9FA",
+            "cornerRadius": 16,
+            "children": [
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 8,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "bell.badge.fill",
+                    "width": 20,
+                    "height": 20,
+                    "foregroundColor": "#E67E22"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Recent Alerts",
+                    "font": "headline",
+                    "weight": "semibold",
+                    "foregroundColor": "#2C3E50"
+                  },
+                  {
+                    "type": "spacer"
+                  },
+                  {
+                    "type": "text",
+                    "text": "{{alerts.count}} new",
+                    "font": "caption",
+                    "foregroundColor": "#E67E22",
+                    "weight": "medium"
+                  }
+                ]
+              },
+              {
+                "type": "vstack",
+                "alignment": "leading",
+                "spacing": 8,
+                "children": [
+                  {
+                    "type": "hstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "exclamationmark.triangle.fill",
+                        "width": 16,
+                        "height": 16,
+                        "foregroundColor": "#F39C12"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Equipment maintenance due: Sprayer Unit A",
+                        "font": "subheadline",
+                        "foregroundColor": "#2C3E50"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "hstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "cloud.rain.fill",
+                        "width": 16,
+                        "height": 16,
+                        "foregroundColor": "#3498DB"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Weather advisory: Rain expected 2-4 PM",
+                        "font": "subheadline",
+                        "foregroundColor": "#2C3E50"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "hstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "clock.fill",
+                        "width": 16,
+                        "height": 16,
+                        "foregroundColor": "#27AE60"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Next job starts in 45 minutes",
+                        "font": "subheadline",
+                        "foregroundColor": "#2C3E50"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "text",
+                "text": "Chemical Inventory Status",
+                "font": "headline",
+                "weight": "semibold",
+                "foregroundColor": "#2C3E50"
+              },
+              {
+                "type": "chemicalInventory",
+                "compact": true,
+                "maxItems": 3,
+                "padding": {
+                  "top": 12,
+                  "bottom": 12,
+                  "leading": 16,
+                  "trailing": 16
+                },
+                "backgroundColor": "#EBF5FF",
+                "cornerRadius": 12
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "text",
+                "text": "Performance Overview",
+                "font": "headline",
+                "weight": "semibold",
+                "foregroundColor": "#2C3E50"
+              },
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 16,
+                "padding": {
+                  "top": 16,
+                  "bottom": 16,
+                  "leading": 16,
+                  "trailing": 16
+                },
+                "backgroundColor": "#F1F2F6",
+                "cornerRadius": 12,
+                "children": [
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "95%",
+                        "font": "title2",
+                        "weight": "bold",
+                        "foregroundColor": "#27AE60"
+                      },
+                      {
+                        "type": "text",
+                        "text": "On-Time Rate",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "foregroundColor": "#BDC3C7"
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "4.8",
+                        "font": "title2",
+                        "weight": "bold",
+                        "foregroundColor": "#F39C12"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Avg Rating",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "foregroundColor": "#BDC3C7"
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 4,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "127",
+                        "font": "title2",
+                        "weight": "bold",
+                        "foregroundColor": "#3498DB"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Jobs Completed",
+                        "font": "caption",
+                        "foregroundColor": "#7F8C8D"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "alignment": "leading",
+            "spacing": 12,
+            "children": [
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 8,
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Equipment Status",
+                    "font": "headline",
+                    "weight": "semibold",
+                    "foregroundColor": "#2C3E50"
+                  },
+                  {
+                    "type": "spacer"
+                  },
+                  {
+                    "type": "button",
+                    "title": "View All",
+                    "action": "view_all_equipment",
+                    "font": "caption",
+                    "foregroundColor": "#3498DB"
+                  }
+                ]
+              },
+              {
+                "type": "hstack",
+                "alignment": "center",
+                "spacing": 12,
+                "children": [
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "padding": {
+                      "top": 12,
+                      "bottom": 12,
+                      "leading": 16,
+                      "trailing": 16
+                    },
+                    "backgroundColor": "#D5F4E6",
+                    "cornerRadius": 10,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "checkmark.circle.fill",
+                        "width": 32,
+                        "height": 32,
+                        "foregroundColor": "#27AE60"
+                      },
+                      {
+                        "type": "text",
+                        "text": "5",
+                        "font": "title3",
+                        "weight": "bold",
+                        "foregroundColor": "#27AE60"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Ready",
+                        "font": "caption",
+                        "foregroundColor": "#27AE60"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "padding": {
+                      "top": 12,
+                      "bottom": 12,
+                      "leading": 16,
+                      "trailing": 16
+                    },
+                    "backgroundColor": "#FFF3CD",
+                    "cornerRadius": 10,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "exclamationmark.triangle.fill",
+                        "width": 32,
+                        "height": 32,
+                        "foregroundColor": "#F39C12"
+                      },
+                      {
+                        "type": "text",
+                        "text": "2",
+                        "font": "title3",
+                        "weight": "bold",
+                        "foregroundColor": "#F39C12"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Maintenance",
+                        "font": "caption",
+                        "foregroundColor": "#F39C12"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "vstack",
+                    "alignment": "center",
+                    "spacing": 8,
+                    "padding": {
+                      "top": 12,
+                      "bottom": 12,
+                      "leading": 16,
+                      "trailing": 16
+                    },
+                    "backgroundColor": "#F8D7DA",
+                    "cornerRadius": 10,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "xmark.circle.fill",
+                        "width": 32,
+                        "height": 32,
+                        "foregroundColor": "#E74C3C"
+                      },
+                      {
+                        "type": "text",
+                        "text": "1",
+                        "font": "title3",
+                        "weight": "bold",
+                        "foregroundColor": "#E74C3C"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Out of Order",
+                        "font": "caption",
+                        "foregroundColor": "#E74C3C"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -7,6 +7,8 @@ import CoreLocation
 final class WeatherDataManager: ObservableObject {
     static let shared = WeatherDataManager()
 
+    @Published var currentWeather: WeatherData? = nil
+
     private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "WeatherDataModel")
         container.loadPersistentStores { _, error in
@@ -21,7 +23,26 @@ final class WeatherDataManager: ObservableObject {
         persistentContainer.viewContext
     }
 
-    private init() {}
+    private init() {
+        // Initialize with sample weather data
+        currentWeather = WeatherData(
+            id: UUID(),
+            temperature: 75.0,
+            feelsLike: 78.0,
+            humidity: 65,
+            pressure: 30.12,
+            windSpeed: 8.5,
+            windDirection: 180.0,
+            uvIndex: 6.0,
+            precipitationProbability: 15,
+            visibility: 10.0,
+            cloudCover: 25,
+            condition: "Partly Cloudy",
+            description: "Partly cloudy with light winds",
+            timestamp: Date(),
+            location: CLLocationCoordinate2D(latitude: 34.0522, longitude: -118.2437)
+        )
+    }
 
     // MARK: - Weather Data Operations
 

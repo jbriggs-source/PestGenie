@@ -245,6 +245,43 @@ final class RouteViewModel: ObservableObject {
         }
         pendingActions.removeAll()
     }
+
+    // MARK: - Dashboard Support
+
+    /// Technician name for dashboard display
+    var technicianName: String {
+        return "Alex Rodriguez" // In production, this would come from user profile
+    }
+
+    /// Current route identifier for display
+    var currentRouteId: String {
+        return "RT-2024-001" // In production, this would be the actual route ID
+    }
+
+    /// Number of completed jobs today
+    var completedJobsCount: Int {
+        return jobs.filter { $0.status == .completed }.count
+    }
+
+    /// Number of remaining jobs today
+    var remainingJobsCount: Int {
+        return jobs.filter { $0.status == .pending || $0.status == .inProgress }.count
+    }
+
+    /// Completion percentage for today's route
+    var completionPercentage: Double {
+        guard !jobs.isEmpty else { return 0.0 }
+        return Double(completedJobsCount) / Double(jobs.count)
+    }
+
+    /// Load today's route data (placeholder for production implementation)
+    func loadTodaysRoute() {
+        // In production, this would fetch today's specific route from the server
+        // For now, we use the existing sample data
+        if jobs.isEmpty {
+            loadSampleData()
+        }
+    }
 }
 
 /// Represents an action performed while offline. These actions are queued and

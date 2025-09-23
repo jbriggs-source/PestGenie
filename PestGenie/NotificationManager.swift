@@ -1,6 +1,75 @@
 import Foundation
 import UserNotifications
 import UIKit
+import SwiftUI
+
+// MARK: - PestGenie Notification Model
+
+struct PestGenieNotification: Identifiable, Codable {
+    let id: UUID
+    let title: String
+    let message: String
+    let timestamp: Date
+    let priority: NotificationPriority
+    let category: NotificationCategory
+    let isRead: Bool
+
+    init(title: String, message: String, timestamp: Date, priority: NotificationPriority, category: NotificationCategory, isRead: Bool) {
+        self.id = UUID()
+        self.title = title
+        self.message = message
+        self.timestamp = timestamp
+        self.priority = priority
+        self.category = category
+        self.isRead = isRead
+    }
+
+    var icon: String {
+        switch category {
+        case .weather:
+            return "cloud.fill"
+        case .equipment:
+            return "wrench.and.screwdriver"
+        case .safety:
+            return "shield.checkered"
+        case .route:
+            return "map"
+        case .system:
+            return "gear"
+        case .emergency:
+            return "exclamationmark.triangle.fill"
+        }
+    }
+}
+
+enum NotificationPriority: String, Codable {
+    case low
+    case normal
+    case high
+    case critical
+
+    var color: Color {
+        switch self {
+        case .low:
+            return PestGenieDesignSystem.Colors.textSecondary
+        case .normal:
+            return PestGenieDesignSystem.Colors.info
+        case .high:
+            return PestGenieDesignSystem.Colors.warning
+        case .critical:
+            return PestGenieDesignSystem.Colors.error
+        }
+    }
+}
+
+enum NotificationCategory: String, Codable, CaseIterable {
+    case weather
+    case equipment
+    case safety
+    case route
+    case system
+    case emergency
+}
 
 /// Manages push notifications, local notifications, and notification permissions
 @MainActor
@@ -9,10 +78,13 @@ final class NotificationManager: NSObject, ObservableObject {
 
     @Published var authorizationStatus: UNAuthorizationStatus = .notDetermined
     @Published var badgeCount: Int = 0
+    @Published var unreadCount: Int = 0
+    @Published var recentNotifications: [PestGenieNotification] = []
 
     override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        loadRecentNotifications()
         Task {
             await checkAuthorizationStatus()
         }
@@ -970,6 +1042,70 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         // For now, return nil as placeholder
         return nil
     }
+
+    // MARK: - Recent Notifications Management
+
+    private func loadRecentNotifications() {
+        // Load sample notifications for demo purposes
+        recentNotifications = [
+            PestGenieNotification(
+                title: "Equipment Maintenance Due",
+                message: "Sprayer Unit A requires scheduled maintenance",
+                timestamp: Date().addingTimeInterval(-300), // 5 minutes ago
+                priority: .high,
+                category: .equipment,
+                isRead: false
+            ),
+            PestGenieNotification(
+                title: "Weather Advisory",
+                message: "Rain expected 2-4 PM, plan indoor tasks",
+                timestamp: Date().addingTimeInterval(-600), // 10 minutes ago
+                priority: .normal,
+                category: .weather,
+                isRead: false
+            ),
+            PestGenieNotification(
+                title: "Route Updated",
+                message: "Your route for today has been modified",
+                timestamp: Date().addingTimeInterval(-1800), // 30 minutes ago
+                priority: .normal,
+                category: .route,
+                isRead: true
+            )
+        ]
+        updateUnreadCount()
+    }
+
+    private func updateUnreadCount() {
+        unreadCount = recentNotifications.filter { !$0.isRead }.count
+    }
+
+    func markNotificationAsRead(_ notificationId: UUID) {
+        if let index = recentNotifications.firstIndex(where: { $0.id == notificationId }) {
+            recentNotifications[index] = PestGenieNotification(
+                title: recentNotifications[index].title,
+                message: recentNotifications[index].message,
+                timestamp: recentNotifications[index].timestamp,
+                priority: recentNotifications[index].priority,
+                category: recentNotifications[index].category,
+                isRead: true
+            )
+            updateUnreadCount()
+        }
+    }
+
+    func addNotification(_ notification: PestGenieNotification) {
+        recentNotifications.insert(notification, at: 0)
+        if recentNotifications.count > 50 {
+            recentNotifications.removeLast()
+        }
+        updateUnreadCount()
+    }
+
+    func clearAllNotifications() {
+        recentNotifications.removeAll()
+        unreadCount = 0
+    }
 }
 
 // MARK: - Notification Names
@@ -982,6 +1118,7 @@ extension Notification.Name {
     static let navigateToRoute = Notification.Name("navigateToRoute")
     static let skipJob = Notification.Name("skipJob")
     static let handleEmergency = Notification.Name("handleEmergency")
+    static let navigateToEquipmentDetail = Notification.Name("navigateToEquipmentDetail")
 }
 
 // MARK: - Equipment Notification Categories Extension

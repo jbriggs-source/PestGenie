@@ -507,7 +507,6 @@ extension Notification.Name {
     static let navigateToCustomerDetail = Notification.Name("navigateToCustomerDetail")
     static let navigateToSettingsSection = Notification.Name("navigateToSettingsSection")
     static let handleEmergencyAlert = Notification.Name("handleEmergencyAlert")
-    static let navigateToEquipmentDetail = Notification.Name("navigateToEquipmentDetail")
 }
 
 // MARK: - SwiftUI Integration

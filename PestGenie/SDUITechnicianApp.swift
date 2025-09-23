@@ -1,22 +1,17 @@
 import SwiftUI
 
-/// Entry point for the SDUI Technician mobile application. The app fetches UI
-/// configuration from a JSON file (or backend) and renders screens dynamically
-/// based on the server provided structure. It still leverages a view model for
-/// domain data like jobs, timestamps and signatures, but the presentation
-/// details are defined by the JSON specification.
+/// Entry point for the SDUI Technician mobile application. The app features an
+/// engaging home dashboard with quick access to routes, equipment, chemicals,
+/// and profile management. The UI configuration can be server-driven via JSON
+/// files while maintaining domain data through view models.
 @main
 struct SDUITechnicianApp: App {
-    @StateObject private var routeViewModel = RouteViewModel()
-    @StateObject private var locationManager = LocationManager()
+    let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                SDUIContentView()
-                    .environmentObject(routeViewModel)
-                    .environmentObject(locationManager)
-            }
+            MainDashboardView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

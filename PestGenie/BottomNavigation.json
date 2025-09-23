@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "component": {
+    "type": "vstack",
+    "alignment": "center",
+    "spacing": 0,
+    "children": [
+      {
+        "type": "divider",
+        "foregroundColor": "#E5E5E5"
+      },
+      {
+        "type": "hstack",
+        "alignment": "center",
+        "spacing": 0,
+        "padding": {
+          "top": 8,
+          "bottom": 20,
+          "leading": 16,
+          "trailing": 16
+        },
+        "backgroundColor": "#FFFFFF",
+        "children": [
+          {
+            "type": "button",
+            "action": "navigate_home",
+            "backgroundColor": "{{navigation.home.isSelected ? '#E3F2FD' : 'transparent'}}",
+            "cornerRadius": 12,
+            "padding": {
+              "top": 8,
+              "bottom": 8,
+              "leading": 16,
+              "trailing": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "center",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "house.fill",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "{{navigation.home.isSelected ? '#1976D2' : '#9E9E9E'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Home",
+                    "font": "caption",
+                    "weight": "medium",
+                    "foregroundColor": "{{navigation.home.isSelected ? '#1976D2' : '#9E9E9E'}}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "spacer"
+          },
+          {
+            "type": "button",
+            "action": "navigate_route",
+            "backgroundColor": "{{navigation.route.isSelected ? '#E8F5E8' : 'transparent'}}",
+            "cornerRadius": 12,
+            "padding": {
+              "top": 8,
+              "bottom": 8,
+              "leading": 16,
+              "trailing": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "center",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "map.fill",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "{{navigation.route.isSelected ? '#388E3C' : '#9E9E9E'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Route",
+                    "font": "caption",
+                    "weight": "medium",
+                    "foregroundColor": "{{navigation.route.isSelected ? '#388E3C' : '#9E9E9E'}}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "spacer"
+          },
+          {
+            "type": "button",
+            "action": "navigate_equipment",
+            "backgroundColor": "{{navigation.equipment.isSelected ? '#F3E5F5' : 'transparent'}}",
+            "cornerRadius": 12,
+            "padding": {
+              "top": 8,
+              "bottom": 8,
+              "leading": 16,
+              "trailing": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "center",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "wrench.and.screwdriver.fill",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "{{navigation.equipment.isSelected ? '#7B1FA2' : '#9E9E9E'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Equipment",
+                    "font": "caption",
+                    "weight": "medium",
+                    "foregroundColor": "{{navigation.equipment.isSelected ? '#7B1FA2' : '#9E9E9E'}}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "spacer"
+          },
+          {
+            "type": "button",
+            "action": "navigate_chemicals",
+            "backgroundColor": "{{navigation.chemicals.isSelected ? '#FFF3E0' : 'transparent'}}",
+            "cornerRadius": 12,
+            "padding": {
+              "top": 8,
+              "bottom": 8,
+              "leading": 16,
+              "trailing": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "center",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "testtube.2",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "{{navigation.chemicals.isSelected ? '#F57C00' : '#9E9E9E'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Chemicals",
+                    "font": "caption",
+                    "weight": "medium",
+                    "foregroundColor": "{{navigation.chemicals.isSelected ? '#F57C00' : '#9E9E9E'}}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "spacer"
+          },
+          {
+            "type": "button",
+            "action": "navigate_profile",
+            "backgroundColor": "{{navigation.profile.isSelected ? '#E1F5FE' : 'transparent'}}",
+            "cornerRadius": 12,
+            "padding": {
+              "top": 8,
+              "bottom": 8,
+              "leading": 16,
+              "trailing": 16
+            },
+            "children": [
+              {
+                "type": "vstack",
+                "alignment": "center",
+                "spacing": 4,
+                "children": [
+                  {
+                    "type": "image",
+                    "imageName": "person.fill",
+                    "width": 24,
+                    "height": 24,
+                    "foregroundColor": "{{navigation.profile.isSelected ? '#0277BD' : '#9E9E9E'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Profile",
+                    "font": "caption",
+                    "weight": "medium",
+                    "foregroundColor": "{{navigation.profile.isSelected ? '#0277BD' : '#9E9E9E'}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
