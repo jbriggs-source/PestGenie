@@ -33,7 +33,7 @@ struct SDUIContentView: View {
             }
         }
         // When the connectivity status flips to online, synchronise any queued actions.
-        .onChange(of: routeViewModel.isOnline) { online in
+        .onChange(of: routeViewModel.isOnline) { _, online in
             if online {
                 routeViewModel.syncPendingActions()
             }
@@ -119,15 +119,21 @@ struct SDUIContentView: View {
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 // Initialize maintenance system
-                _ = MaintenanceSchedulingManager.shared
+                await MainActor.run {
+                    _ = MaintenanceSchedulingManager.shared
+                }
             }
             group.addTask {
                 // Initialize calibration system  
-                _ = CalibrationTrackingManager.shared
+                await MainActor.run {
+                    _ = CalibrationTrackingManager.shared
+                }
             }
             group.addTask {
                 // Initialize sync manager
-                _ = SyncManager.shared
+                await MainActor.run {
+                    _ = SyncManager.shared
+                }
             }
         }
     }

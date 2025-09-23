@@ -451,7 +451,15 @@ final class NotificationManager: NSObject, ObservableObject {
     func updateBadgeCount(_ count: Int) {
         badgeCount = count
         DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber = count
+            if #available(iOS 16.0, *) {
+                UNUserNotificationCenter.current().setBadgeCount(count) { error in
+                    if let error = error {
+                        print("Failed to set badge count: \(error)")
+                    }
+                }
+            } else {
+                UIApplication.shared.applicationIconBadgeNumber = count
+            }
         }
     }
 
@@ -719,7 +727,7 @@ final class NotificationManager: NSObject, ObservableObject {
 // MARK: - UNUserNotificationCenterDelegate
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
@@ -730,7 +738,7 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         }
     }
 
-    func userNotificationCenter(
+    nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
@@ -807,7 +815,6 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
 
         // Reschedule notification for 15 minutes later
         if let job = await getJob(withId: jobId) {
-            let newTime = Date().addingTimeInterval(15 * 60)
             await scheduleJobReminder(for: job, minutesBefore: 0)
         }
     }

@@ -40,9 +40,8 @@ final class NetworkMonitor: ObservableObject {
     }
 
     deinit {
-        Task { @MainActor in
-            stopMonitoring()
-        }
+        // Stop monitoring synchronously to avoid capturing self in async context
+        monitor.cancel()
     }
 
     private func startMonitoring() {
