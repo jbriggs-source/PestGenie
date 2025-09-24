@@ -83,7 +83,7 @@ struct MainDashboardView: View {
         .onAppear {
             setupInitialData()
         }
-        .onChange(of: selectedMenuItem) { newItem in
+        .onChange(of: selectedMenuItem) { _, newItem in
             if newItem != nil {
                 // Reset tab selection when showing menu feature
                 selectedTab = .home
@@ -666,7 +666,7 @@ struct MainDashboardView: View {
             }
 
             // Request notification permissions in background
-            await notificationManager.requestPermissions()
+            _ = await notificationManager.requestPermissions()
             notificationManager.setupNotificationCategories()
         }
     }

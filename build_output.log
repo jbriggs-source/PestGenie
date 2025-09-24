@@ -1,0 +1,827 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project PestGenie.xcodeproj -scheme PestGenie -destination "platform=iOS Simulator,name=iPhone 16" -configuration Debug
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:EDB71B9C-4F38-4311-9163-2AE053D32D58, OS:26.0, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:EDB71B9C-4F38-4311-9163-2AE053D32D58, OS:26.0, name:iPhone 16 }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'PestGenie' in project 'PestGenie' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/momc --dry-run --action generate --swift-version 5.0 --sdkroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --iphonesimulator-deployment-target 18.2 --module PestGenie /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDataModel.xcdatamodeld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview Content/Preview Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 883ae3a49a52c50553512665fffb3ed1
+Build description path: /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/XCBuildData/883ae3a49a52c50553512665fffb3ed1.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk /Users/jbriggs/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+
+CreateBuildDirectory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    builtin-create-build-directory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products
+
+CreateBuildDirectory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    builtin-create-build-directory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    builtin-create-build-directory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator
+
+CreateBuildDirectory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    builtin-create-build-directory /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie-811bf41688a6e19e7030a8279d1c83a3-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/jbriggs/StudioProjects/PestGenie/PestGenie.xcodeproj
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie-811bf41688a6e19e7030a8279d1c83a3-VFS-iphonesimulator/all-product-headers.yaml
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/empty-PestGenie.plist (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/empty-PestGenie.plist
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-target-headers.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-own-target-headers.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-project-headers.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-project-headers.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-generated-files.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-generated-files.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyStaticMetadataFileList (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibPath-normal-arm64.txt (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibInstallName-normal-arm64.txt (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibInstallName-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-non-framework-target-headers.hmap (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyMetadataFileList (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_const_extract_protocols.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftConstValuesFileList (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.LinkFileList (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.LinkFileList
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-OutputFileMap.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/Entitlements-Simulated.plist (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    write-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/Entitlements-Simulated.plist
+
+MkDir /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /bin/mkdir -p /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+ValidateDevelopmentAssets /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-validate-development-assets --validate YES_ERROR /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content
+
+ProcessProductPackaging "" /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "W9KVXZ4HY7.Greenix.PestGenie";
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent
+
+ProcessProductPackagingDER /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent.der (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /usr/bin/derq query -f xml -i /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent.der --raw
+
+GenerateAssetSymbols /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content/Preview\ Assets.xcassets (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content/Preview\ Assets.xcassets --compile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_dependencies --output-partial-info-plist /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 18.2 --platform iphonesimulator --bundle-identifier Greenix.PestGenie --generate-swift-asset-symbols /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+DataModelCompile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/ /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDataModel.xcdatamodeld (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/usr/bin/momc --sdkroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --iphonesimulator-deployment-target 18.2 --module PestGenie /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDataModel.xcdatamodeld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/
+PestGenieDataModel.xcdatamodel: note: Model PestGenieDataModel version checksum: pIFw6XxYqmxn7cIZYuEIXtCQyfFC2Dao039VwRDIZ10=
+
+Ld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/__preview.dylib normal (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.2-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -install_name @rpath/PestGenie.debug.dylib -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/__preview.dylib
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/WeatherDashboard.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherDashboard.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherDashboard.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/TechnicianScreen_v5_complete.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v5_complete.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v5_complete.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/TechnicianScreen_v4_comprehensive.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v4_comprehensive.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v4_comprehensive.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/TechnicianScreen_v3b.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v3b.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen_v3b.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/TechnicianScreen.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TechnicianScreen.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/HomeDashboard.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/HomeDashboard.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/HomeDashboard.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+MkDir /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/unthinned (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /bin/mkdir -p /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/unthinned
+
+MkDir /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/thinned (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /bin/mkdir -p /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/thinned
+
+DataModelCodegen /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDataModel.xcdatamodeld (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/usr/bin/momc --action generate --swift-version 5.0 --sdkroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --iphonesimulator-deployment-target 18.2 --module PestGenie /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDataModel.xcdatamodeld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/CriticalWeatherAlert.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CriticalWeatherAlert.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CriticalWeatherAlert.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/CompactWeatherWidget.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CompactWeatherWidget.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CompactWeatherWidget.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CpResource /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/BottomNavigation.json /Users/jbriggs/StudioProjects/PestGenie/PestGenie/BottomNavigation.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/jbriggs/StudioProjects/PestGenie/PestGenie/BottomNavigation.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+CompileAssetCatalogVariant thinned /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content/Preview\ Assets.xcassets (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content/Preview\ Assets.xcassets --compile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --filter-for-thinning-device-configuration iPhone17,3 --filter-for-device-os-version 26.0 --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 18.2 --platform iphonesimulator
+/* com.apple.actool.compilation-results */
+/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist_thinned
+
+
+LinkAssetCatalog /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Assets.xcassets /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Preview\ Content/Preview\ Assets.xcassets (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-linkAssetCatalog --thinned /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/thinned --thinned-dependencies /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist_unthinned --output /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app --plist-output /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist
+
+ProcessInfoPlistFile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Info.plist /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/empty-PestGenie.plist (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-infoPlistUtility /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/empty-PestGenie.plist -producttype com.apple.product-type.application -genpkginfo /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/assetcatalog_generated_info.plist -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Info.plist
+
+SwiftDriver PestGenie normal arm64 com.apple.xcode.tools.swift.compiler (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name PestGenie -Onone -enforce-exclusivity\=checked @/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios18.2-simulator -g -module-cache-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Index.noindex/DataStore -swift-version 5 -I /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64 -c -j14 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-generated-files.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-own-target-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-project-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources-normal/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-Swift.h -working-directory /Users/jbriggs/StudioProjects/PestGenie -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ WeatherAPI.swift,\ AnalyticsDashboardView.swift,\ EnhancedDashboardCards.swift,\ NetworkMonitor.swift,\ SDUIContentView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherAPI.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/AnalyticsDashboardView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/EnhancedDashboardCards.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/NetworkMonitor.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUIContentView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherAPI.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/AnalyticsDashboardView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/EnhancedDashboardCards.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/NetworkMonitor.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUIContentView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ JobStatus.swift,\ BundleOptimizer.swift,\ PestGenieDesignSystem.swift,\ QRCodeScanner.swift,\ SignatureView.swift,\ AppStoreCompliance.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/JobStatus.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/BundleOptimizer.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDesignSystem.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SignatureView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/AppStoreCompliance.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/JobStatus.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/BundleOptimizer.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PestGenieDesignSystem.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift:110:19: warning: main actor-isolated property 'captureSession' can not be referenced from a Sendable closure; this is an error in the Swift 6 language mode
+            self?.captureSession?.startRunning()
+                  ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift:17:17: note: property declared here
+    private var captureSession: AVCaptureSession?
+                ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift:219:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift:219:9: note: set the initial value via the initializer or explicitly define a CodingKeys enum including a 'id' case to silence this warning
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/QRCodeScanner.swift:219:9: note: make the property mutable instead
+    let id = UUID()
+    ~~~ ^
+    var
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SignatureView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/AppStoreCompliance.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/AppStoreCompliance.swift:200:13: warning: 'SKStoreReviewController' was deprecated in iOS 18.0: Use AppStore.requestReview(in:)
+            SKStoreReviewController.requestReview(in: scene)
+            ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/AppStoreCompliance.swift:200:37: warning: 'requestReview(in:)' was deprecated in iOS 18.0: Use AppStore.requestReview(in:)
+            SKStoreReviewController.requestReview(in: scene)
+                                    ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/AppStoreCompliance.swift:395:53: warning: result of call to 'requestDataUsageConsent()' is unused
+                            await complianceManager.requestDataUsageConsent()
+                                                    ^                      ~~
+
+SwiftCompile normal arm64 Compiling\ RouteEntity+CoreDataClass.swift,\ RouteEntity+CoreDataProperties.swift,\ SignatureEntity+CoreDataClass.swift,\ SignatureEntity+CoreDataProperties.swift,\ ChemicalEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/RouteEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/RouteEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/SignatureEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/SignatureEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/RouteEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/RouteEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/SignatureEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/SignatureEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ Models.swift,\ SDUI+Utilities.swift,\ SecurityManager.swift,\ MainDashboardView.swift,\ RouteViewModel.swift,\ WeatherSDUIComponents.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Models.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+Utilities.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/SecurityManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MainDashboardView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/RouteViewModel.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherSDUIComponents.swift (in target 'PestGenie' from project 'PestGenie')
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Models.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+Utilities.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/SecurityManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/SecurityManager.swift:29:15: warning: result of call to 'validateSecurityConfiguration()' is unused
+        await validateSecurityConfiguration()
+              ^                            ~~
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MainDashboardView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/MainDashboardView.swift:86:10: warning: 'onChange(of:perform:)' was deprecated in iOS 17.0: Use `onChange` with a two or zero parameter action closure instead.
+        .onChange(of: selectedMenuItem) { newItem in
+         ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/MainDashboardView.swift:669:39: warning: result of call to 'requestPermissions()' is unused
+            await notificationManager.requestPermissions()
+                                      ^                 ~~
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/RouteViewModel.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherSDUIComponents.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ TopNavigationBar.swift,\ MaintenanceSchedulingSystem.swift,\ SDUI.swift,\ ReasonCode.swift,\ CalibrationTrackingSystem.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TopNavigationBar.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MaintenanceSchedulingSystem.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/ReasonCode.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CalibrationTrackingSystem.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TopNavigationBar.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/TopNavigationBar.swift:498:16: warning: value 'location' was defined but never used; consider replacing with boolean test
+        if let location = locationManager.currentLocation {
+           ~~~~^~~~~~~~~~~
+                                                          != nil
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/TopNavigationBar.swift:506:28: warning: main actor-isolated property 'isSyncing' can not be referenced from a Sendable closure; this is an error in the Swift 6 language mode
+            if syncManager.isSyncing {
+                           ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SyncManager.swift:11:20: note: property declared here
+    @Published var isSyncing = false
+                   ^
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MaintenanceSchedulingSystem.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/ReasonCode.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CalibrationTrackingSystem.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/CalibrationTrackingSystem.swift:577:9: warning: default will never be executed
+        default:
+        ^
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ PestGenie (in target 'PestGenie' from project 'PestGenie')
+
+EmitSwiftModule normal arm64 (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ EquipmentPerformanceEntity+CoreDataProperties.swift,\ EquipmentInspectionPhotoEntity+CoreDataClass.swift,\ EquipmentInspectionPhotoEntity+CoreDataProperties.swift,\ PestGenieDataModel+CoreDataModel.swift,\ GeneratedAssetSymbols.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentPerformanceEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionPhotoEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionPhotoEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PestGenieDataModel+CoreDataModel.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentPerformanceEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionPhotoEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionPhotoEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PestGenieDataModel+CoreDataModel.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ SyncManager.swift,\ WeatherNotificationManager.swift,\ Job.swift,\ PersistenceController.swift,\ SettingsPreferencesView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SyncManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherNotificationManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/Job.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PersistenceController.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SettingsPreferencesView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SyncManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherNotificationManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherNotificationManager.swift:339:19: warning: value 'location' was defined but never used; consider replacing with boolean test
+        guard let location = lastKnownLocation else { return }
+              ~~~~^~~~~~~~~~~
+                                               != nil
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Models/Job/Job.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PersistenceController.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SettingsPreferencesView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ LaunchScreenView.swift,\ ReasonPickerView.swift,\ StartupPerformanceMonitor.swift,\ WeatherDataManager.swift,\ HelpSupportView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/LaunchScreenView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ReasonPickerView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/StartupPerformanceMonitor.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherDataManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/HelpSupportView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/LaunchScreenView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ReasonPickerView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/StartupPerformanceMonitor.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/WeatherDataManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/HelpSupportView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ ChemicalEntity+CoreDataProperties.swift,\ ChemicalTreatmentEntity+CoreDataClass.swift,\ ChemicalTreatmentEntity+CoreDataProperties.swift,\ EquipmentEntity+CoreDataClass.swift,\ EquipmentEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalTreatmentEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalTreatmentEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalTreatmentEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/ChemicalTreatmentEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ JobEntity+CoreDataProperties.swift,\ JobPhotoEntity+CoreDataClass.swift,\ JobPhotoEntity+CoreDataProperties.swift,\ PendingActionEntity+CoreDataClass.swift,\ PendingActionEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobPhotoEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobPhotoEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PendingActionEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PendingActionEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobPhotoEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobPhotoEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PendingActionEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/PendingActionEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ PerformanceManager.swift,\ SDUITechnicianApp.swift,\ TreatmentWeatherValidator.swift,\ DeepLinkManager.swift,\ JobEntity+CoreDataClass.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PerformanceManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUITechnicianApp.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TreatmentWeatherValidator.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/DeepLinkManager.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/PerformanceManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUITechnicianApp.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TreatmentWeatherValidator.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/TreatmentWeatherValidator.swift:317:13: warning: variable 'passed' was never mutated; consider changing to 'let' constant
+        var passed = true
+        ~~~ ^
+        let
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/TreatmentWeatherValidator.swift:396:13: warning: variable 'passed' was never mutated; consider changing to 'let' constant
+        var passed = true
+        ~~~ ^
+        let
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/TreatmentWeatherValidator.swift:436:13: warning: variable 'passed' was never mutated; consider changing to 'let' constant
+        var passed = true
+        ~~~ ^
+        let
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/DeepLinkManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/JobEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ EquipmentPerformanceManager.swift,\ NotificationManager.swift,\ SDUIRenderer.swift,\ TrainingResourcesView.swift,\ CustomerCommunicationView.swift,\ MenuView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/NotificationManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUIRenderer.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TrainingResourcesView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CustomerCommunicationView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MenuView.swift (in target 'PestGenie' from project 'PestGenie')
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:777:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:777:9: note: set the initial value via the initializer or explicitly define a CodingKeys enum including a 'id' case to silence this warning
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:777:9: note: make the property mutable instead
+    let id = UUID()
+    ~~~ ^
+    var
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:833:9: warning: immutable property will not be decoded because it is declared with an initial value which cannot be overwritten
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:833:9: note: set the initial value via the initializer or explicitly define a CodingKeys enum including a 'id' case to silence this warning
+    let id = UUID()
+        ^
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/EquipmentPerformanceManager.swift:833:9: note: make the property mutable instead
+    let id = UUID()
+    ~~~ ^
+    var
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/NotificationManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUIRenderer.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/TrainingResourcesView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/CustomerCommunicationView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/MenuView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ EquipmentInspectionEntity+CoreDataClass.swift,\ EquipmentInspectionEntity+CoreDataProperties.swift,\ EquipmentMaintenanceEntity+CoreDataClass.swift,\ EquipmentMaintenanceEntity+CoreDataProperties.swift,\ EquipmentPerformanceEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentMaintenanceEntity+CoreDataClass.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentMaintenanceEntity+CoreDataProperties.swift /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentPerformanceEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentInspectionEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentMaintenanceEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentMaintenanceEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/CoreDataGenerated/PestGenieDataModel/EquipmentPerformanceEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 Compiling\ SDUI+ComponentRenderers.swift,\ ErrorManager.swift,\ ChemicalNotificationManager.swift,\ LocationManager.swift,\ ReportsDocumentationView.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/ErrorManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/LocationManager.swift /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ReportsDocumentationView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:455:19: warning: immutable value 'chemicalId' was never used; consider replacing with '_' or removing it
+        guard let chemicalId = component.chemicalId,
+              ~~~~^~~~~~~~~~
+              _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:456:19: warning: immutable value 'targetArea' was never used; consider replacing with '_' or removing it
+              let targetArea = component.targetArea else {
+              ~~~~^~~~~~~~~~
+              _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:460:13: warning: initialization of immutable value 'applicationMethod' was never used; consider replacing with assignment to '_' or removing it
+        let applicationMethod = ApplicationMethod(rawValue: component.applicationMethod ?? "spray") ?? .spray
+        ~~~~^~~~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:461:13: warning: initialization of immutable value 'targetPest' was never used; consider replacing with assignment to '_' or removing it
+        let targetPest = component.targetPest ?? "General"
+        ~~~~^~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:462:13: warning: initialization of immutable value 'calculationMode' was never used; consider replacing with assignment to '_' or removing it
+        let calculationMode = component.dosageCalculationMode ?? "automatic"
+        ~~~~^~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:809:13: warning: initialization of immutable value 'template' was never used; consider replacing with assignment to '_' or removing it
+        let template = component.checklistTemplate
+        ~~~~^~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:842:13: warning: initialization of immutable value 'equipmentType' was never used; consider replacing with assignment to '_' or removing it
+        let equipmentType = component.equipmentType
+        ~~~~^~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:843:13: warning: initialization of immutable value 'allowMultiple' was never used; consider replacing with assignment to '_' or removing it
+        let allowMultiple = component.allowMultipleSelection ?? false
+        ~~~~^~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/SDUI+ComponentRenderers.swift:844:13: warning: initialization of immutable value 'showOnlyAvailable' was never used; consider replacing with assignment to '_' or removing it
+        let showOnlyAvailable = component.showOnlyAvailable ?? true
+        ~~~~^~~~~~~~~~~~~~~~~
+        _
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/ErrorManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/Core/Services/ErrorManager.swift:134:17: warning: no calls to throwing functions occur within 'try' expression
+                try? await SyncManager.shared.syncNow()
+                ^
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift:230:13: warning: initialization of immutable value 'chemicalExpirationCategory' was never used; consider replacing with assignment to '_' or removing it
+        let chemicalExpirationCategory = createChemicalExpirationCategory()
+        ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift:231:13: warning: initialization of immutable value 'chemicalLowStockCategory' was never used; consider replacing with assignment to '_' or removing it
+        let chemicalLowStockCategory = createChemicalLowStockCategory()
+        ~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift:232:13: warning: initialization of immutable value 'chemicalSafetyCategory' was never used; consider replacing with assignment to '_' or removing it
+        let chemicalSafetyCategory = createChemicalSafetyCategory()
+        ~~~~^~~~~~~~~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift:233:13: warning: initialization of immutable value 'epaComplianceCategory' was never used; consider replacing with assignment to '_' or removing it
+        let epaComplianceCategory = createEPAComplianceCategory()
+        ~~~~^~~~~~~~~~~~~~~~~~~~~
+        _
+/Users/jbriggs/StudioProjects/PestGenie/PestGenie/ChemicalNotificationManager.swift:236:13: warning: initialization of immutable value 'existingCategories' was never used; consider replacing with assignment to '_' or removing it
+        let existingCategories = UNUserNotificationCenter.current()
+        ~~~~^~~~~~~~~~~~~~~~~~
+        _
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/LocationManager.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftCompile normal arm64 /Users/jbriggs/StudioProjects/PestGenie/PestGenie/ReportsDocumentationView.swift (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RouteEntity+CoreDataClass.swift, RouteEntity+CoreDataProperties.swift, SignatureEntity+CoreDataClass.swift, SignatureEntity+CoreDataProperties.swift, ChemicalEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling JobEntity+CoreDataProperties.swift, JobPhotoEntity+CoreDataClass.swift, JobPhotoEntity+CoreDataProperties.swift, PendingActionEntity+CoreDataClass.swift, PendingActionEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EquipmentInspectionEntity+CoreDataClass.swift, EquipmentInspectionEntity+CoreDataProperties.swift, EquipmentMaintenanceEntity+CoreDataClass.swift, EquipmentMaintenanceEntity+CoreDataProperties.swift, EquipmentPerformanceEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ChemicalEntity+CoreDataProperties.swift, ChemicalTreatmentEntity+CoreDataClass.swift, ChemicalTreatmentEntity+CoreDataProperties.swift, EquipmentEntity+CoreDataClass.swift, EquipmentEntity+CoreDataProperties.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EquipmentPerformanceEntity+CoreDataProperties.swift, EquipmentInspectionPhotoEntity+CoreDataClass.swift, EquipmentInspectionPhotoEntity+CoreDataProperties.swift, PestGenieDataModel+CoreDataModel.swift, GeneratedAssetSymbols.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PerformanceManager.swift, SDUITechnicianApp.swift, TreatmentWeatherValidator.swift, DeepLinkManager.swift, JobEntity+CoreDataClass.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for PestGenie (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriver\ Compilation\ Requirements PestGenie normal arm64 com.apple.xcode.tools.swift.compiler (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name PestGenie -Onone -enforce-exclusivity\=checked @/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios18.2-simulator -g -module-cache-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Index.noindex/DataStore -swift-version 5 -I /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64 -c -j14 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-generated-files.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-own-target-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-project-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources-normal/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-Swift.h -working-directory /Users/jbriggs/StudioProjects/PestGenie -experimental-emit-module-separately -disable-cmo
+
+SwiftMergeGeneratedHeaders /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/PestGenie-Swift.h /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-Swift.h (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-swiftHeaderTool -arch arm64 /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-Swift.h -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/PestGenie-Swift.h
+
+Copy /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftdoc (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftdoc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.abi.json (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.abi.json /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftsourceinfo (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftsourceinfo /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling JobStatus.swift, BundleOptimizer.swift, PestGenieDesignSystem.swift, QRCodeScanner.swift, SignatureView.swift, AppStoreCompliance.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling LaunchScreenView.swift, ReasonPickerView.swift, StartupPerformanceMonitor.swift, WeatherDataManager.swift, HelpSupportView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling WeatherAPI.swift, AnalyticsDashboardView.swift, EnhancedDashboardCards.swift, NetworkMonitor.swift, SDUIContentView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TopNavigationBar.swift, MaintenanceSchedulingSystem.swift, SDUI.swift, ReasonCode.swift, CalibrationTrackingSystem.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling SDUI+ComponentRenderers.swift, ErrorManager.swift, ChemicalNotificationManager.swift, LocationManager.swift, ReportsDocumentationView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling SyncManager.swift, WeatherNotificationManager.swift, Job.swift, PersistenceController.swift, SettingsPreferencesView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling Models.swift, SDUI+Utilities.swift, SecurityManager.swift, MainDashboardView.swift, RouteViewModel.swift, WeatherSDUIComponents.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EquipmentPerformanceManager.swift, NotificationManager.swift, SDUIRenderer.swift, TrainingResourcesView.swift, CustomerCommunicationView.swift, MenuView.swift (in target 'PestGenie' from project 'PestGenie')
+
+SwiftDriver\ Compilation PestGenie normal arm64 com.apple.xcode.tools.swift.compiler (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name PestGenie -Onone -enforce-exclusivity\=checked @/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios18.2-simulator -g -module-cache-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Index.noindex/DataStore -swift-version 5 -I /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64 -c -j14 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-generated-files.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-own-target-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-project-headers.hmap -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources-normal/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources/arm64 -Xcc -I/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie-Swift.h -working-directory /Users/jbriggs/StudioProjects/PestGenie -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib normal (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.2-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -filelist /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.LinkFileList -install_name @rpath/PestGenie.debug.dylib -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-ExecutorLinkFileList-normal-arm64.txt (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    construct-stub-executor-link-file-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'PestGenie' from project 'PestGenie')
+
+Ld /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie normal (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.2-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -F/Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.app-Simulated.xcent.der /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie
+
+CopySwiftLibs /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib --scan-folder /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Frameworks --scan-folder /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PlugIns --scan-folder /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/SystemExtensions --scan-folder /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name PestGenie --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 18.2 --bundle-identifier Greenix.PestGenie --output /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app --target-triple arm64-apple-ios18.2-simulator --binary-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie --dependency-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie_dependency_info.dat --stringsdata-file /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftFileList --metadata-file-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyMetadataFileList --static-metadata-file-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyStaticMetadataFileList --swift-const-vals-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/Objects-normal/arm64/PestGenie.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2025-09-24 07:32:15.859 appintentsmetadataprocessor[41271:20735606] Starting appintentsmetadataprocessor export
+2025-09-24 07:32:15.861 appintentsmetadataprocessor[41271:20735606] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+AppIntentsSSUTraining (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Info.plist --temp-dir-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/ssu --bundle-id Greenix.PestGenie --product-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app --extracted-metadata-path /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/Metadata.appintents --metadata-file-list /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Intermediates.noindex/PestGenie.build/Debug-iphonesimulator/PestGenie.build/PestGenie.DependencyMetadataFileList --archive-ssu-assets
+2025-09-24 07:32:15.889 appintentsnltrainingprocessor[41272:20735607] Parsing options for appintentsnltrainingprocessor
+2025-09-24 07:32:15.890 appintentsnltrainingprocessor[41272:20735607] No AppShortcuts found - Skipping.
+
+CodeSign /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/PestGenie.debug.dylib
+
+CodeSign /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/__preview.dylib (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app/__preview.dylib
+
+CodeSign /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+RegisterExecutionPolicyException /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-RegisterExecutionPolicyException /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+Validate /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    builtin-validationUtility /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app -infoplist-subpath Info.plist
+
+Touch /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app (in target 'PestGenie' from project 'PestGenie')
+    cd /Users/jbriggs/StudioProjects/PestGenie
+    /usr/bin/touch -c /Users/jbriggs/Library/Developer/Xcode/DerivedData/PestGenie-dymsoiqhwtsdevbmolvmtdutlauz/Build/Products/Debug-iphonesimulator/PestGenie.app
+
+** BUILD SUCCEEDED **
+

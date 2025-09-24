@@ -452,14 +452,14 @@ struct SDUIChemicalRenderer: SDUIComponentRenderer {
     // MARK: - Dosage Calculator Component
 
     private static func renderDosageCalculator(component: SDUIComponent, context: SDUIContext) -> AnyView {
-        guard let chemicalId = component.chemicalId,
-              let targetArea = component.targetArea else {
+        guard let _ = component.chemicalId,
+              let _ = component.targetArea else {
             return AnyView(Text("Missing required parameters for dosage calculation").foregroundColor(.red))
         }
 
-        let applicationMethod = ApplicationMethod(rawValue: component.applicationMethod ?? "spray") ?? .spray
-        let targetPest = component.targetPest ?? "General"
-        let calculationMode = component.dosageCalculationMode ?? "automatic"
+        _ = ApplicationMethod(rawValue: component.applicationMethod ?? "spray") ?? .spray
+        _ = component.targetPest ?? "General"
+        _ = component.dosageCalculationMode ?? "automatic"
 
         let calculatorView = AnyView(
             VStack(alignment: .leading, spacing: 12) {

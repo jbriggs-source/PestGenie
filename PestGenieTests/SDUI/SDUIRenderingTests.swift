@@ -10,6 +10,12 @@ final class SDUIRenderingTests: PestGenieTestCase {
     override func setUp() {
         super.setUp()
         sduiRenderer = SDUIScreenRenderer()
+
+        // Write test SDUI screen to test bundle
+        let testScreenJSON = createTestDashboardScreenJSON()
+        if let testBundle = Bundle(for: type(of: self)).bundleURL.appendingPathComponent("test_dashboard_screen.json") {
+            try? testScreenJSON.write(to: testBundle, atomically: true, encoding: .utf8)
+        }
     }
 
     override func tearDown() {
@@ -579,17 +585,4 @@ extension SDUIRenderingTests {
         """
     }
 
-    override func setUp() {
-        super.setUp()
-
-        // Write test SDUI screen to test bundle
-        let testScreenJSON = createTestDashboardScreenJSON()
-        if let testBundle = Bundle(for: type(of: self)).bundleURL.appendingPathComponent("test_dashboard_screen.json") {
-            do {
-                try testScreenJSON.write(to: testBundle, atomically: true, encoding: .utf8)
-            } catch {
-                print("Warning: Could not write test SDUI screen: \(error)")
-            }
-        }
-    }
 }

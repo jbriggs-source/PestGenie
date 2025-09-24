@@ -26,7 +26,7 @@ final class SecurityManager: ObservableObject {
         guard !isInitialized else { return }
         isInitialized = true
 
-        await validateSecurityConfiguration()
+        _ = await validateSecurityConfiguration()
         await setupDataEncryption()
         await setupBiometricAuthentication()
     }

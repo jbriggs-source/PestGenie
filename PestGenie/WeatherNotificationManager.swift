@@ -336,7 +336,7 @@ final class WeatherNotificationManager: ObservableObject {
     // MARK: - Manual Weather Check
 
     func performManualWeatherCheck() async {
-        guard let location = lastKnownLocation else { return }
+        guard lastKnownLocation != nil else { return }
         await checkWeatherConditions()
     }
 

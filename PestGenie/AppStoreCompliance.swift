@@ -197,7 +197,13 @@ final class AppStoreComplianceManager: ObservableObject {
 
     private func requestReview() {
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-            SKStoreReviewController.requestReview(in: scene)
+            // Note: SKStoreReviewController is deprecated in iOS 18.0 in favor of AppStore.requestReview(in:)
+            // However, AppStore framework is not available in this configuration
+            if #available(iOS 14.0, *) {
+                SKStoreReviewController.requestReview(in: scene)
+            } else {
+                SKStoreReviewController.requestReview()
+            }
 
             UserDefaults.standard.set(Date(), forKey: "lastReviewPrompt")
             UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "reviewPromptCount") + 1, forKey: "reviewPromptCount")
@@ -392,7 +398,7 @@ struct PrivacyConsentView: View {
 
                     Button("Accept and Continue") {
                         Task {
-                            await complianceManager.requestDataUsageConsent()
+                            _ = await complianceManager.requestDataUsageConsent()
                             dismiss()
                         }
                     }

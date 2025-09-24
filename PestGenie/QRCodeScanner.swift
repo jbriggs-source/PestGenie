@@ -106,8 +106,10 @@ final class QRCodeScannerManager: NSObject, ObservableObject {
             return
         }
 
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            self?.captureSession?.startRunning()
+        Task.detached {
+            await MainActor.run {
+                self.captureSession?.startRunning()
+            }
         }
     }
 

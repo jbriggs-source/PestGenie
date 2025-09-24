@@ -314,7 +314,7 @@ final class TreatmentWeatherValidator: ObservableObject {
         var severity = ValidationSeverity.info
         var riskLevel = RiskLevel.low
         var message = "Humidity levels are acceptable"
-        var passed = true
+        let passed = true
 
         if humidity > 85 {
             severity = .warning
@@ -393,7 +393,7 @@ final class TreatmentWeatherValidator: ObservableObject {
         var severity = ValidationSeverity.info
         var riskLevel = RiskLevel.low
         var message = "UV conditions are safe"
-        var passed = true
+        let passed = true
 
         if uvIndex > 8 {
             severity = .warning
@@ -433,7 +433,7 @@ final class TreatmentWeatherValidator: ObservableObject {
         var severity = ValidationSeverity.info
         var riskLevel = RiskLevel.low
         var message = "Treatment timing is appropriate"
-        var passed = true
+        let passed = true
 
         // Check for optimal application times
         if hour >= 10 && hour <= 14 && weather.temperature > 80 {

@@ -31,7 +31,7 @@ struct TopNavigationBar: View {
                 // User greeting and route info
                 userInfoSection
 
-                Spacer(minLength: 8) // Ensure minimum spacing
+                Spacer(minLength: 4) // More compact spacing
 
                 // Status indicators
                 statusIndicatorsSection
@@ -146,7 +146,7 @@ struct TopNavigationBar: View {
         .accessibilityHint("Tap to view detailed weather information")
     }
 
-    // MARK: - Sync Status Indicator
+    // MARK: - Sync Status Indicator (Simplified)
 
     private var syncStatusIndicator: some View {
         Button(action: {
@@ -154,69 +154,55 @@ struct TopNavigationBar: View {
                 await syncManager.syncNow()
             }
         }) {
-            HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
-                ZStack {
+            ZStack {
+                // Simple status dot
+                Circle()
+                    .fill(syncStatusColor)
+                    .frame(width: 8, height: 8)
+
+                if syncManager.isSyncing {
                     Circle()
-                        .pestGenieStatusIndicator(color: syncStatusColor)
-
-                    if syncManager.isSyncing {
-                        Circle()
-                            .stroke(PestGenieDesignSystem.Colors.accent, lineWidth: 2)
-                            .frame(width: 16, height: 16)
-                            .rotationEffect(.degrees(syncRotation))
-                            .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: syncRotation)
-                    }
-                }
-
-                if !syncManager.syncErrors.isEmpty {
-                    Text("\(syncManager.syncErrors.count)")
-                        .font(PestGenieDesignSystem.Typography.captionEmphasis)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .stroke(syncStatusColor, lineWidth: 1.5)
+                        .frame(width: 14, height: 14)
+                        .rotationEffect(.degrees(syncRotation))
+                        .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: syncRotation)
                 }
             }
-            .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.xxs)
-            .frame(height: 32) // Standard navigation button height
-            .background(
-                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
-                    .fill(PestGenieDesignSystem.Colors.surface)
-            )
+            .frame(width: 28, height: 28)
         }
         .buttonStyle(PlainButtonStyle())
         .accessibilityLabel("Sync status: \(syncAccessibilityLabel)")
         .accessibilityHint("Tap to sync data")
     }
 
-    // MARK: - Notification Indicator
+    // MARK: - Notification Indicator (Primary)
 
     private var notificationIndicator: some View {
         Button(action: {
             showingNotifications = true
         }) {
             ZStack {
-                Image(systemName: "bell")
-                    .font(.system(size: PestGenieDesignSystem.Components.Navigation.iconSize - 4))
-                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Image(systemName: notificationManager.unreadCount > 0 ? "bell.badge" : "bell")
+                    .font(.system(size: PestGenieDesignSystem.Components.Navigation.iconSize - 2))
+                    .foregroundColor(notificationManager.unreadCount > 0 ? PestGenieDesignSystem.Colors.accent : PestGenieDesignSystem.Colors.textSecondary)
 
                 if notificationManager.unreadCount > 0 {
                     ZStack {
                         Circle()
                             .fill(PestGenieDesignSystem.Colors.error)
-                            .frame(width: PestGenieDesignSystem.Components.Navigation.badgeSize, height: PestGenieDesignSystem.Components.Navigation.badgeSize)
+                            .frame(width: 16, height: 16)
 
-                        Text("\(min(notificationManager.unreadCount, 99))")
+                        Text("\(min(notificationManager.unreadCount, 9))")
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.white)
                     }
-                    .offset(x: 8, y: -8)
+                    .offset(x: 10, y: -8)
                 }
             }
-            .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.xxs)
-            .frame(height: 32) // Standard navigation button height
+            .frame(width: 36, height: 36)
             .background(
                 RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
-                    .fill(PestGenieDesignSystem.Colors.surface)
+                    .fill(PestGenieDesignSystem.Colors.surface.opacity(0.8))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -302,76 +288,6 @@ struct TopNavigationBar: View {
 
     // MARK: - Sheet Views
 
-    private var emergencyOptionsSheet: some View {
-        NavigationView {
-            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
-                // Emergency header
-                VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 48))
-                        .foregroundColor(PestGenieDesignSystem.Colors.emergency)
-
-                    Text("Emergency Contacts")
-                        .font(PestGenieDesignSystem.Typography.headlineLarge)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-
-                    Text("Choose an emergency contact option")
-                        .font(PestGenieDesignSystem.Typography.bodyMedium)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, PestGenieDesignSystem.Spacing.xl)
-
-                // Emergency options
-                VStack(spacing: PestGenieDesignSystem.Spacing.md) {
-                    emergencyContactButton(
-                        title: "911 Emergency",
-                        subtitle: "Fire, Medical, Police",
-                        icon: "phone.badge.plus",
-                        color: PestGenieDesignSystem.Colors.emergency,
-                        phoneNumber: "911"
-                    )
-
-                    emergencyContactButton(
-                        title: "Supervisor",
-                        subtitle: "John Smith • Direct Line",
-                        icon: "person.badge.shield.checkmark",
-                        color: PestGenieDesignSystem.Colors.primary,
-                        phoneNumber: "+1-555-0123"
-                    )
-
-                    emergencyContactButton(
-                        title: "Company Dispatch",
-                        subtitle: "24/7 Support Center",
-                        icon: "building.2",
-                        color: PestGenieDesignSystem.Colors.accent,
-                        phoneNumber: "+1-555-0456"
-                    )
-
-                    emergencyContactButton(
-                        title: "Safety Hotline",
-                        subtitle: "Chemical & Equipment Issues",
-                        icon: "shield.checkered",
-                        color: PestGenieDesignSystem.Colors.warning,
-                        phoneNumber: "+1-555-0789"
-                    )
-                }
-                .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
-
-                Spacer()
-            }
-            .navigationTitle("Emergency")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        showingEmergencyOptions = false
-                    }
-                }
-            }
-        }
-    }
-
     private var weatherDetailsSheet: some View {
         NavigationView {
             ScrollView {
@@ -421,43 +337,6 @@ struct TopNavigationBar: View {
     }
 
     // MARK: - Helper Views
-
-    private func emergencyContactButton(
-        title: String,
-        subtitle: String,
-        icon: String,
-        color: Color,
-        phoneNumber: String
-    ) -> some View {
-        Button(action: {
-            makeEmergencyCall(to: phoneNumber)
-        }) {
-            HStack(spacing: PestGenieDesignSystem.Spacing.md) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundColor(color)
-                    .frame(width: 32)
-
-                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxxs) {
-                    Text(title)
-                        .font(PestGenieDesignSystem.Typography.titleMedium)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-
-                    Text(subtitle)
-                        .font(PestGenieDesignSystem.Typography.bodySmall)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14))
-                    .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
-            }
-            .padding(PestGenieDesignSystem.Spacing.md)
-        }
-        .pestGenieCard()
-    }
 
     private var currentWeatherCard: some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
@@ -616,7 +495,7 @@ struct TopNavigationBar: View {
     // MARK: - Helper Methods
 
     private func setupWeatherUpdates() {
-        if let location = locationManager.currentLocation {
+        if locationManager.currentLocation != nil {
             Task {
                 // Weather fetch would be implemented here
             }
@@ -624,26 +503,16 @@ struct TopNavigationBar: View {
 
         // Update sync rotation animation
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            if syncManager.isSyncing {
-                withAnimation(.linear(duration: 1)) {
-                    syncRotation += 36 // 360 degrees over 1 second
+            Task { @MainActor in
+                if syncManager.isSyncing {
+                    withAnimation(.linear(duration: 1)) {
+                        syncRotation += 36 // 360 degrees over 1 second
+                    }
                 }
             }
         }
     }
 
-    private func makeEmergencyCall(to phoneNumber: String) {
-        showingEmergencyOptions = false
-
-        // In a real app, this would initiate a phone call
-        if let url = URL(string: "tel:\(phoneNumber)") {
-            #if canImport(UIKit)
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
-            #endif
-        }
-    }
 
     private func alertSeverityColor(_ severity: String) -> Color {
         switch severity.lowercased() {

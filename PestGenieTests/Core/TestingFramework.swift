@@ -1,5 +1,6 @@
 import XCTest
 import CoreData
+import CoreLocation
 @testable import PestGenie
 
 /// Comprehensive testing framework for PestGenie application
@@ -127,7 +128,7 @@ class PestGenieTestCase: XCTestCase {
 
     func createTestEquipment(
         name: String = "Test Sprayer",
-        type: EquipmentType = .sprayer
+        type: EquipmentType = .backpackSprayer
     ) -> Equipment {
         return Equipment(
             id: UUID(),
