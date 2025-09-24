@@ -104,25 +104,21 @@ class PestGenieTestCase: XCTestCase {
         return Chemical(
             id: UUID(),
             name: name,
-            epaNumber: "EPA-123-456",
             activeIngredient: "Test Ingredient",
+            manufacturerName: "Test Manufacturer",
+            epaRegistrationNumber: "EPA-123-456",
             concentration: 25.0,
-            signalWord: signalWord,
-            hazardCategories: [.skin],
-            applicationMethods: [.spray],
-            targetPests: ["Test Pest"],
-            dilutionRatio: "1:100",
-            reentryInterval: 4,
-            phiDays: 7,
-            storageInstructions: "Store in cool, dry place",
-            firstAidInstructions: "Seek medical attention if exposed",
-            isRestricted: false,
-            requiresCertification: false,
-            currentStock: 10,
-            minimumStock: 5,
+            unitOfMeasure: "gallons",
+            quantityInStock: 10.0,
             expirationDate: Calendar.current.date(byAdding: .year, value: 1, to: Date())!,
-            lastInventoryCheck: Date(),
-            notes: "Test chemical notes"
+            batchNumber: "BATCH123",
+            targetPests: ["Test Pest"],
+            signalWord: signalWord,
+            hazardCategory: .category3,
+            pphiDays: 7,
+            reentryInterval: 4,
+            siteOfAction: "Test site of action",
+            storageRequirements: "Store in cool, dry place"
         )
     }
 
@@ -130,31 +126,23 @@ class PestGenieTestCase: XCTestCase {
         name: String = "Test Sprayer",
         type: EquipmentType = .backpackSprayer
     ) -> Equipment {
+        var specs = EquipmentSpecifications()
+        specs.tankCapacity = 5.0
+        specs.weight = 50.0
+        specs.powerSource = "Electric"
+        specs.flowRate = 2.0
+        specs.warrantyPeriod = "2 years"
+
         return Equipment(
             id: UUID(),
             name: name,
-            type: type,
-            category: .treatmentApplication,
+            brand: "Test Brand",
             model: "Test Model",
             serialNumber: "TEST123",
-            status: .available,
-            specifications: EquipmentSpecifications(
-                manufacturer: "Test Manufacturer",
-                modelYear: 2023,
-                capacity: "5 gallons",
-                weight: "50 lbs",
-                powerSource: "Electric",
-                operatingPressure: "40-60 PSI",
-                flowRate: "2 GPM",
-                specialFeatures: ["Test Feature"]
-            ),
-            location: "Test Location",
-            assignedTechnician: nil,
-            lastMaintenanceDate: Date(),
-            nextMaintenanceDate: Calendar.current.date(byAdding: .month, value: 3, to: Date())!,
+            type: type,
+            category: .sprayEquipment,
             purchaseDate: Calendar.current.date(byAdding: .year, value: -1, to: Date())!,
-            warrantyExpiration: Calendar.current.date(byAdding: .year, value: 2, to: Date())!,
-            notes: "Test equipment notes"
+            specifications: specs
         )
     }
 
@@ -183,7 +171,7 @@ class PestGenieTestCase: XCTestCase {
     func measureAsyncPerformance<T>(
         name: String,
         iterations: Int = 1,
-        operation: () async throws -> T
+        operation: @escaping () async throws -> T
     ) async throws -> T {
         var result: T!
 
@@ -226,11 +214,17 @@ class PestGenieTestCase: XCTestCase {
     }
 
     func createTestSDUIContext() -> SDUIContext {
+        let mockJobs = [createTestJob()]
+        let mockViewModel = RouteViewModel()
+        let mockActions: [String: (Job?) -> Void] = [:]
+        let mockPersistence = PersistenceController.shared
+
         return SDUIContext(
-            environmentVariables: ["test": "true"],
-            userPermissions: ["basic_access"],
-            deviceCapabilities: ["camera", "location"],
-            connectivityStatus: .connected
+            jobs: mockJobs,
+            routeViewModel: mockViewModel,
+            actions: mockActions,
+            currentJob: nil,
+            persistenceController: mockPersistence
         )
     }
 
