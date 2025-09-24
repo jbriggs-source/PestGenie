@@ -655,11 +655,17 @@ struct MainDashboardView: View {
     }
 
     private func setupInitialData() {
-        // Initialize any required data
-        routeViewModel.loadTodaysRoute()
-
-        // Request notification permissions
+        // Defer non-critical operations for better startup performance
         Task {
+            // Small delay to let UI render first
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+
+            // Load route data after initial render
+            await MainActor.run {
+                routeViewModel.loadTodaysRoute()
+            }
+
+            // Request notification permissions in background
             await notificationManager.requestPermissions()
             notificationManager.setupNotificationCategories()
         }

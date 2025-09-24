@@ -10,7 +10,6 @@ struct TopNavigationBar: View {
     @StateObject private var weatherManager = WeatherDataManager.shared
     @StateObject private var syncManager = SyncManager.shared
 
-    @State private var showingEmergencyOptions = false
     @State private var showingWeatherDetails = false
     @State private var showingNotifications = false
     @Binding var showingMenu: Bool
@@ -36,9 +35,6 @@ struct TopNavigationBar: View {
 
                 // Status indicators
                 statusIndicatorsSection
-
-                // Emergency button
-                emergencyButton
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
             .frame(height: PestGenieDesignSystem.Components.Navigation.height)
@@ -48,9 +44,6 @@ struct TopNavigationBar: View {
             Rectangle()
                 .fill(PestGenieDesignSystem.Colors.border)
                 .frame(height: PestGenieDesignSystem.Components.Navigation.borderWidth)
-        }
-        .sheet(isPresented: $showingEmergencyOptions) {
-            emergencyOptionsSheet
         }
         .sheet(isPresented: $showingWeatherDetails) {
             weatherDetailsSheet
@@ -94,8 +87,7 @@ struct TopNavigationBar: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8) // Allow text to scale down if needed
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .minimumScaleFactor(0.85) // Allow text to scale down slightly if needed
 
             // Route info
             HStack(spacing: PestGenieDesignSystem.Spacing.xxxs) {
@@ -115,14 +107,11 @@ struct TopNavigationBar: View {
     // MARK: - Status Indicators Section
 
     private var statusIndicatorsSection: some View {
-        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-            // Weather status
-            weatherStatusIndicator
-
-            // Sync status
+        HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+            // Sync status (simplified)
             syncStatusIndicator
 
-            // Notifications
+            // Notifications (primary action)
             notificationIndicator
         }
     }
@@ -235,32 +224,6 @@ struct TopNavigationBar: View {
         .accessibilityHint("Tap to view notifications")
     }
 
-    // MARK: - Emergency Button
-
-    private var emergencyButton: some View {
-        Button(action: {
-            showingEmergencyOptions = true
-        }) {
-            HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
-                Image(systemName: "phone.fill")
-                    .font(.system(size: 12, weight: .bold))
-
-                Text("SOS")
-                    .font(.system(size: 11, weight: .bold))
-            }
-            .foregroundColor(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
-                    .fill(PestGenieDesignSystem.Colors.emergency)
-            )
-            .frame(height: 32) // Match other navigation button heights
-        }
-        .buttonStyle(PlainButtonStyle())
-        .accessibilityLabel("Emergency contact")
-        .accessibilityHint("Tap to access emergency options")
-    }
 
     // MARK: - Computed Properties
 

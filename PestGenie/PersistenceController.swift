@@ -28,6 +28,9 @@ final class PersistenceController: ObservableObject {
 
     let container: NSPersistentContainer
 
+    private var isStoreLoaded = false
+    private let loadingQueue = DispatchQueue(label: "com.pestgenie.persistence", qos: .background)
+
     /// Initializes persistence controller with optional in-memory store
     /// - Parameter inMemory: If true, uses in-memory store for testing
     init(inMemory: Bool = false) {
@@ -40,10 +43,14 @@ final class PersistenceController: ObservableObject {
             configureCloudKitStore()
         }
 
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                // In production, handle this error appropriately
-                print("Core Data error: \(error), \(error.userInfo)")
+        // Load stores asynchronously in background
+        loadingQueue.async { [weak self] in
+            self?.container.loadPersistentStores { storeDescription, error in
+                if let error = error as NSError? {
+                    // In production, handle this error appropriately
+                    print("Core Data error: \(error), \(error.userInfo)")
+                }
+                self?.isStoreLoaded = true
             }
         }
 

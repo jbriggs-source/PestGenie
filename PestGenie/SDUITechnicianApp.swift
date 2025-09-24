@@ -6,12 +6,9 @@ import SwiftUI
 /// files while maintaining domain data through view models.
 @main
 struct SDUITechnicianApp: App {
-    let persistenceController = PersistenceController.shared
-
     var body: some Scene {
         WindowGroup {
-            MainDashboardView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            AppRootView()
         }
     }
 }
