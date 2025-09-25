@@ -14,6 +14,9 @@ struct MainDashboardView: View {
 
     @State private var selectedTab: NavigationTab = .home
     @State private var showingRouteView = false
+    @State private var showingRouteStartView = false
+    @State private var showingDemoPanel = false
+    @State private var showingEmergencyAlert = false
     @State private var showingEquipmentView = false
     @State private var showingChemicalView = false
     @State private var showingProfileView = false
@@ -182,6 +185,32 @@ struct MainDashboardView: View {
         .sheet(isPresented: $showingSDUIDemoSheet) {
             sduiDemoSheet
         }
+        .sheet(isPresented: $showingRouteStartView) {
+            RouteStartView(routeViewModel: routeViewModel)
+        }
+        .sheet(isPresented: $showingDemoPanel) {
+            NavigationView {
+                ScrollView {
+                    DemoControlPanel(routeViewModel: routeViewModel)
+                        .padding()
+                }
+                .navigationTitle("Demo Controls")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            showingDemoPanel = false
+                        }
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showingEmergencyAlert) {
+            EmergencyAlertView(
+                routeViewModel: routeViewModel,
+                emergency: .beeSwarm
+            )
+        }
     }
 
     // MARK: - Menu Feature View
@@ -221,6 +250,10 @@ struct MainDashboardView: View {
             case .helpSupport:
                 menuFeatureWrapper {
                     HelpSupportView()
+                }
+            case .demoControls:
+                menuFeatureWrapper {
+                    DemoControlPanel(routeViewModel: routeViewModel)
                 }
             case .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
                 placeholderFeatureView(for: menuItem)
@@ -382,6 +415,16 @@ struct MainDashboardView: View {
                 .progressViewStyle(LinearProgressViewStyle(tint: PestGenieDesignSystem.Colors.success))
                 .background(PestGenieDesignSystem.Colors.surfaceSecondary)
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+
+            // Emergency Alert (shown when there's an active emergency)
+            if routeViewModel.hasActiveEmergency {
+                emergencyAlertBanner
+            }
+
+            // Live Route Metrics (shown when route is active)
+            if routeViewModel.isRouteStarted {
+                liveRouteMetricsView
+            }
         }
         .pestGenieCard()
         .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -411,8 +454,16 @@ struct MainDashboardView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: PestGenieDesignSystem.Spacing.xs) {
-                actionButton(title: "Start Route", icon: "play.circle.fill", color: PestGenieDesignSystem.Colors.success) {
-                    selectedTab = .route
+                actionButton(
+                    title: routeViewModel.isRouteStarted ? "Route Active" : "Start Route",
+                    icon: routeViewModel.isRouteStarted ? "location.circle.fill" : "play.circle.fill",
+                    color: routeViewModel.isRouteStarted ? PestGenieDesignSystem.Colors.primary : PestGenieDesignSystem.Colors.success
+                ) {
+                    if routeViewModel.isRouteStarted {
+                        selectedTab = .route
+                    } else {
+                        showingRouteStartView = true
+                    }
                 }
                 actionButton(title: "Equipment", icon: "wrench.and.screwdriver.fill", color: PestGenieDesignSystem.Colors.accent) {
                     selectedTab = .equipment
@@ -495,6 +546,595 @@ struct MainDashboardView: View {
         .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
     }
 
+    private var liveRouteMetricsView: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                Image(systemName: "location.circle.fill")
+                    .foregroundColor(.green)
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                Text("Live Route Metrics")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Spacer()
+                if routeViewModel.demoMode {
+                    Button("Demo") {
+                        showingDemoPanel = true
+                    }
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.blue.opacity(0.2))
+                    .foregroundColor(.blue)
+                    .cornerRadius(6)
+                }
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.sm) {
+                liveMetricItem(
+                    title: "Current Speed",
+                    value: "\(Int(routeViewModel.currentSpeed)) mph",
+                    icon: "speedometer",
+                    color: .blue
+                )
+
+                liveMetricItem(
+                    title: "Distance Today",
+                    value: String(format: "%.1f mi", routeViewModel.totalDistanceTraveled),
+                    icon: "location.north.line",
+                    color: .green
+                )
+
+                liveMetricItem(
+                    title: "Route Duration",
+                    value: formatRouteDuration(),
+                    icon: "clock.circle",
+                    color: .orange
+                )
+
+                liveMetricItem(
+                    title: "Next Job ETA",
+                    value: formatTimeInterval(routeViewModel.estimatedTimeToNextJob),
+                    icon: "clock.arrow.circlepath",
+                    color: .purple
+                )
+            }
+
+            // Weather Banner
+            HStack {
+                Image(systemName: "cloud.sun.fill")
+                    .foregroundColor(.cyan)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Current Conditions")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(routeViewModel.weatherConditions)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                }
+                Spacer()
+            }
+            .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+            .background(Color.cyan.opacity(0.1))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        }
+        .pestGenieCard()
+        .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+    }
+
+    private func liveMetricItem(title: String, value: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.title3)
+                Spacer()
+            }
+
+            Text(value)
+                .font(PestGenieDesignSystem.Typography.headlineMedium)
+                .fontWeight(.bold)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+            Text(title)
+                .font(.caption)
+                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(PestGenieDesignSystem.Colors.surface)
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+    }
+
+    private func formatRouteDuration() -> String {
+        guard let startTime = routeViewModel.routeStartTime else { return "0h 0m" }
+        let duration = Date().timeIntervalSince(startTime)
+        let hours = Int(duration) / 3600
+        let minutes = (Int(duration) % 3600) / 60
+        return "\(hours)h \(minutes)m"
+    }
+
+    private func formatTimeInterval(_ interval: TimeInterval) -> String {
+        let minutes = Int(interval) / 60
+        if minutes < 60 {
+            return "\(minutes)m"
+        } else {
+            let hours = minutes / 60
+            let remainingMinutes = minutes % 60
+            return "\(hours)h \(remainingMinutes)m"
+        }
+    }
+
+    private var emergencyAlertBanner: some View {
+        Button(action: {
+            showingEmergencyAlert = true
+        }) {
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.white)
+                    .font(.title2)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("EMERGENCY ALERT")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+
+                    if let emergency = routeViewModel.currentEmergency {
+                        Text(emergency)
+                            .font(.body)
+                            .foregroundColor(.white.opacity(0.9))
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.white)
+                    .font(.title3)
+            }
+            .padding()
+            .background(
+                LinearGradient(
+                    colors: [Color.red, Color.red.opacity(0.8)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .cornerRadius(12)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+        .shadow(color: .red.opacity(0.3), radius: 8, x: 0, y: 4)
+    }
+
+    // MARK: - Route Management Components
+
+    private var routeHeaderCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("Today's Route")
+                        .font(PestGenieDesignSystem.Typography.headlineMedium)
+                        .fontWeight(.semibold)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Text("Route \(routeViewModel.currentRouteId)")
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text(routeViewModel.isRouteStarted ? "ACTIVE" : "NOT STARTED")
+                        .font(PestGenieDesignSystem.Typography.captionEmphasis)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                        .background(routeViewModel.isRouteStarted ? PestGenieDesignSystem.Colors.success : PestGenieDesignSystem.Colors.textSecondary)
+                        .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+
+                    if let startTime = routeViewModel.routeStartTime {
+                        Text("Started \(startTime, formatter: timeFormatter)")
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    }
+                }
+            }
+
+            // Progress Overview
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+                HStack {
+                    Text("Progress")
+                        .font(PestGenieDesignSystem.Typography.labelMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Spacer()
+
+                    Text("\(routeViewModel.completedJobsCount)/\(routeViewModel.jobs.count) jobs")
+                        .font(PestGenieDesignSystem.Typography.labelMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+
+                ProgressView(value: routeViewModel.completionPercentage)
+                    .progressViewStyle(LinearProgressViewStyle(tint: PestGenieDesignSystem.Colors.success))
+                    .background(PestGenieDesignSystem.Colors.surfaceSecondary)
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private var routeMetricsCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "speedometer")
+                    .foregroundColor(.blue)
+                Text("Live Route Metrics")
+                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Spacer()
+                if routeViewModel.demoMode {
+                    Text("DEMO")
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(4)
+                }
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.sm) {
+                routeMetricItem(
+                    title: "Current Speed",
+                    value: "\(Int(routeViewModel.currentSpeed)) mph",
+                    icon: "speedometer",
+                    color: .blue
+                )
+
+                routeMetricItem(
+                    title: "Distance Today",
+                    value: String(format: "%.1f mi", routeViewModel.totalDistanceTraveled),
+                    icon: "location.north.line",
+                    color: .green
+                )
+
+                routeMetricItem(
+                    title: "Time on Route",
+                    value: formatRouteDuration(),
+                    icon: "clock.circle",
+                    color: .orange
+                )
+
+                routeMetricItem(
+                    title: "Next Job ETA",
+                    value: formatTimeInterval(routeViewModel.estimatedTimeToNextJob),
+                    icon: "clock.arrow.circlepath",
+                    color: .purple
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private var emergencyAlertCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.red)
+                    .font(.title2)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("ACTIVE EMERGENCY")
+                        .font(PestGenieDesignSystem.Typography.headlineSmall)
+                        .fontWeight(.bold)
+                        .foregroundColor(.red)
+
+                    if let emergency = routeViewModel.currentEmergency {
+                        Text(emergency)
+                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    }
+                }
+
+                Spacer()
+
+                Button("Respond") {
+                    showingEmergencyAlert = true
+                }
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+                .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
+                .background(Color.red)
+                .foregroundColor(.white)
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+        }
+        .pestGenieCard()
+        .background(Color.red.opacity(0.05))
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.md)
+                .stroke(Color.red.opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    private var routeActionsCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            Text("Quick Actions")
+                .font(PestGenieDesignSystem.Typography.headlineSmall)
+                .fontWeight(.semibold)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible())
+            ], spacing: PestGenieDesignSystem.Spacing.sm) {
+                if !routeViewModel.isRouteStarted {
+                    routeActionButton(
+                        title: "Start Route",
+                        icon: "play.circle.fill",
+                        color: PestGenieDesignSystem.Colors.success
+                    ) {
+                        showingRouteStartView = true
+                    }
+                } else {
+                    routeActionButton(
+                        title: "End Route",
+                        icon: "stop.circle.fill",
+                        color: PestGenieDesignSystem.Colors.error
+                    ) {
+                        routeViewModel.endRoute()
+                    }
+                }
+
+                routeActionButton(
+                    title: "Navigation",
+                    icon: "map.fill",
+                    color: .blue
+                ) {
+                    // Open navigation to next job
+                }
+
+                routeActionButton(
+                    title: "Weather",
+                    icon: "cloud.sun.fill",
+                    color: .cyan
+                ) {
+                    // Show weather details
+                }
+
+                routeActionButton(
+                    title: "Emergency",
+                    icon: "exclamationmark.triangle.fill",
+                    color: .red
+                ) {
+                    routeViewModel.loadEmergencyScenario()
+                }
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func routeActionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
+
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.labelMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .background(color.opacity(0.1))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private func routeMetricItem(title: String, value: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.title3)
+                Spacer()
+            }
+
+            Text(value)
+                .font(PestGenieDesignSystem.Typography.headlineSmall)
+                .fontWeight(.bold)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+            Text(title)
+                .font(PestGenieDesignSystem.Typography.caption)
+                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(PestGenieDesignSystem.Colors.surface)
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+    }
+
+    private var jobListSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Text("Today's Jobs")
+                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("\(routeViewModel.jobs.count) total")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+            }
+
+            ForEach(routeViewModel.jobs, id: \.id) { job in
+                jobCard(job)
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func jobCard(_ job: Job) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text(job.customerName)
+                        .font(PestGenieDesignSystem.Typography.titleSmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Text(job.address)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    jobStatusBadge(job.status)
+
+                    Text(job.scheduledDate, style: .time)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+
+            if let notes = job.notes {
+                Text("📋 \(notes)")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    .padding(.top, PestGenieDesignSystem.Spacing.xs)
+            }
+
+            if let pinnedNotes = job.pinnedNotes {
+                Text("📌 \(pinnedNotes)")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                    .padding(.top, PestGenieDesignSystem.Spacing.xs)
+            }
+
+            // Job Actions
+            HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                if job.status == .pending {
+                    Button("Start Job") {
+                        routeViewModel.start(job: job)
+                    }
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                    .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                    .background(PestGenieDesignSystem.Colors.success)
+                    .foregroundColor(.white)
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+
+                    Button("Skip") {
+                        routeViewModel.skip(job: job)
+                    }
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                    .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                    .background(PestGenieDesignSystem.Colors.warning)
+                    .foregroundColor(.white)
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+                } else if job.status == .inProgress {
+                    Button("Complete Job") {
+                        let signature = "Demo Signature".data(using: .utf8) ?? Data()
+                        routeViewModel.complete(job: job, signature: signature)
+                    }
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                    .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                    .background(PestGenieDesignSystem.Colors.primary)
+                    .foregroundColor(.white)
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+                }
+
+                Button("Navigate") {
+                    // Open navigation to this job
+                }
+                .font(PestGenieDesignSystem.Typography.caption)
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                .background(Color.blue.opacity(0.2))
+                .foregroundColor(.blue)
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+
+                Spacer()
+            }
+            .padding(.top, PestGenieDesignSystem.Spacing.sm)
+        }
+        .padding(PestGenieDesignSystem.Spacing.md)
+        .background(job.status == .inProgress ? PestGenieDesignSystem.Colors.primary.opacity(0.05) : PestGenieDesignSystem.Colors.surface)
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .stroke(job.status == .inProgress ? PestGenieDesignSystem.Colors.primary.opacity(0.3) : PestGenieDesignSystem.Colors.border, lineWidth: 1)
+        )
+    }
+
+    private func jobStatusBadge(_ status: JobStatus) -> some View {
+        Text(status.displayName)
+            .font(PestGenieDesignSystem.Typography.captionEmphasis)
+            .foregroundColor(.white)
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xxs)
+            .background(status.color)
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+    }
+
+    private var demoControlsCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            Text("Demo Controls")
+                .font(PestGenieDesignSystem.Typography.headlineSmall)
+                .fontWeight(.semibold)
+                .foregroundColor(.blue)
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                Button("Load Demo Data") {
+                    routeViewModel.loadDemoData()
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue.opacity(0.1))
+                .foregroundColor(.blue)
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+
+                Button("Start Demo Progression") {
+                    routeViewModel.progressDemoJobs()
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green.opacity(0.1))
+                .foregroundColor(.green)
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+
+                Button("Emergency Scenario") {
+                    routeViewModel.loadEmergencyScenario()
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.red.opacity(0.1))
+                .foregroundColor(.red)
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+        }
+        .pestGenieCard()
+        .background(Color.blue.opacity(0.02))
+    }
+
+    private var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }
+
     private func alertItem(icon: String, text: String, color: Color) -> some View {
         HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
             Image(systemName: icon)
@@ -513,18 +1153,48 @@ struct MainDashboardView: View {
     // MARK: - Navigation Views
 
     private var routeView: some View {
-        VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
-            Text("Route Management")
-                .font(PestGenieDesignSystem.Typography.displayMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-            Text("Today's route and job details")
-                .font(PestGenieDesignSystem.Typography.bodyLarge)
-                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+        NavigationView {
+            ScrollView {
+                VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
+                    // Route Header with Status
+                    routeHeaderCard
 
-            // Enhanced route content would go here
-            Spacer()
+                    // Live Route Metrics (if route is active)
+                    if routeViewModel.isRouteStarted {
+                        routeMetricsCard
+                    }
+
+                    // Emergency Alert (if active)
+                    if routeViewModel.hasActiveEmergency {
+                        emergencyAlertCard
+                    }
+
+                    // Route Actions
+                    routeActionsCard
+
+                    // Job List
+                    jobListSection
+
+                    // Demo Controls (if in demo mode)
+                    if routeViewModel.demoMode {
+                        demoControlsCard
+                    }
+                }
+                .padding(PestGenieDesignSystem.Spacing.md)
+            }
+            .navigationTitle("Route Management")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        routeViewModel.toggleDemoMode()
+                    }) {
+                        Image(systemName: routeViewModel.demoMode ? "waveform.badge.magnifyingglass" : "waveform")
+                            .foregroundColor(routeViewModel.demoMode ? .blue : PestGenieDesignSystem.Colors.primary)
+                    }
+                }
+            }
         }
-        .padding(PestGenieDesignSystem.Spacing.md)
     }
 
     private var equipmentView: some View {

@@ -34,5 +34,19 @@
 	<string>PestGenie uses the camera to document job completion and capture before/after photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>PestGenie accesses photos to attach documentation to job reports.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>PestGenie tracks steps to measure technician activity during property inspections.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>PestGenie uses motion data to track steps and movement during property inspections.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>PestGenie uses your location for route optimization, job site navigation, and automatic arrival/departure tracking even when the app is in the background.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+	</array>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>PestGenie may update health data to provide comprehensive activity tracking during work hours.</string>
 </dict>
 </plist>

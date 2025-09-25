@@ -31,7 +31,7 @@ struct AppRootView: View {
             await authManager.initialize()
 
             // Set authentication manager on route view model
-            await routeViewModel.setAuthenticationManager(authManager)
+            routeViewModel.setAuthenticationManager(authManager)
 
             // Check App Store compliance
             let complianceResult = complianceManager.validateAppStoreCompliance()

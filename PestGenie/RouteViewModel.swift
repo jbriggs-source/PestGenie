@@ -59,6 +59,17 @@ final class RouteViewModel: ObservableObject {
     /// Stores multi-select values for components that allow multiple selection.
     @Published var multiSelectValues: [String: [String]] = [:]
 
+    // MARK: - Demo & Route Management
+    @Published var isRouteStarted: Bool = false
+    @Published var routeStartTime: Date? = nil
+    @Published var totalDistanceTraveled: Double = 0.0
+    @Published var currentSpeed: Double = 0.0
+    @Published var estimatedTimeToNextJob: TimeInterval = 0
+    @Published var weatherConditions: String = "Clear, 72°F"
+    @Published var demoMode: Bool = false
+    @Published var hasActiveEmergency: Bool = false
+    @Published var currentEmergency: String? = nil
+
     // MARK: - Offline mode support
     /// Flag indicating whether the app is currently online. In a real app this
     /// would be driven by network reachability monitoring. Here it can be
@@ -108,11 +119,60 @@ final class RouteViewModel: ObservableObject {
     private func loadSampleData() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
+
+        // Create realistic demo jobs for technician workflow demonstration
         jobs = [
-            Job(id: UUID(), customerName: "Smith Residence", address: "123 Maple Street", scheduledDate: formatter.date(from: "2025-08-05 08:00")!, latitude: 40.2783, longitude: -111.7227, notes: "Gate code 1234", pinnedNotes: "Beware of dog", status: .pending),
-            Job(id: UUID(), customerName: "Brown Residence", address: "456 Oak Avenue", scheduledDate: formatter.date(from: "2025-08-05 09:30")!, latitude: 40.2815, longitude: -111.7210, notes: nil, pinnedNotes: nil, status: .pending),
-            Job(id: UUID(), customerName: "Johnson Residence", address: "789 Pine Lane", scheduledDate: formatter.date(from: "2025-08-05 11:00")!, latitude: 40.2800, longitude: -111.7200, notes: "Call before arrival", pinnedNotes: "Customer has bee allergy", status: .pending)
+            // Morning jobs - typical suburban route
+            Job(id: UUID(), customerName: "Smith Residence", address: "123 Maple Street", scheduledDate: formatter.date(from: "2025-09-25 08:00")!, latitude: 40.2783, longitude: -111.7227, notes: "Gate code 1234. Customer works from home.", pinnedNotes: "⚠️ Beware of dog - German Shepherd", status: .pending),
+
+            Job(id: UUID(), customerName: "Westfield Shopping Center", address: "456 Commerce Blvd", scheduledDate: formatter.date(from: "2025-09-25 08:45")!, latitude: 40.2815, longitude: -111.7210, notes: "Use service entrance. Contact facility manager first.", pinnedNotes: "🏢 Commercial account - high visibility", status: .pending),
+
+            Job(id: UUID(), customerName: "Johnson Family", address: "789 Pine Lane", scheduledDate: formatter.date(from: "2025-09-25 09:30")!, latitude: 40.2800, longitude: -111.7200, notes: "Call 15min before arrival", pinnedNotes: "🐝 Customer has severe bee allergy - NO bee treatments", status: .pending),
+
+            // Mid-morning - challenging locations
+            Job(id: UUID(), customerName: "Mountain View Apartments", address: "321 Highland Dr, Unit 15B", scheduledDate: formatter.date(from: "2025-09-25 10:15")!, latitude: 40.2850, longitude: -111.7180, notes: "Basement unit. Parking in rear. Key from manager.", pinnedNotes: "🏠 Recurring ant problem - check moisture levels", status: .pending),
+
+            Job(id: UUID(), customerName: "Green Valley Restaurant", address: "555 Food Court Way", scheduledDate: formatter.date(from: "2025-09-25 11:00")!, latitude: 40.2900, longitude: -111.7150, notes: "After hours only (before 9AM). Health inspector visit last week.", pinnedNotes: "🍽️ Food service - extra care with chemicals", status: .pending),
+
+            // Late morning - residential priority
+            Job(id: UUID(), customerName: "Davis Elderly Care", address: "888 Senior Living Blvd", scheduledDate: formatter.date(from: "2025-09-25 11:45")!, latitude: 40.2750, longitude: -111.7300, notes: "Sensitive residents. Use least toxic options.", pinnedNotes: "👴 Elderly facility - low-impact treatments only", status: .pending)
         ]
+    }
+
+    /// Load comprehensive demo data with varied scenarios
+    func loadDemoData() {
+        demoMode = true
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+
+        jobs = [
+            // Completed morning job
+            Job(id: UUID(), customerName: "Early Bird Café", address: "100 Main Street", scheduledDate: formatter.date(from: "2025-09-25 06:30")!, latitude: 40.2700, longitude: -111.7400, notes: "Pre-opening treatment completed", pinnedNotes: "✅ Regular monthly service", status: .completed),
+
+            // In-progress job
+            Job(id: UUID(), customerName: "Smith Residence", address: "123 Maple Street", scheduledDate: formatter.date(from: "2025-09-25 08:00")!, latitude: 40.2783, longitude: -111.7227, notes: "Currently treating perimeter", pinnedNotes: "🐕 Large dog - friendly but energetic", status: .inProgress),
+
+            // Priority jobs ahead
+            Job(id: UUID(), customerName: "Emergency Call - Wilson Home", address: "999 Urgent Ave", scheduledDate: formatter.date(from: "2025-09-25 09:00")!, latitude: 40.2820, longitude: -111.7190, notes: "URGENT: Wasp nest near children's play area", pinnedNotes: "🚨 PRIORITY - Children at risk", status: .pending),
+
+            // Regular scheduled jobs
+            Job(id: UUID(), customerName: "Westfield Shopping Center", address: "456 Commerce Blvd", scheduledDate: formatter.date(from: "2025-09-25 09:45")!, latitude: 40.2815, longitude: -111.7210, notes: "Monthly preventive treatment", pinnedNotes: "🏢 High-traffic area - work efficiently", status: .pending),
+
+            Job(id: UUID(), customerName: "Johnson Family", address: "789 Pine Lane", scheduledDate: formatter.date(from: "2025-09-25 10:30")!, latitude: 40.2800, longitude: -111.7200, notes: "Follow-up from last week's treatment", pinnedNotes: "🏡 Repeat customer - very satisfied", status: .pending),
+
+            // Challenging afternoon jobs
+            Job(id: UUID(), customerName: "Hillside Mansion", address: "1200 Luxury Lane", scheduledDate: formatter.date(from: "2025-09-25 11:15")!, latitude: 40.2890, longitude: -111.7120, notes: "Large property - estimate 2-3 hours", pinnedNotes: "💰 Premium client - white-glove service", status: .pending),
+
+            Job(id: UUID(), customerName: "Industrial Complex", address: "500 Factory Rd", scheduledDate: formatter.date(from: "2025-09-25 13:00")!, latitude: 40.2950, longitude: -111.7080, notes: "Safety equipment required. Check in at gate.", pinnedNotes: "🏭 Industrial site - follow all safety protocols", status: .pending),
+
+            // End-of-day wrap up
+            Job(id: UUID(), customerName: "Sunset Retirement Community", address: "777 Golden Years Dr", scheduledDate: formatter.date(from: "2025-09-25 15:30")!, latitude: 40.2680, longitude: -111.7450, notes: "Gentle treatments for sensitive environment", pinnedNotes: "👥 Many residents - minimal disruption", status: .pending)
+        ]
+
+        // Set one job as started if in demo mode
+        if let firstPendingIndex = jobs.firstIndex(where: { $0.status == .inProgress }) {
+            jobs[firstPendingIndex].startTime = Date().addingTimeInterval(-1800) // Started 30 min ago
+        }
     }
 
     func moveJob(from source: IndexSet, to destination: Int) {
@@ -323,6 +383,135 @@ final class RouteViewModel: ObservableObject {
             loadSampleData()
         }
     }
+
+    // MARK: - Route Management & Demo Functions
+
+    /// Start the daily route with tracking
+    func startRoute() {
+        isRouteStarted = true
+        routeStartTime = Date()
+        totalDistanceTraveled = 0.0
+
+        // Start simulated tracking updates if in demo mode
+        if demoMode {
+            startDemoTracking()
+        }
+
+        if !isOnline {
+            let action = PendingAction(type: .routeStart, jobId: nil, valueKey: "route_start", value: ISO8601DateFormatter().string(from: Date()), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// End the daily route
+    func endRoute() {
+        isRouteStarted = false
+        routeStartTime = nil
+        currentSpeed = 0.0
+        estimatedTimeToNextJob = 0
+
+        if !isOnline {
+            let action = PendingAction(type: .routeEnd, jobId: nil, valueKey: "route_end", value: ISO8601DateFormatter().string(from: Date()), timestamp: Date())
+            pendingActions.append(action)
+        }
+    }
+
+    /// Simulate realistic technician workflow progression for demos
+    func progressDemoJobs() {
+        guard demoMode else { return }
+
+        // Simulate realistic job progression every few seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.simulateJobProgression()
+        }
+    }
+
+    private func simulateJobProgression() {
+        // Find next logical job to progress
+        if let inProgressJob = jobs.first(where: { $0.status == .inProgress }) {
+            // Complete in-progress job after some time
+            if let startTime = inProgressJob.startTime,
+               Date().timeIntervalSince(startTime) > 120 { // 2 minutes in demo
+                completeCurrentJob()
+            }
+        } else if let nextPendingJob = jobs.first(where: { $0.status == .pending }) {
+            // Start next pending job
+            start(job: nextPendingJob)
+        }
+
+        // Continue progression
+        if jobs.contains(where: { $0.status == .pending || $0.status == .inProgress }) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                self.simulateJobProgression()
+            }
+        }
+    }
+
+    private func completeCurrentJob() {
+        guard let inProgressJob = jobs.first(where: { $0.status == .inProgress }) else { return }
+
+        // Create mock signature data for demo
+        let mockSignature = "Demo Signature Data".data(using: .utf8) ?? Data()
+        complete(job: inProgressJob, signature: mockSignature)
+    }
+
+    private func startDemoTracking() {
+        // Simulate GPS tracking updates
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { timer in
+            guard self.isRouteStarted else {
+                timer.invalidate()
+                return
+            }
+
+            // Update simulated metrics
+            self.currentSpeed = Double.random(in: 15...45) // MPH
+            self.totalDistanceTraveled += self.currentSpeed * (5.0 / 3600.0) // Distance in 5 seconds
+
+            // Update weather periodically
+            let weatherOptions = ["Clear, 72°F", "Partly cloudy, 68°F", "Overcast, 65°F", "Light rain, 60°F"]
+            if Int.random(in: 1...10) == 1 {
+                self.weatherConditions = weatherOptions.randomElement() ?? "Clear, 72°F"
+            }
+
+            // Calculate time to next job
+            if let nextJob = self.jobs.first(where: { $0.status == .pending }) {
+                self.estimatedTimeToNextJob = TimeInterval.random(in: 300...1800) // 5-30 minutes
+            }
+        }
+    }
+
+    /// Toggle demo mode and load appropriate data
+    func toggleDemoMode() {
+        demoMode.toggle()
+        if demoMode {
+            loadDemoData()
+            progressDemoJobs()
+        } else {
+            loadSampleData()
+            endRoute()
+        }
+    }
+
+    /// Quick demo scenarios for specific technician situations
+    func loadEmergencyScenario() {
+        demoMode = true
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+
+        jobs = [
+            // Active emergency
+            Job(id: UUID(), customerName: "🚨 EMERGENCY - School District", address: "Emergency Call: Elementary School", scheduledDate: formatter.date(from: "2025-09-25 08:15")!, latitude: 40.2800, longitude: -111.7200, notes: "URGENT: Bees swarming playground during recess", pinnedNotes: "⚡ IMMEDIATE RESPONSE REQUIRED - Children evacuated", status: .inProgress),
+
+            // Delayed jobs due to emergency
+            Job(id: UUID(), customerName: "Smith Residence (DELAYED)", address: "123 Maple Street", scheduledDate: formatter.date(from: "2025-09-25 09:30")!, latitude: 40.2783, longitude: -111.7227, notes: "Customer notified of delay due to emergency", pinnedNotes: "ℹ️ Rescheduled - customer understanding", status: .pending)
+        ]
+
+        weatherConditions = "⚠️ High winds, 85°F - Use extra caution"
+        isRouteStarted = true
+        routeStartTime = Date().addingTimeInterval(-900) // Started 15 min ago
+        hasActiveEmergency = true
+        currentEmergency = "🚨 ACTIVE EMERGENCY: Bee swarm at elementary school"
+    }
 }
 
 /// Represents an action performed while offline. These actions are queued and
@@ -342,6 +531,8 @@ struct PendingAction: CustomStringConvertible {
         case stepperInput
         case segmentedInput
         case multiSelectInput
+        case routeStart
+        case routeEnd
     }
     let type: ActionType
     let jobId: UUID?

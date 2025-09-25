@@ -574,8 +574,7 @@ final class CalibrationTrackingManager: ObservableObject {
             nextDate = Calendar.current.date(byAdding: .month, value: months, to: lastCompleted) ?? lastCompleted
         case .years(let years):
             nextDate = Calendar.current.date(byAdding: .year, value: years, to: lastCompleted) ?? lastCompleted
-        default:
-            return // Only support months/years for calibration
+
         }
 
         var nextSchedule = originalSchedule

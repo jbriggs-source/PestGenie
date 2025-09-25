@@ -21,8 +21,8 @@ final class SessionManager {
     func createSession(for user: AuthenticatedUser) async {
         let deviceInfo = DeviceInfo(
             deviceId: await UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString,
-            deviceModel: UIDevice.current.model,
-            systemVersion: UIDevice.current.systemVersion,
+            deviceModel: await UIDevice.current.model,
+            systemVersion: await UIDevice.current.systemVersion,
             appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
         )
 

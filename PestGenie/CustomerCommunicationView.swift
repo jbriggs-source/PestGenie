@@ -8,6 +8,12 @@ struct CustomerCommunicationView: View {
     @State private var showingNewMessage = false
     @State private var showingNotificationComposer = false
     @State private var searchText = ""
+    @State private var selectedMessage: CustomerMessage?
+    @State private var selectedFeedback: CustomerFeedback?
+    @State private var showingMessageDetails = false
+    @State private var showingFeedbackResponse = false
+    @State private var showingCallConfirmation = false
+    @State private var customerToCall: CustomerMessage?
     @StateObject private var communicationManager = CustomerCommunicationManager()
 
     var body: some View {
@@ -30,9 +36,9 @@ struct CustomerCommunicationView: View {
                     }
                 }
             }
-            .navigationTitle("Customer Communication")
+            .navigationTitle("Communications")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search communications...")
+            .searchable(text: $searchText, prompt: "Search \(selectedTab.title.lowercased())...")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
@@ -58,6 +64,20 @@ struct CustomerCommunicationView: View {
         .sheet(isPresented: $showingNotificationComposer) {
             notificationComposerSheet
         }
+        .sheet(isPresented: $showingMessageDetails) {
+            messageDetailsSheet
+        }
+        .sheet(isPresented: $showingFeedbackResponse) {
+            feedbackResponseSheet
+        }
+        .confirmationDialog("Call Customer", isPresented: $showingCallConfirmation, presenting: customerToCall) { customer in
+            Button("Call \(customer.customerName)") {
+                initiateCall(to: customer)
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: { customer in
+            Text("Would you like to call \(customer.customerName)?")
+        }
         .onAppear {
             loadCommunications()
         }
@@ -73,20 +93,21 @@ struct CustomerCommunicationView: View {
                         selectedTab = tab
                     }
                 }) {
-                    VStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
-                        HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
                             Image(systemName: tab.icon)
                                 .font(.system(size: 16))
 
-                            Text(tab.title)
+                            Text(tab.shortTitle)
                                 .font(PestGenieDesignSystem.Typography.labelMedium)
+                                .lineLimit(1)
 
                             if tab.unreadCount > 0 {
                                 Text("\(tab.unreadCount)")
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundColor(.white)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 1)
                                     .background(PestGenieDesignSystem.Colors.error)
                                     .clipShape(Capsule())
                             }
@@ -107,7 +128,7 @@ struct CustomerCommunicationView: View {
         .overlay(
             Rectangle()
                 .fill(PestGenieDesignSystem.Colors.border)
-                .frame(height: 1),
+                .frame(height: 0.5),
             alignment: .bottom
         )
     }
@@ -491,23 +512,200 @@ struct CustomerCommunicationView: View {
 
     private var notificationComposerSheet: some View {
         NavigationView {
-            Text("Notification Composer")
-                .navigationTitle("Send Notification")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Cancel") {
-                            showingNotificationComposer = false
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Send") {
-                            // Send notification logic
-                            showingNotificationComposer = false
-                        }
-                        .fontWeight(.semibold)
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("Title")
+                        .font(PestGenieDesignSystem.Typography.labelMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    TextField("Notification title", text: .constant(""))
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("Message")
+                        .font(PestGenieDesignSystem.Typography.labelMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    TextField("Your message", text: .constant(""), axis: .vertical)
+                        .lineLimit(3...6)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Send Notification")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        showingNotificationComposer = false
                     }
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Send") {
+                        // Send notification logic
+                        showingNotificationComposer = false
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    private var messageDetailsSheet: some View {
+        NavigationView {
+            Group {
+                if let message = selectedMessage {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
+                            // Customer Info
+                            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+                                Text("Customer Information")
+                                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+                                    HStack {
+                                        Text("Name:")
+                                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                                        Text(message.customerName)
+                                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                                    }
+
+                                    HStack {
+                                        Text("Address:")
+                                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                                        Text(message.address)
+                                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                                    }
+                                }
+                            }
+                            .pestGenieCard()
+
+                            // Message Content
+                            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+                                Text("Message")
+                                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                                Text(message.content)
+                                    .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                            }
+                            .pestGenieCard()
+
+                            // Actions
+                            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                                Button(action: {
+                                    replyToMessage(message)
+                                    showingMessageDetails = false
+                                }) {
+                                    HStack {
+                                        Image(systemName: "arrowshape.turn.up.left")
+                                        Text("Reply to Message")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(PestGenieDesignSystem.Colors.primary)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+                                }
+
+                                Button(action: {
+                                    callCustomer(message)
+                                    showingMessageDetails = false
+                                }) {
+                                    HStack {
+                                        Image(systemName: "phone")
+                                        Text("Call Customer")
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(PestGenieDesignSystem.Colors.accent)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+                                }
+                            }
+                        }
+                        .padding(PestGenieDesignSystem.Spacing.md)
+                    }
+                } else {
+                    Text("No message selected")
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+            .navigationTitle("Message Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingMessageDetails = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var feedbackResponseSheet: some View {
+        NavigationView {
+            Group {
+                if let feedback = selectedFeedback {
+                    VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+                        // Original feedback
+                        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+                            Text("Customer Feedback")
+                                .font(PestGenieDesignSystem.Typography.headlineSmall)
+                                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                            Text(feedback.comments)
+                                .font(PestGenieDesignSystem.Typography.bodyMedium)
+                                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                                .padding()
+                                .background(PestGenieDesignSystem.Colors.surface)
+                                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+                        }
+
+                        // Response field
+                        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                            Text("Your Response")
+                                .font(PestGenieDesignSystem.Typography.labelMedium)
+                                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                            TextField("Write your response...", text: .constant(""), axis: .vertical)
+                                .lineLimit(4...8)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                        }
+
+                        Spacer()
+                    }
+                    .padding(PestGenieDesignSystem.Spacing.md)
+                } else {
+                    Text("No feedback selected")
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+            .navigationTitle("Respond to Feedback")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        showingFeedbackResponse = false
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Send") {
+                        // Send response logic
+                        showingFeedbackResponse = false
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
         }
     }
 
@@ -536,28 +734,41 @@ struct CustomerCommunicationView: View {
     }
 
     private func replyToMessage(_ message: CustomerMessage) {
-        // Implement reply logic
-        print("Replying to message from \(message.customerName)")
+        selectedMessage = message
+        showingNewMessage = true
     }
 
     private func callCustomer(_ message: CustomerMessage) {
-        // Implement call logic
-        print("Calling customer \(message.customerName)")
+        customerToCall = message
+        showingCallConfirmation = true
     }
 
     private func viewMessageDetails(_ message: CustomerMessage) {
-        // Implement message details view
-        print("Viewing details for message from \(message.customerName)")
+        selectedMessage = message
+        showingMessageDetails = true
     }
 
     private func sendQuickNotification(type: String) {
-        // Implement quick notification logic
-        print("Sending quick notification: \(type)")
+        // Create and show quick notification
+        let notification = CustomerNotification(
+            title: "\(type) Update",
+            message: "This is a \(type.lowercased()) notification",
+            recipientCount: 1,
+            sentAt: Date(),
+            deliveryStatus: .sent
+        )
+        communicationManager.addNotification(notification)
     }
 
     private func respondToFeedback(_ feedback: CustomerFeedback) {
-        // Implement feedback response logic
-        print("Responding to feedback from \(feedback.customerName)")
+        selectedFeedback = feedback
+        showingFeedbackResponse = true
+    }
+
+    private func initiateCall(to message: CustomerMessage) {
+        // In a real app, this would trigger a phone call
+        // For demo purposes, we'll show a toast or update the message status
+        print("Calling \(message.customerName) at their contact number")
     }
 }
 
@@ -574,6 +785,15 @@ enum CommunicationTab: String, CaseIterable {
         case .messages: return "Messages"
         case .notifications: return "Notifications"
         case .feedback: return "Feedback"
+        case .serviceUpdates: return "Updates"
+        }
+    }
+
+    var shortTitle: String {
+        switch self {
+        case .messages: return "Messages"
+        case .notifications: return "Alerts"
+        case .feedback: return "Reviews"
         case .serviceUpdates: return "Updates"
         }
     }
@@ -761,6 +981,10 @@ class CustomerCommunicationManager: ObservableObject {
 
     func refresh() {
         loadData()
+    }
+
+    func addNotification(_ notification: CustomerNotification) {
+        sentNotifications.insert(notification, at: 0)
     }
 
     private func loadMockData() {

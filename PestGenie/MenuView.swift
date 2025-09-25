@@ -523,6 +523,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case helpSupport = "help_support"
     case sendFeedback = "send_feedback"
     case emergencyContacts = "emergency_contacts"
+    case demoControls = "demo_controls"
 
     var id: String { rawValue }
 
@@ -542,6 +543,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .helpSupport: return "Help & Support"
         case .sendFeedback: return "Send Feedback"
         case .emergencyContacts: return "Emergency Contacts"
+        case .demoControls: return "Demo Controls"
         }
     }
 }

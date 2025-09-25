@@ -197,11 +197,15 @@ final class AppStoreComplianceManager: ObservableObject {
 
     private func requestReview() {
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-            // Note: SKStoreReviewController is deprecated in iOS 18.0 in favor of AppStore.requestReview(in:)
-            // However, AppStore framework is not available in this configuration
             if #available(iOS 14.0, *) {
+                // Note: SKStoreReviewController.requestReview(in:) is deprecated in iOS 18.0
+                // in favor of AppStore.requestReview(in:), but AppStore framework is not yet
+                // available in the current Xcode SDK. This will be updated when the framework
+                // becomes available.
+                // TODO: Update to AppStore.requestReview(in:) when AppStore framework becomes available
                 SKStoreReviewController.requestReview(in: scene)
             } else {
+                // Fallback for older iOS versions
                 SKStoreReviewController.requestReview()
             }
 

@@ -25,8 +25,8 @@ final class GoogleSignInProvider {
 
     /// Perform Google Sign-In
     func signIn() async throws -> GoogleUser {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController = windowScene.windows.first?.rootViewController else {
+        guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = await windowScene.windows.first?.rootViewController else {
             throw GoogleSignInError.noRootViewController
         }
 

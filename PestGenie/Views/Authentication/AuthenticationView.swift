@@ -158,14 +158,14 @@ struct AuthenticationView: View {
         .sheet(isPresented: $showingBiometricSetup) {
             EnhancedBiometricSetupView()
         }
-        .onChange(of: authManager.lastError) { error in
+        .onChange(of: authManager.lastError) { _, error in
             showingError = error != nil
             if error != nil {
                 currentAuthStep = .error
                 authenticationMessage = error?.localizedDescription ?? "An error occurred"
             }
         }
-        .onChange(of: authManager.isAuthenticated) { authenticated in
+        .onChange(of: authManager.isAuthenticated) { _, authenticated in
             if authenticated {
                 currentAuthStep = .completed
                 authenticationMessage = "Welcome to PestGenie!"
