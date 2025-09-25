@@ -147,7 +147,8 @@ final class SDUITests: XCTestCase {
             routeViewModel: RouteViewModel(),
             actions: [:],
             currentJob: job,
-            persistenceController: persistenceController
+            persistenceController: persistenceController,
+            authManager: AuthenticationManager.shared
         )
 
         // TODO: Implement SDUIDataResolver class

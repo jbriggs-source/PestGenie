@@ -218,13 +218,15 @@ class PestGenieTestCase: XCTestCase {
         let mockViewModel = RouteViewModel()
         let mockActions: [String: (Job?) -> Void] = [:]
         let mockPersistence = PersistenceController.shared
+        let mockAuthManager = AuthenticationManager.shared
 
         return SDUIContext(
             jobs: mockJobs,
             routeViewModel: mockViewModel,
             actions: mockActions,
             currentJob: nil,
-            persistenceController: mockPersistence
+            persistenceController: mockPersistence,
+            authManager: mockAuthManager
         )
     }
 

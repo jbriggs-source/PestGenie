@@ -75,7 +75,7 @@ final class AuthenticationTests: XCTestCase {
         // Test that Session Manager can be created
         let sessionManager = SessionManager()
         XCTAssertNotNil(sessionManager, "SessionManager should initialize")
-        XCTAssertNil(sessionManager.currentSession, "Should have no current session initially")
+        XCTAssertNil(sessionManager.currentSessionInfo, "Should have no current session initially")
         XCTAssertEqual(sessionManager.sessionStatus, .inactive, "Session should be inactive initially")
     }
 

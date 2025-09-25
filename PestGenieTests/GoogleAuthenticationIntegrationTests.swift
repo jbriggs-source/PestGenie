@@ -41,7 +41,7 @@ final class GoogleAuthenticationIntegrationTests: XCTestCase {
     func testSessionManagerInitialization() {
         let sessionManager = SessionManager()
         XCTAssertNotNil(sessionManager, "SessionManager should initialize")
-        XCTAssertNil(sessionManager.currentSession, "Should have no current session initially")
+        XCTAssertNil(sessionManager.currentSessionInfo, "Should have no current session initially")
         XCTAssertEqual(sessionManager.sessionStatus, .inactive, "Session should be inactive initially")
     }
 
