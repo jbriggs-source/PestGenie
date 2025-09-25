@@ -234,23 +234,23 @@ struct MainDashboardView: View {
 
     private var fallbackDashboardView: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xl) {
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
                 // Welcome section with design system styling
                 HStack {
-                    VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxxs) {
                         Text("Dashboard Overview")
-                            .font(PestGenieDesignSystem.Typography.headlineLarge)
+                            .font(PestGenieDesignSystem.Typography.headlineMedium)
                             .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
                         Text("Monitor your progress and manage daily tasks")
-                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .font(PestGenieDesignSystem.Typography.bodySmall)
                             .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                     }
 
                     Spacer()
 
                     Image(systemName: "chart.line.uptrend.xyaxis")
-                        .font(.system(size: 32))
+                        .font(.system(size: 28))
                         .foregroundColor(PestGenieDesignSystem.Colors.accent)
                 }
                 .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -264,7 +264,7 @@ struct MainDashboardView: View {
                 // Recent alerts
                 alertsCard
 
-                Spacer(minLength: 120) // Space for bottom navigation and safe area
+                Spacer(minLength: 80) // Space for bottom navigation and safe area
             }
             .padding(.top, PestGenieDesignSystem.Spacing.md)
             .padding(.bottom, PestGenieDesignSystem.Spacing.xxxl)
@@ -272,13 +272,13 @@ struct MainDashboardView: View {
     }
 
     private var quickStatsCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack {
                 Image(systemName: "calendar.badge.clock")
                     .foregroundColor(PestGenieDesignSystem.Colors.accent)
-                    .font(.system(size: 20))
+                    .font(.system(size: 18))
                 Text("Today's Schedule")
-                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                    .font(PestGenieDesignSystem.Typography.titleSmall)
                     .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
                 Spacer()
                 Text(Date(), style: .date)
@@ -286,14 +286,14 @@ struct MainDashboardView: View {
                     .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
             }
 
-            HStack(spacing: PestGenieDesignSystem.Spacing.lg) {
+            HStack(spacing: PestGenieDesignSystem.Spacing.md) {
                 statItem(title: "Total Jobs", value: "\(routeViewModel.jobs.count)", color: PestGenieDesignSystem.Colors.accent)
                 Divider()
-                    .frame(height: 32)
+                    .frame(height: 28)
                     .background(PestGenieDesignSystem.Colors.border)
                 statItem(title: "Completed", value: "\(routeViewModel.completedJobsCount)", color: PestGenieDesignSystem.Colors.success)
                 Divider()
-                    .frame(height: 32)
+                    .frame(height: 28)
                     .background(PestGenieDesignSystem.Colors.border)
                 statItem(title: "Remaining", value: "\(routeViewModel.remainingJobsCount)", color: PestGenieDesignSystem.Colors.warning)
             }
@@ -330,17 +330,17 @@ struct MainDashboardView: View {
             LazyVGrid(columns: [
                 GridItem(.flexible()),
                 GridItem(.flexible())
-            ], spacing: PestGenieDesignSystem.Spacing.sm) {
+            ], spacing: PestGenieDesignSystem.Spacing.xs) {
                 actionButton(title: "Start Route", icon: "play.circle.fill", color: PestGenieDesignSystem.Colors.success) {
                     selectedTab = .route
                 }
-                actionButton(title: "Equipment Check", icon: "wrench.and.screwdriver.fill", color: PestGenieDesignSystem.Colors.accent) {
+                actionButton(title: "Equipment", icon: "wrench.and.screwdriver.fill", color: PestGenieDesignSystem.Colors.accent) {
                     selectedTab = .equipment
                 }
                 actionButton(title: "QR Scanner", icon: "qrcode.viewfinder", color: PestGenieDesignSystem.Colors.secondary) {
                     openQRScanner()
                 }
-                actionButton(title: "Chemical Log", icon: "testtube.2", color: PestGenieDesignSystem.Colors.warning) {
+                actionButton(title: "Chemicals", icon: "testtube.2", color: PestGenieDesignSystem.Colors.warning) {
                     selectedTab = .chemicals
                 }
             }
@@ -350,19 +350,21 @@ struct MainDashboardView: View {
 
     private func actionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
                 Image(systemName: icon)
-                    .font(.system(size: 28))
+                    .font(.system(size: 24))
                     .foregroundColor(.white)
                 Text(title)
-                    .font(PestGenieDesignSystem.Typography.labelLarge)
+                    .font(PestGenieDesignSystem.Typography.labelMedium)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 80)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .frame(minHeight: 44)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
             .background(
                 LinearGradient(
                     gradient: Gradient(colors: [color, color.opacity(0.8)]),
