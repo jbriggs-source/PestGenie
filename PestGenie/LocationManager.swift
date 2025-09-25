@@ -3,10 +3,12 @@ import CoreLocation
 import UserNotifications
 
 final class LocationManager: NSObject, ObservableObject {
+    static let shared = LocationManager()
+
     private let locationManager = CLLocationManager()
     @Published var monitoredJobs: [Job] = []
     @Published var currentLocation: CLLocation?
-    override init() {
+    override private init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest

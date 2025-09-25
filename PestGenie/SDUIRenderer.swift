@@ -14,6 +14,8 @@ struct SDUIContext {
     var currentJob: Job?
     /// Core Data persistence controller for data operations
     let persistenceController: PersistenceController
+    /// Authentication manager for user profile data
+    let authManager: AuthenticationManager?
 
     /// Returns a new context with the current job set to the provided job.
     /// This helps avoid state mutation inside SwiftUI view builder closures.
@@ -23,7 +25,8 @@ struct SDUIContext {
             routeViewModel: routeViewModel,
             actions: actions,
             currentJob: job,
-            persistenceController: persistenceController
+            persistenceController: persistenceController,
+            authManager: authManager
         )
     }
 }
@@ -226,7 +229,14 @@ struct SDUIScreenRenderer {
 
     private static func renderImage(component: SDUIComponent, context: SDUIContext) -> AnyView {
         let imageView: AnyView
-        if let imageName = component.imageName {
+
+        // Check for special profile image identifier
+        if let imageName = component.imageName, imageName == "user.profile" {
+            // Create a special view that observes the authentication state
+            imageView = AnyView(
+                ProfileImageView(authManager: context.authManager)
+            )
+        } else if let imageName = component.imageName {
             imageView = AnyView(Image(imageName)
                                 .resizable()
                                 .scaledToFit())

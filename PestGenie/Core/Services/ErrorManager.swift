@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import os.log
 
 /// Comprehensive error handling and reporting system for enterprise applications
@@ -171,16 +172,30 @@ struct PestGenieError {
 
         // Generate contextual message based on error type
         switch context {
+        case .general:
+            return "An error occurred. Please try again."
+        case .authentication:
+            return "Authentication failed. Please log in again."
+        case .biometricAuth:
+            return "Biometric authentication failed. Please try again."
+        case .location:
+            return "Location services are not available."
+        case .notifications:
+            return "Notification services are not available."
+        case .dataSync:
+            return "Failed to sync data. Please check your internet connection."
+        case .network:
+            return "Network connection issue. Please try again."
+        case .security:
+            return "Security check failed. Please verify your credentials."
+        case .storage:
+            return "Storage operation failed. Please try again."
         case .sync:
             return "Failed to sync data. Please check your internet connection."
         case .weather:
             return "Unable to fetch weather data. Using cached information."
         case .database:
             return "Database operation failed. Your data is safe."
-        case .network:
-            return "Network connection issue. Please try again."
-        case .authentication:
-            return "Authentication failed. Please log in again."
         case .validation:
             return "Please check your input and try again."
         case .fileSystem:
@@ -191,16 +206,7 @@ struct PestGenieError {
     }
 }
 
-enum ErrorContext: String, CaseIterable {
-    case sync = "sync"
-    case weather = "weather"
-    case database = "database"
-    case network = "network"
-    case authentication = "authentication"
-    case validation = "validation"
-    case fileSystem = "file_system"
-    case unknown = "unknown"
-}
+// Note: ErrorContext is defined below after ErrorSeverity
 
 enum ErrorSeverity: Int, Comparable, CaseIterable {
     case low = 1
@@ -220,6 +226,43 @@ enum ErrorSeverity: Int, Comparable, CaseIterable {
         case .critical: return "Critical"
         }
     }
+
+    var color: Color {
+        switch self {
+        case .low: return .blue
+        case .medium: return .orange
+        case .high: return .red
+        case .critical: return .purple
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .low: return "info.circle.fill"
+        case .medium: return "exclamationmark.triangle.fill"
+        case .high: return "xmark.circle.fill"
+        case .critical: return "exclamationmark.octagon.fill"
+        }
+    }
+}
+
+/// Error context enumeration for categorizing errors by area
+enum ErrorContext: String, CaseIterable {
+    case general = "General"
+    case authentication = "Authentication"
+    case biometricAuth = "Biometric Authentication"
+    case location = "Location"
+    case notifications = "Notifications"
+    case dataSync = "Data Synchronization"
+    case network = "Network"
+    case security = "Security"
+    case storage = "Storage"
+    case sync = "Sync"
+    case weather = "Weather"
+    case database = "Database"
+    case validation = "Validation"
+    case fileSystem = "File System"
+    case unknown = "Unknown"
 }
 
 /// Error report for history tracking

@@ -1,0 +1,241 @@
+{
+  "version": 4,
+  "component": {
+    "id": "authentication-screen",
+    "type": "vstack",
+    "spacing": 40,
+    "padding": 20,
+    "backgroundColor": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "children": [
+      {
+        "id": "spacer-top",
+        "type": "spacer"
+      },
+      {
+        "id": "app-branding",
+        "type": "vstack",
+        "spacing": 16,
+        "children": [
+          {
+            "id": "app-icon",
+            "type": "image",
+            "systemName": "shield.checkered",
+            "font": "system-80",
+            "foregroundColor": "#FFFFFF"
+          },
+          {
+            "id": "app-title",
+            "type": "text",
+            "text": "PestGenie",
+            "font": "largeTitle",
+            "fontWeight": "bold",
+            "foregroundColor": "#FFFFFF"
+          },
+          {
+            "id": "app-subtitle",
+            "type": "text",
+            "text": "Secure Pest Control Management",
+            "font": "subheadline",
+            "foregroundColor": "#FFFFFF80"
+          }
+        ]
+      },
+      {
+        "id": "spacer-middle",
+        "type": "spacer"
+      },
+      {
+        "id": "authentication-section",
+        "type": "vstack",
+        "spacing": 24,
+        "padding": 40,
+        "children": [
+          {
+            "id": "google-signin-button",
+            "type": "button",
+            "text": "Sign in with Google",
+            "actionId": "google_signin",
+            "backgroundColor": "#FFFFFF",
+            "foregroundColor": "#000000",
+            "cornerRadius": 8,
+            "padding": 16,
+            "font": "headline",
+            "shadow": {
+              "radius": 4,
+              "offset": { "x": 0, "y": 2 },
+              "color": "#00000020"
+            }
+          },
+          {
+            "id": "loading-indicator",
+            "type": "conditional",
+            "condition": "isLoading",
+            "children": [
+              {
+                "id": "loading-content",
+                "type": "hstack",
+                "spacing": 12,
+                "children": [
+                  {
+                    "id": "progress-view",
+                    "type": "progressView",
+                    "style": "circular"
+                  },
+                  {
+                    "id": "loading-text",
+                    "type": "text",
+                    "text": "Signing in...",
+                    "font": "subheadline",
+                    "foregroundColor": "#FFFFFF80"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "privacy-link",
+            "type": "button",
+            "text": "Privacy Policy",
+            "actionId": "show_privacy",
+            "font": "footnote",
+            "foregroundColor": "#FFFFFF80",
+            "underline": true
+          }
+        ]
+      },
+      {
+        "id": "spacer-bottom",
+        "type": "spacer"
+      },
+      {
+        "id": "security-features",
+        "type": "vstack",
+        "spacing": 12,
+        "padding": 40,
+        "children": [
+          {
+            "id": "security-row-1",
+            "type": "hstack",
+            "spacing": 16,
+            "children": [
+              {
+                "id": "encryption-feature",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "encryption-icon",
+                    "type": "image",
+                    "systemName": "lock.shield",
+                    "font": "system-24",
+                    "foregroundColor": "#FFFFFF"
+                  },
+                  {
+                    "id": "encryption-text",
+                    "type": "text",
+                    "text": "End-to-End Encryption",
+                    "font": "caption",
+                    "foregroundColor": "#FFFFFF80",
+                    "multilineTextAlignment": "center"
+                  }
+                ]
+              },
+              {
+                "id": "biometric-feature",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "biometric-icon",
+                    "type": "image",
+                    "systemName": "faceid",
+                    "font": "system-24",
+                    "foregroundColor": "#FFFFFF"
+                  },
+                  {
+                    "id": "biometric-text",
+                    "type": "text",
+                    "text": "Biometric Security",
+                    "font": "caption",
+                    "foregroundColor": "#FFFFFF80",
+                    "multilineTextAlignment": "center"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "security-row-2",
+            "type": "hstack",
+            "spacing": 16,
+            "children": [
+              {
+                "id": "sync-feature",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "sync-icon",
+                    "type": "image",
+                    "systemName": "icloud.and.arrow.up",
+                    "font": "system-24",
+                    "foregroundColor": "#FFFFFF"
+                  },
+                  {
+                    "id": "sync-text",
+                    "type": "text",
+                    "text": "Secure Cloud Sync",
+                    "font": "caption",
+                    "foregroundColor": "#FFFFFF80",
+                    "multilineTextAlignment": "center"
+                  }
+                ]
+              },
+              {
+                "id": "privacy-feature",
+                "type": "vstack",
+                "spacing": 8,
+                "children": [
+                  {
+                    "id": "privacy-icon",
+                    "type": "image",
+                    "systemName": "checkmark.shield",
+                    "font": "system-24",
+                    "foregroundColor": "#FFFFFF"
+                  },
+                  {
+                    "id": "privacy-text",
+                    "type": "text",
+                    "text": "Privacy Compliant",
+                    "font": "caption",
+                    "foregroundColor": "#FFFFFF80",
+                    "multilineTextAlignment": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "spacer-final",
+        "type": "spacer"
+      }
+    ]
+  },
+  "actions": {
+    "google_signin": {
+      "type": "authentication",
+      "method": "google_signin"
+    },
+    "show_privacy": {
+      "type": "sheet",
+      "destination": "privacy_policy"
+    }
+  },
+  "bindings": {
+    "isLoading": {
+      "source": "authentication.isLoading"
+    }
+  }
+}

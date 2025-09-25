@@ -10,7 +10,7 @@ final class SecurityManager: ObservableObject {
     @Published var biometricAuthenticationEnabled = false
     @Published var dataEncryptionStatus: EncryptionStatus = .disabled
 
-    private let keychain = KeychainManager()
+    let keychain = KeychainManager()
     private let encryptionManager = DataEncryptionManager()
 
     private var isInitialized = false

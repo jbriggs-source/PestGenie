@@ -43,7 +43,7 @@
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="entityId" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="parameters" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="parameters" optional="YES" attributeType="Binary"/>
         <attribute name="retryCount" optional="YES" attributeType="Integer 32" defaultValue="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="RouteEntity" representedClassName="RouteEntity" syncable="YES" codeGenerationType="class">
@@ -146,7 +146,7 @@
         <relationship name="performanceMetrics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EquipmentPerformanceEntity" inverseName="equipment" inverseEntity="EquipmentPerformanceEntity"/>
     </entity>
     <entity name="EquipmentInspectionEntity" representedClassName="EquipmentInspectionEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="checklistData" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String: Any]"/>
+        <attribute name="checklistData" optional="YES" attributeType="Binary"/>
         <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

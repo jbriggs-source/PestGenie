@@ -8,6 +8,30 @@ import Network
 /// networking layers. Here it uses in‑memory sample data to simplify the
 /// example.
 final class RouteViewModel: ObservableObject {
+
+    // MARK: - Authentication
+    private var authManager: AuthenticationManager? = nil
+    @Published var currentUserName: String = "Technician"
+    private var authCancellable: AnyCancellable?
+
+    /// Set the authentication manager for user profile data
+    @MainActor
+    func setAuthenticationManager(_ authManager: AuthenticationManager) {
+        self.authManager = authManager
+
+        // Set initial user name if user is already authenticated
+        if let currentUser = authManager.currentUser {
+            currentUserName = currentUser.name ?? "Technician"
+        }
+
+        // Subscribe to authentication changes and update the stored user name
+        authCancellable = authManager.$currentUser
+            .receive(on: DispatchQueue.main)
+            .map { user in
+                user?.name ?? "Technician"
+            }
+            .assign(to: \.currentUserName, on: self)
+    }
     @Published var jobs: [Job] = []
     @Published var selectedReason: ReasonCode? = nil
     @Published var isShowingReasonPicker: Bool = false
@@ -250,7 +274,7 @@ final class RouteViewModel: ObservableObject {
 
     /// Technician name for dashboard display
     var technicianName: String {
-        return "Alex Rodriguez" // In production, this would come from user profile
+        return currentUserName
     }
 
     /// Current route identifier for display

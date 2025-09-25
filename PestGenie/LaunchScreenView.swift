@@ -57,9 +57,10 @@ struct LaunchScreenView: View {
 }
 
 /// Wrapper view that handles transition from launch to main app
-struct AppRootView: View {
+struct LegacyAppRootView: View {
     @State private var showLaunchScreen = true
     @StateObject private var appInitializer = AppInitializer()
+    @StateObject private var authManager = AuthenticationManager.shared
 
     let persistenceController = PersistenceController.shared
 
@@ -67,6 +68,7 @@ struct AppRootView: View {
         ZStack {
             if !showLaunchScreen {
                 MainDashboardView()
+                    .environmentObject(authManager)
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .transition(.opacity)
             }

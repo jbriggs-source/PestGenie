@@ -9,6 +9,7 @@ struct SDUIContentView: View {
     // Renamed to avoid collision with similarly named properties in SDUIContext.
     @EnvironmentObject private var routeViewModel: RouteViewModel
     @EnvironmentObject private var locationManager: LocationManager
+    @EnvironmentObject private var authManager: AuthenticationManager
     @State private var screen: SDUIScreen? = nil
     @State private var jobAwaitingSignature: Job? = nil
     @State private var showingSignatureSheet: Bool = false
@@ -75,7 +76,7 @@ struct SDUIContentView: View {
         actions["skipJob"] = { job in
             if let job = job { routeViewModel.skip(job: job) }
         }
-        return SDUIContext(jobs: routeViewModel.jobs, routeViewModel: routeViewModel, actions: actions, currentJob: nil, persistenceController: PersistenceController.shared)
+        return SDUIContext(jobs: routeViewModel.jobs, routeViewModel: routeViewModel, actions: actions, currentJob: nil, persistenceController: PersistenceController.shared, authManager: authManager)
     }
     /// Loads the screen definition from the bundled JSON file. In a real app
     /// this could fetch from a remote service and cache it. This method

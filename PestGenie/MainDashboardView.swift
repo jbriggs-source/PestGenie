@@ -5,8 +5,9 @@ import SwiftUI
 /// overview of the technician's day and quick access to key features.
 struct MainDashboardView: View {
     @StateObject private var routeViewModel = RouteViewModel()
-    @StateObject private var locationManager = LocationManager()
+    @StateObject private var locationManager = LocationManager.shared
     @StateObject private var notificationManager = NotificationManager.shared
+    @EnvironmentObject private var authManager: AuthenticationManager
 
     @State private var selectedTab: NavigationTab = .home
     @State private var showingRouteView = false
@@ -507,11 +508,15 @@ struct MainDashboardView: View {
                         VStack(spacing: PestGenieDesignSystem.Components.Navigation.BottomTab.spacing) {
                             Image(systemName: tab.icon)
                                 .font(.system(size: PestGenieDesignSystem.Components.Navigation.BottomTab.iconSize, weight: PestGenieDesignSystem.Components.Navigation.BottomTab.iconWeight))
+                                .symbolRenderingMode(.monochrome)
                                 .foregroundColor(selectedTab == tab ? tab.designSystemColor : PestGenieDesignSystem.Colors.textTertiary)
+                                .frame(width: PestGenieDesignSystem.Components.Navigation.BottomTab.iconSize, height: PestGenieDesignSystem.Components.Navigation.BottomTab.iconSize)
 
                             Text(tab.title)
                                 .font(.system(size: PestGenieDesignSystem.Components.Navigation.BottomTab.fontSize, weight: selectedTab == tab ? .semibold : .medium))
                                 .foregroundColor(selectedTab == tab ? tab.designSystemColor : PestGenieDesignSystem.Colors.textTertiary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, PestGenieDesignSystem.Components.Navigation.BottomTab.verticalPadding)
@@ -650,7 +655,8 @@ struct MainDashboardView: View {
             routeViewModel: routeViewModel,
             actions: actions,
             currentJob: nil,
-            persistenceController: persistenceController
+            persistenceController: persistenceController,
+            authManager: authManager
         )
     }
 

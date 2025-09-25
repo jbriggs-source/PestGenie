@@ -7,6 +7,7 @@ struct TopNavigationBar: View {
     @EnvironmentObject private var routeViewModel: RouteViewModel
     @EnvironmentObject private var locationManager: LocationManager
     @EnvironmentObject private var notificationManager: NotificationManager
+    @EnvironmentObject private var authManager: AuthenticationManager
     @StateObject private var weatherManager = WeatherDataManager.shared
     @StateObject private var syncManager = SyncManager.shared
 
@@ -81,24 +82,33 @@ struct TopNavigationBar: View {
     // MARK: - User Info Section
 
     private var userInfoSection: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            // Greeting - improved to show complete message
-            Text(greetingText)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85) // Allow text to scale down slightly if needed
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // User profile picture
+            UserProfilePictureView(
+                profileImageURL: authManager.currentUser?.profileImageURL,
+                size: 36,
+                fallbackColor: PestGenieDesignSystem.Colors.primary
+            )
 
-            // Route info
-            HStack(spacing: PestGenieDesignSystem.Spacing.xxxs) {
-                Image(systemName: "map")
-                    .font(.system(size: 11))
-                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-
-                Text(routeInfoText)
-                    .font(.system(size: 12))
-                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+            VStack(alignment: .leading, spacing: 2) {
+                // Greeting with actual user name
+                Text(greetingText)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.85) // Allow text to scale down slightly if needed
+
+                // Route info
+                HStack(spacing: PestGenieDesignSystem.Spacing.xxxs) {
+                    Image(systemName: "map")
+                        .font(.system(size: 11))
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+
+                    Text(routeInfoText)
+                        .font(.system(size: 12))
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .lineLimit(1)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -216,7 +226,10 @@ struct TopNavigationBar: View {
     private var greetingText: String {
         let hour = Calendar.current.component(.hour, from: Date())
         let timeOfDay = hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening"
-        return "Good \(timeOfDay), \(technicianName)"
+
+        // Use authenticated user's name if available, fallback to provided technicianName
+        let displayName = authManager.currentUser?.name ?? technicianName
+        return "Good \(timeOfDay), \(displayName)"
     }
 
     private var routeInfoText: String {
@@ -630,14 +643,16 @@ struct NotificationRowView: View {
 #Preview("Top Navigation Bar") {
     TopNavigationBar(technicianName: "John Smith", showingMenu: .constant(false))
         .environmentObject(RouteViewModel())
-        .environmentObject(LocationManager())
+        .environmentObject(LocationManager.shared)
         .environmentObject(NotificationManager.shared)
+        .environmentObject(AuthenticationManager.shared)
 }
 
 #Preview("Top Navigation Dark Mode") {
     TopNavigationBar(technicianName: "Sarah Johnson", showingMenu: .constant(false))
         .environmentObject(RouteViewModel())
-        .environmentObject(LocationManager())
+        .environmentObject(LocationManager.shared)
         .environmentObject(NotificationManager.shared)
+        .environmentObject(AuthenticationManager.shared)
         .preferredColorScheme(.dark)
 }

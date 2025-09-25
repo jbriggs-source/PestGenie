@@ -96,3 +96,21 @@ Thumbs.db
 *.tmp
 *.temp
 *~
+
+# Firebase Configuration Files - KEEP SECURE
+GoogleService-Info.plist
+GoogleService-Info-Dev.plist
+GoogleService-Info-Staging.plist
+GoogleService-Info-Production.plist
+
+# Environment Configuration
+Config.xcconfig
+Config-Dev.xcconfig
+Config-Staging.xcconfig
+Config-Production.xcconfig
+
+# Secrets and API Keys
+*.secrets
+secrets.plist
+api-keys.plist
+firebase-config.json

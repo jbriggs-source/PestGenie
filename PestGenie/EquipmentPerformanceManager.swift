@@ -629,31 +629,7 @@ struct EquipmentUsage: Codable {
     let conditions: UsageConditions?
 }
 
-/// Usage conditions affecting equipment performance
-struct UsageConditions: Codable {
-    let temperature: Double?
-    let humidity: Double?
-    let terrain: String?
-    let chemicalType: String?
-    let workload: WorkloadLevel
-}
-
-/// Workload intensity levels
-enum WorkloadLevel: Int, CaseIterable, Codable {
-    case light = 1
-    case moderate = 2
-    case heavy = 3
-    case extreme = 4
-
-    var description: String {
-        switch self {
-        case .light: return "Light"
-        case .moderate: return "Moderate"
-        case .heavy: return "Heavy"
-        case .extreme: return "Extreme"
-        }
-    }
-}
+// Note: UsageConditions and WorkloadLevel are now defined in Models.swift
 
 /// Maintenance event tracking
 struct MaintenanceEvent: Codable {
@@ -666,24 +642,7 @@ struct MaintenanceEvent: Codable {
     let notes: String?
 }
 
-/// Types of maintenance events
-enum MaintenanceType: String, CaseIterable, Codable {
-    case routine = "routine"
-    case preventive = "preventive"
-    case corrective = "corrective"
-    case emergency = "emergency"
-    case calibration = "calibration"
-
-    var description: String {
-        switch self {
-        case .routine: return "Routine Maintenance"
-        case .preventive: return "Preventive Maintenance"
-        case .corrective: return "Corrective Maintenance"
-        case .emergency: return "Emergency Repair"
-        case .calibration: return "Calibration"
-        }
-    }
-}
+// Note: MaintenanceType is now defined in Models.swift
 
 /// Equipment calibration event
 struct CalibrationEvent: Codable {
@@ -837,31 +796,7 @@ struct MaintenanceRecommendation: Identifiable, Codable {
     let recommendedDate: Date
 }
 
-/// Maintenance priority levels
-enum MaintenancePriority: String, CaseIterable, Codable {
-    case low = "low"
-    case medium = "medium"
-    case high = "high"
-    case urgent = "urgent"
-
-    var description: String {
-        switch self {
-        case .low: return "Low Priority"
-        case .medium: return "Medium Priority"
-        case .high: return "High Priority"
-        case .urgent: return "Urgent"
-        }
-    }
-
-    var color: String {
-        switch self {
-        case .low: return "green"
-        case .medium: return "yellow"
-        case .high: return "orange"
-        case .urgent: return "red"
-        }
-    }
-}
+// Note: MaintenancePriority is now defined in Models.swift
 
 /// Time period for analytics
 enum TimePeriod: CaseIterable {

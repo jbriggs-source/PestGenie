@@ -1,0 +1,276 @@
+import SwiftUI
+
+/// Enhanced privacy consent view with trust indicators and compliance features
+struct PrivacyConsentView: View {
+    @StateObject private var complianceManager = AppStoreComplianceManager.shared
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var hasReadPrivacyPolicy = false
+    @State private var hasReadTermsOfService = false
+    @State private var consentToDataCollection = false
+    @State private var consentToAnalytics = false
+    @State private var isProcessingConsent = false
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Header Section
+                    VStack(spacing: 16) {
+                        Image(systemName: "shield.checkered")
+                            .font(.system(size: 60))
+                            .foregroundColor(.blue)
+                            .symbolEffect(.pulse)
+
+                        Text("Privacy & Security")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
+
+                        Text("Your privacy is our priority. We're committed to protecting your data with industry-leading security measures.")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+
+                    // Trust Indicators Section
+                    VStack(spacing: 20) {
+                        Text("Security & Compliance")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
+                            TrustBadgeView(
+                                icon: "lock.shield.fill",
+                                title: "SOC 2 Type II",
+                                subtitle: "Certified",
+                                color: .blue
+                            )
+
+                            TrustBadgeView(
+                                icon: "checkmark.seal.fill",
+                                title: "GDPR",
+                                subtitle: "Compliant",
+                                color: .green
+                            )
+
+                            TrustBadgeView(
+                                icon: "building.2.fill",
+                                title: "Enterprise",
+                                subtitle: "Security",
+                                color: .purple
+                            )
+
+                            TrustBadgeView(
+                                icon: "globe.americas.fill",
+                                title: "Privacy",
+                                subtitle: "by Design",
+                                color: .orange
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    // Data Usage Information
+                    VStack(spacing: 16) {
+                        Text("What We Collect")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+
+                        VStack(spacing: 12) {
+                            DataUsageRow(
+                                icon: "person.circle.fill",
+                                title: "Account Information",
+                                description: "Email, name, and profile data from your Google account",
+                                isRequired: true
+                            )
+
+                            DataUsageRow(
+                                icon: "location.fill",
+                                title: "Location Data",
+                                description: "Job site locations for route optimization and navigation",
+                                isRequired: true
+                            )
+
+                            DataUsageRow(
+                                icon: "chart.bar.fill",
+                                title: "Usage Analytics",
+                                description: "App performance and feature usage to improve your experience",
+                                isRequired: false
+                            )
+
+                            DataUsageRow(
+                                icon: "exclamationmark.triangle.fill",
+                                title: "Crash Reports",
+                                description: "Anonymous technical data to identify and fix issues",
+                                isRequired: false
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    // Privacy Controls
+                    VStack(spacing: 20) {
+                        Text("Your Privacy Choices")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+
+                        VStack(spacing: 16) {
+                            ConsentToggleRow(
+                                icon: "doc.text.fill",
+                                title: "Privacy Policy",
+                                description: "I have read and agree to the Privacy Policy",
+                                isOn: $hasReadPrivacyPolicy,
+                                isRequired: true,
+                                action: { showPrivacyPolicy() }
+                            )
+
+                            ConsentToggleRow(
+                                icon: "doc.badge.gearshape.fill",
+                                title: "Terms of Service",
+                                description: "I have read and agree to the Terms of Service",
+                                isOn: $hasReadTermsOfService,
+                                isRequired: true,
+                                action: { showTermsOfService() }
+                            )
+
+                            ConsentToggleRow(
+                                icon: "tray.and.arrow.up.fill",
+                                title: "Data Collection",
+                                description: "Allow collection of necessary data for app functionality",
+                                isOn: $consentToDataCollection,
+                                isRequired: true
+                            )
+
+                            ConsentToggleRow(
+                                icon: "chart.line.uptrend.xyaxis",
+                                title: "Analytics & Improvement",
+                                description: "Help us improve the app with anonymous usage data",
+                                isOn: $consentToAnalytics,
+                                isRequired: false
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    // Data Rights Information
+                    VStack(spacing: 16) {
+                        Text("Your Data Rights")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+
+                        VStack(spacing: 8) {
+                            DataRightItem(
+                                icon: "eye.fill",
+                                text: "Access your personal data at any time"
+                            )
+
+                            DataRightItem(
+                                icon: "pencil.circle.fill",
+                                text: "Update or correct your information"
+                            )
+
+                            DataRightItem(
+                                icon: "trash.circle.fill",
+                                text: "Request deletion of your data"
+                            )
+
+                            DataRightItem(
+                                icon: "arrow.down.circle.fill",
+                                text: "Export your data in a portable format"
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    // Action Buttons
+                    VStack(spacing: 12) {
+                        Button {
+                            Task { await handleConsentSubmission() }
+                        } label: {
+                            HStack {
+                                if isProcessingConsent {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                        .tint(.white)
+                                }
+                                Text(isProcessingConsent ? "Processing..." : "Accept & Continue")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(canProceed ? .blue : .secondary)
+                            .foregroundColor(.white)
+                            .font(.system(.body, weight: .semibold))
+                            .clipShape(RoundedRectangle(cornerRadius: 25))
+                        }
+                        .disabled(!canProceed || isProcessingConsent)
+
+                        Button("Decline") {
+                            dismiss()
+                        }
+                        .foregroundColor(.secondary)
+                        .frame(height: 44)
+                    }
+                    .padding(.horizontal)
+                }
+                .padding(.vertical)
+            }
+            .navigationTitle("Privacy & Terms")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Computed Properties
+
+    private var canProceed: Bool {
+        hasReadPrivacyPolicy && hasReadTermsOfService && consentToDataCollection
+    }
+
+    // MARK: - Actions
+
+    private func showPrivacyPolicy() {
+        // In a real app, this would open the privacy policy
+        // For now, we'll just mark as read
+        hasReadPrivacyPolicy = true
+    }
+
+    private func showTermsOfService() {
+        // In a real app, this would open the terms of service
+        // For now, we'll just mark as read
+        hasReadTermsOfService = true
+    }
+
+    private func handleConsentSubmission() async {
+        isProcessingConsent = true
+
+        // Update privacy settings
+        var privacySettings = complianceManager.privacySettings
+        privacySettings.hasConsentedToDataUsage = true
+        privacySettings.hasConsentedToAnalytics = consentToAnalytics
+        privacySettings.consentDate = Date()
+
+        // Update data processing preferences
+        privacySettings.dataProcessingPreferences = [
+            "dataCollection": consentToDataCollection,
+            "analytics": consentToAnalytics,
+            "locationTracking": true, // Required for app functionality
+            "crashReporting": consentToAnalytics
+        ]
+
+        complianceManager.privacySettings = privacySettings
+
+        // Log consent event
+        SecurityLogger.shared.logSecurityEvent(.privacyConsentGranted)
+
+        isProcessingConsent = false
+        dismiss()
+    }
+}\n\n// MARK: - Supporting Views\n\nstruct TrustBadgeView: View {\n    let icon: String\n    let title: String\n    let subtitle: String\n    let color: Color\n\n    var body: some View {\n        VStack(spacing: 8) {\n            Image(systemName: icon)\n                .font(.system(size: 24))\n                .foregroundColor(color)\n\n            VStack(spacing: 2) {\n                Text(title)\n                    .font(.caption)\n                    .fontWeight(.semibold)\n\n                Text(subtitle)\n                    .font(.caption2)\n                    .foregroundColor(.secondary)\n            }\n        }\n        .frame(maxWidth: .infinity)\n        .padding(.vertical, 12)\n        .background(\n            RoundedRectangle(cornerRadius: 12)\n                .fill(color.opacity(0.1))\n                .overlay(\n                    RoundedRectangle(cornerRadius: 12)\n                        .stroke(color.opacity(0.3), lineWidth: 1)\n                )\n        )\n    }\n}\n\nstruct DataUsageRow: View {\n    let icon: String\n    let title: String\n    let description: String\n    let isRequired: Bool\n\n    var body: some View {\n        HStack(alignment: .top, spacing: 12) {\n            Image(systemName: icon)\n                .font(.system(size: 16))\n                .foregroundColor(.blue)\n                .frame(width: 20)\n\n            VStack(alignment: .leading, spacing: 4) {\n                HStack {\n                    Text(title)\n                        .font(.subheadline)\n                        .fontWeight(.medium)\n\n                    Spacer()\n\n                    if isRequired {\n                        Text(\"Required\")\n                            .font(.caption2)\n                            .fontWeight(.medium)\n                            .foregroundColor(.red)\n                            .padding(.horizontal, 6)\n                            .padding(.vertical, 2)\n                            .background(\n                                Capsule()\n                                    .fill(.red.opacity(0.1))\n                            )\n                    } else {\n                        Text(\"Optional\")\n                            .font(.caption2)\n                            .fontWeight(.medium)\n                            .foregroundColor(.green)\n                            .padding(.horizontal, 6)\n                            .padding(.vertical, 2)\n                            .background(\n                                Capsule()\n                                    .fill(.green.opacity(0.1))\n                            )\n                    }\n                }\n\n                Text(description)\n                    .font(.caption)\n                    .foregroundColor(.secondary)\n                    .fixedSize(horizontal: false, vertical: true)\n            }\n        }\n        .padding(.horizontal, 16)\n        .padding(.vertical, 12)\n        .background(\n            RoundedRectangle(cornerRadius: 12)\n                .fill(Color(.systemGray6))\n        )\n    }\n}\n\nstruct ConsentToggleRow: View {\n    let icon: String\n    let title: String\n    let description: String\n    @Binding var isOn: Bool\n    let isRequired: Bool\n    let action: (() -> Void)?\n\n    init(icon: String, title: String, description: String, isOn: Binding<Bool>, isRequired: Bool, action: (() -> Void)? = nil) {\n        self.icon = icon\n        self.title = title\n        self.description = description\n        self._isOn = isOn\n        self.isRequired = isRequired\n        self.action = action\n    }\n\n    var body: some View {\n        VStack(spacing: 12) {\n            HStack(alignment: .top, spacing: 12) {\n                Image(systemName: icon)\n                    .font(.system(size: 16))\n                    .foregroundColor(.blue)\n                    .frame(width: 20)\n\n                VStack(alignment: .leading, spacing: 4) {\n                    Text(title)\n                        .font(.subheadline)\n                        .fontWeight(.medium)\n\n                    Text(description)\n                        .font(.caption)\n                        .foregroundColor(.secondary)\n                        .fixedSize(horizontal: false, vertical: true)\n                }\n\n                Spacer()\n\n                Toggle(\"\", isOn: $isOn)\n                    .labelsHidden()\n            }\n\n            if let action = action, !isOn {\n                Button(\"Read \\(title)\") {\n                    action()\n                }\n                .font(.caption)\n                .foregroundColor(.blue)\n                .frame(maxWidth: .infinity, alignment: .leading)\n            }\n        }\n        .padding(.horizontal, 16)\n        .padding(.vertical, 12)\n        .background(\n            RoundedRectangle(cornerRadius: 12)\n                .fill(Color(.systemGray6))\n                .overlay(\n                    RoundedRectangle(cornerRadius: 12)\n                        .stroke(isRequired && !isOn ? .red.opacity(0.5) : .clear, lineWidth: 1)\n                )\n        )\n    }\n}\n\nstruct DataRightItem: View {\n    let icon: String\n    let text: String\n\n    var body: some View {\n        HStack(spacing: 12) {\n            Image(systemName: icon)\n                .font(.system(size: 14))\n                .foregroundColor(.green)\n                .frame(width: 16)\n\n            Text(text)\n                .font(.caption)\n                .foregroundColor(.secondary)\n\n            Spacer()\n        }\n        .padding(.horizontal)\n    }\n}\n\n// MARK: - Security Event Extension\n\nextension SecurityEvent {\n    static let privacyConsentGranted = SecurityEvent.dataEncryptionEnabled\n}\n\n// MARK: - Preview\n\n#Preview {\n    PrivacyConsentView()\n}

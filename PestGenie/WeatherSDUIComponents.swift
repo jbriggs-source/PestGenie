@@ -46,7 +46,7 @@ final class WeatherSDUIContext: ObservableObject {
     @Published var lastUpdateTime: Date?
 
     private let weatherAPI = WeatherAPI.shared
-    private let locationManager = LocationManager()
+    private let locationManager = LocationManager.shared
 
     init() {
         setupLocationMonitoring()

@@ -1249,5 +1249,78 @@ enum SyncStatus: String, CaseIterable, Codable {
     }
 }
 
+// MARK: - Equipment Maintenance Enums (moved from EquipmentPerformanceManager for shared access)
+
+/// Maintenance type enumeration
+enum MaintenanceType: String, CaseIterable, Codable {
+    case routine = "routine"
+    case preventive = "preventive"
+    case corrective = "corrective"
+    case emergency = "emergency"
+    case calibration = "calibration"
+
+    var description: String {
+        switch self {
+        case .routine: return "Routine Maintenance"
+        case .preventive: return "Preventive Maintenance"
+        case .corrective: return "Corrective Maintenance"
+        case .emergency: return "Emergency Repair"
+        case .calibration: return "Calibration"
+        }
+    }
+}
+
+/// Maintenance priority enumeration
+enum MaintenancePriority: String, CaseIterable, Codable {
+    case low = "low"
+    case medium = "medium"
+    case high = "high"
+    case urgent = "urgent"
+
+    var description: String {
+        switch self {
+        case .low: return "Low Priority"
+        case .medium: return "Medium Priority"
+        case .high: return "High Priority"
+        case .urgent: return "Urgent"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .low: return "green"
+        case .medium: return "yellow"
+        case .high: return "orange"
+        case .urgent: return "red"
+        }
+    }
+}
+
+/// Usage conditions affecting equipment performance
+struct UsageConditions: Codable {
+    let temperature: Double?
+    let humidity: Double?
+    let terrain: String?
+    let chemicalType: String?
+    let workload: WorkloadLevel
+}
+
+/// Workload intensity levels
+enum WorkloadLevel: Int, CaseIterable, Codable {
+    case light = 1
+    case moderate = 2
+    case heavy = 3
+    case extreme = 4
+
+    var description: String {
+        switch self {
+        case .light: return "Light"
+        case .moderate: return "Moderate"
+        case .heavy: return "Heavy"
+        case .extreme: return "Extreme"
+        }
+    }
+}
+
 // MARK: - Model Conversion Extensions
 // Note: Core Data entity extensions will be added here as needed

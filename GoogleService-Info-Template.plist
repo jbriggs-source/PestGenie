@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+    🔒 FIREBASE CONFIGURATION TEMPLATE 🔒
+
+    This is a TEMPLATE file. To configure Firebase authentication:
+
+    1. Go to https://console.firebase.google.com/
+    2. Create/select your Firebase project
+    3. Add iOS app with bundle ID: Greenix.PestGenie
+    4. Download the real GoogleService-Info.plist file
+    5. Replace the template file with your downloaded file
+
+    SECURITY NOTES:
+    - The real GoogleService-Info.plist is automatically excluded from Git
+    - Never commit actual credentials to version control
+    - Use different Firebase projects for development/production
+
+    FILE NAMING:
+    - Production: GoogleService-Info.plist
+    - Development: GoogleService-Info-Dev.plist (optional)
+    -->
+
+    <key>CLIENT_ID</key>
+    <string>REPLACE_WITH_YOUR_CLIENT_ID.apps.googleusercontent.com</string>
+
+    <key>REVERSED_CLIENT_ID</key>
+    <string>com.googleusercontent.apps.REPLACE_WITH_YOUR_CLIENT_ID</string>
+
+    <key>API_KEY</key>
+    <string>REPLACE_WITH_YOUR_API_KEY</string>
+
+    <key>GCM_SENDER_ID</key>
+    <string>REPLACE_WITH_YOUR_GCM_SENDER_ID</string>
+
+    <key>PLIST_VERSION</key>
+    <string>1</string>
+
+    <key>BUNDLE_ID</key>
+    <string>Greenix.PestGenie</string>
+
+    <key>PROJECT_ID</key>
+    <string>REPLACE_WITH_YOUR_PROJECT_ID</string>
+
+    <key>STORAGE_BUCKET</key>
+    <string>REPLACE_WITH_YOUR_PROJECT_ID.appspot.com</string>
+
+    <key>IS_ADS_ENABLED</key>
+    <false/>
+
+    <key>IS_ANALYTICS_ENABLED</key>
+    <false/>
+
+    <key>IS_APPINVITE_ENABLED</key>
+    <true/>
+
+    <key>IS_GCM_ENABLED</key>
+    <true/>
+
+    <key>IS_SIGNIN_ENABLED</key>
+    <true/>
+
+    <key>GOOGLE_APP_ID</key>
+    <string>1:REPLACE_WITH_YOUR_GCM_SENDER_ID:ios:REPLACE_WITH_YOUR_APP_ID</string>
+</dict>
+</plist>

@@ -33,7 +33,7 @@ final class AppStoreComplianceManager: ObservableObject {
     }
 
     func requestLocationPermission() async -> Bool {
-        return await LocationManager().requestPermission()
+        return await LocationManager.shared.requestPermission()
     }
 
     func requestNotificationPermission() async -> Bool {
@@ -281,6 +281,7 @@ struct PrivacySettings: Codable {
     var userId: String = UUID().uuidString
     var userEmail: String = ""
     var dataProcessingPreferences: [String: Bool] = [:]
+    var consentDate: Date?
 }
 
 struct AccessibilitySettings: Codable {
@@ -354,76 +355,7 @@ struct LocationDataSummary: Codable {
 
 // MARK: - SwiftUI Views
 
-struct PrivacyConsentView: View {
-    @StateObject private var complianceManager = AppStoreComplianceManager.shared
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Privacy & Data Usage")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-
-                    Text("PestGenie collects and processes the following data to provide our pest control services:")
-                        .font(.body)
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        DataUsageRow(
-                            icon: "location",
-                            title: "Location Data",
-                            description: "Used to navigate to job sites and track service areas"
-                        )
-
-                        DataUsageRow(
-                            icon: "camera",
-                            title: "Photos",
-                            description: "Service photos are stored locally and can be synced to our servers"
-                        )
-
-                        DataUsageRow(
-                            icon: "person.crop.circle",
-                            title: "Contact Information",
-                            description: "Customer contact details for service appointments"
-                        )
-                    }
-
-                    Text("Your Rights")
-                        .font(.headline)
-                        .padding(.top)
-
-                    Text("You have the right to access, modify, or delete your personal data at any time. You can also opt out of data processing for non-essential features.")
-                        .font(.body)
-
-                    Button("Accept and Continue") {
-                        Task {
-                            _ = await complianceManager.requestDataUsageConsent()
-                            dismiss()
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
-
-                    Button("Learn More") {
-                        // Open privacy policy
-                    }
-                    .buttonStyle(.bordered)
-                    .frame(maxWidth: .infinity)
-                }
-                .padding()
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Skip") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
+// Note: PrivacyConsentView is now defined in Views/Authentication/PrivacyConsentView.swift
 
 struct DataUsageRow: View {
     let icon: String
