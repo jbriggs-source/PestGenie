@@ -29,13 +29,14 @@ struct TopNavigationBar: View {
                 // Hamburger menu button
                 menuButton
 
-                // User greeting and route info
+                // User greeting and route info (give it more space)
                 userInfoSection
 
-                Spacer(minLength: 4) // More compact spacing
+                Spacer(minLength: 8) // Slightly more spacing to prevent cramping
 
-                // Status indicators
+                // Status indicators (compact)
                 statusIndicatorsSection
+                    .layoutPriority(0) // Lower priority than user info
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
             .frame(height: PestGenieDesignSystem.Components.Navigation.height)
@@ -91,12 +92,13 @@ struct TopNavigationBar: View {
             )
 
             VStack(alignment: .leading, spacing: 2) {
-                // Greeting with actual user name
+                // Greeting with first name only (better UX, less truncation)
                 Text(greetingText)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.85) // Allow text to scale down slightly if needed
+                    .minimumScaleFactor(0.90) // Slightly higher scale factor since we use first name only
+                    .fixedSize(horizontal: true, vertical: false) // Prevent truncation when possible
 
                 // Route info
                 HStack(spacing: PestGenieDesignSystem.Spacing.xxxs) {
@@ -108,8 +110,10 @@ struct TopNavigationBar: View {
                         .font(.system(size: 12))
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
             }
+            .layoutPriority(1) // Give text section priority over other elements
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -228,8 +232,18 @@ struct TopNavigationBar: View {
         let timeOfDay = hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening"
 
         // Use authenticated user's name if available, fallback to provided technicianName
-        let displayName = authManager.currentUser?.name ?? technicianName
-        return "Good \(timeOfDay), \(displayName)"
+        let fullName = authManager.currentUser?.name ?? technicianName
+
+        // Extract first name for better UX and to prevent truncation
+        let firstName = extractFirstName(from: fullName)
+
+        return "Good \(timeOfDay), \(firstName)"
+    }
+
+    /// Extracts the first name from a full name string
+    private func extractFirstName(from fullName: String) -> String {
+        let components = fullName.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: " ")
+        return components.first ?? fullName
     }
 
     private var routeInfoText: String {

@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 /// Main dashboard view that combines the home dashboard content with bottom navigation.
 /// This serves as the primary entry point after app launch, providing an engaging
@@ -7,6 +8,8 @@ struct MainDashboardView: View {
     @StateObject private var routeViewModel = RouteViewModel()
     @StateObject private var locationManager = LocationManager.shared
     @StateObject private var notificationManager = NotificationManager.shared
+    @StateObject private var userProfileManager = UserProfileManager()
+    @StateObject private var profileImageManager = ProfileImageManager()
     @EnvironmentObject private var authManager: AuthenticationManager
 
     @State private var selectedTab: NavigationTab = .home
@@ -16,6 +19,28 @@ struct MainDashboardView: View {
     @State private var showingProfileView = false
     @State private var showingMenu = false
     @State private var selectedMenuItem: MenuItem?
+
+    // Profile-specific sheet states
+    @State private var showingProfileEditSheet = false
+    @State private var showingSecuritySheet = false
+    @State private var showingPrivacySheet = false
+    @State private var showingDataExportSheet = false
+    @State private var showingNotificationSheet = false
+    @State private var showingOfflineDataSheet = false
+    @State private var showingSDUIDemoSheet = false
+
+    // Image picker states
+    @State private var showingImagePicker = false
+    @State private var showingCamera = false
+    @State private var selectedImageItem: PhotosPickerItem?
+    @State private var showingImageOptions = false
+
+    // Error handling
+    @State private var profileError: String?
+    @State private var showingProfileError = false
+
+    // Loading states
+    @State private var isUpdatingProfile = false
 
     let persistenceController = PersistenceController.shared
 
@@ -81,8 +106,42 @@ struct MainDashboardView: View {
         .environmentObject(routeViewModel)
         .environmentObject(locationManager)
         .environmentObject(notificationManager)
+        .environmentObject(userProfileManager)
         .onAppear {
             setupInitialData()
+        }
+        .confirmationDialog("Change Profile Photo", isPresented: $showingImageOptions) {
+            Button("Take Photo") {
+                showingCamera = true
+            }
+            Button("Choose from Library") {
+                showingImagePicker = true
+            }
+            if userProfileManager.currentProfile?.customProfileImageData != nil {
+                Button("Remove Photo", role: .destructive) {
+                    removeCustomProfilePhoto()
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        }
+        .photosPicker(isPresented: $showingImagePicker, selection: $selectedImageItem, matching: .images)
+        .fullScreenCover(isPresented: $showingCamera) {
+            CameraView { image in
+                processCameraImage(image)
+                showingCamera = false
+            }
+        }
+        .onChange(of: selectedImageItem) { _, newItem in
+            if let newItem = newItem {
+                processSelectedImage(newItem)
+            }
+        }
+        .alert("Profile Error", isPresented: $showingProfileError) {
+            Button("OK") {
+                profileError = nil
+            }
+        } message: {
+            Text(profileError ?? "An unknown error occurred")
         }
         .onChange(of: selectedMenuItem) { _, newItem in
             if newItem != nil {
@@ -101,6 +160,27 @@ struct MainDashboardView: View {
         }
         .sheet(isPresented: $showingProfileView) {
             profileDetailView
+        }
+        .sheet(isPresented: $showingProfileEditSheet) {
+            profileEditSheet
+        }
+        .sheet(isPresented: $showingSecuritySheet) {
+            securitySettingsSheet
+        }
+        .sheet(isPresented: $showingPrivacySheet) {
+            privacySettingsSheet
+        }
+        .sheet(isPresented: $showingDataExportSheet) {
+            dataExportSheet
+        }
+        .sheet(isPresented: $showingNotificationSheet) {
+            notificationSettingsSheet
+        }
+        .sheet(isPresented: $showingOfflineDataSheet) {
+            offlineDataSheet
+        }
+        .sheet(isPresented: $showingSDUIDemoSheet) {
+            sduiDemoSheet
         }
     }
 
@@ -478,6 +558,20 @@ struct MainDashboardView: View {
     }
 
     private var profileView: some View {
+        Group {
+            if let screen = loadProfileScreen() {
+                let context = createProfileSDUIContext()
+                SDUIScreenRenderer.render(screen: screen, context: context)
+                    .onAppear {
+                        populateProfileData()
+                    }
+            } else {
+                fallbackProfileView
+            }
+        }
+    }
+
+    private var fallbackProfileView: some View {
         VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
             Text("Profile & Settings")
                 .font(PestGenieDesignSystem.Typography.displayMedium)
@@ -601,6 +695,176 @@ struct MainDashboardView: View {
         }
     }
 
+    // MARK: - Profile Sheets
+
+    private var profileEditSheet: some View {
+        NavigationView {
+            Group {
+                if let screen = loadProfileEditScreen() {
+                    let context = createProfileEditSDUIContext()
+                    SDUIScreenRenderer.render(screen: screen, context: context)
+                } else {
+                    fallbackProfileEditView
+                }
+            }
+            .navigationTitle("Edit Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        showingProfileEditSheet = false
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        saveProfileChanges()
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    private var fallbackProfileEditView: some View {
+        VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+            Text("Edit Profile")
+                .font(PestGenieDesignSystem.Typography.displayMedium)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+            Text("Profile editing functionality will be available soon")
+                .font(PestGenieDesignSystem.Typography.bodyLarge)
+                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+            Spacer()
+        }
+        .padding(PestGenieDesignSystem.Spacing.md)
+    }
+
+    private var securitySettingsSheet: some View {
+        NavigationView {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+                Text("Security Settings")
+                    .font(PestGenieDesignSystem.Typography.displayMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text("Manage your security preferences")
+                    .font(PestGenieDesignSystem.Typography.bodyLarge)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Security")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingSecuritySheet = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var privacySettingsSheet: some View {
+        NavigationView {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+                Text("Privacy Settings")
+                    .font(PestGenieDesignSystem.Typography.displayMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text("Control your data privacy preferences")
+                    .font(PestGenieDesignSystem.Typography.bodyLarge)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Privacy")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingPrivacySheet = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var dataExportSheet: some View {
+        NavigationView {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+                Text("Data Export & Privacy")
+                    .font(PestGenieDesignSystem.Typography.displayMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text("Export your data and manage privacy controls")
+                    .font(PestGenieDesignSystem.Typography.bodyLarge)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Data Export")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingDataExportSheet = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var notificationSettingsSheet: some View {
+        NavigationView {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+                Text("Notification Preferences")
+                    .font(PestGenieDesignSystem.Typography.displayMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text("Customize your notification settings")
+                    .font(PestGenieDesignSystem.Typography.bodyLarge)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Notifications")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingNotificationSheet = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var offlineDataSheet: some View {
+        NavigationView {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
+                Text("Offline Data Management")
+                    .font(PestGenieDesignSystem.Typography.displayMedium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text("Manage offline storage and sync settings")
+                    .font(PestGenieDesignSystem.Typography.bodyLarge)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                Spacer()
+            }
+            .padding(PestGenieDesignSystem.Spacing.md)
+            .navigationTitle("Offline Data")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        showingOfflineDataSheet = false
+                    }
+                }
+            }
+        }
+    }
+
+    private var sduiDemoSheet: some View {
+        SDUIComponentsDemo()
+            .environmentObject(routeViewModel)
+            .environmentObject(locationManager)
+            .environmentObject(authManager)
+    }
+
     // MARK: - Helper Methods
 
     private func loadHomeDashboard() -> SDUIScreen? {
@@ -614,6 +878,21 @@ struct MainDashboardView: View {
             return try JSONDecoder().decode(SDUIScreen.self, from: data)
         } catch {
             print("Failed to decode HomeDashboard.json: \(error)")
+            return nil
+        }
+    }
+
+    private func loadProfileScreen() -> SDUIScreen? {
+        guard let url = Bundle.main.url(forResource: "ProfileScreen", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            print("Failed to load ProfileScreen.json")
+            return nil
+        }
+
+        do {
+            return try JSONDecoder().decode(SDUIScreen.self, from: data)
+        } catch {
+            print("Failed to decode ProfileScreen.json: \(error)")
             return nil
         }
     }
@@ -662,7 +941,54 @@ struct MainDashboardView: View {
         )
     }
 
+    private func createProfileSDUIContext() -> SDUIContext {
+        let profileActions: [String: (Job?) -> Void] = [
+            "edit_profile": { _ in
+                self.showProfileEditSheet()
+            },
+            "account_settings": { _ in
+                self.selectedMenuItem = .settingsPreferences
+            },
+            "security_settings": { _ in
+                self.showSecuritySettings()
+            },
+            "privacy_settings": { _ in
+                self.showPrivacySettings()
+            },
+            "data_export": { _ in
+                self.showDataExportSheet()
+            },
+            "notification_preferences": { _ in
+                self.showNotificationSettings()
+            },
+            "offline_data": { _ in
+                self.showOfflineDataManagement()
+            },
+            "help_support": { _ in
+                self.selectedMenuItem = .helpSupport
+            },
+            "sdui_demo": { _ in
+                self.showSDUIDemo()
+            },
+            "sign_out": { _ in
+                self.handleSignOut()
+            }
+        ]
+
+        return SDUIContext(
+            jobs: routeViewModel.jobs,
+            routeViewModel: routeViewModel,
+            actions: profileActions,
+            currentJob: nil,
+            persistenceController: persistenceController,
+            authManager: authManager
+        )
+    }
+
     private func setupInitialData() {
+        // Set up UserProfileManager with AuthenticationManager
+        routeViewModel.setAuthenticationManager(authManager)
+
         // Defer non-critical operations for better startup performance
         Task {
             // Small delay to let UI render first
@@ -671,6 +997,28 @@ struct MainDashboardView: View {
             // Load route data after initial render
             await MainActor.run {
                 routeViewModel.loadTodaysRoute()
+            }
+
+            // Initialize profile data if user is authenticated
+            if let user = authManager.currentUser {
+                do {
+                    // Try to load existing profile or create from auth data
+                    if let existingProfile = await userProfileManager.loadUserProfile(for: user.id) {
+                        userProfileManager.currentProfile = existingProfile
+                    } else {
+                        // Create profile from Google auth data
+                        let googleUser = GoogleUser(
+                            id: user.id,
+                            email: user.email,
+                            name: user.name,
+                            profileImageURL: user.profileImageURL,
+                            tokens: AuthTokens(accessToken: "", refreshToken: nil, idToken: nil, expiresAt: Date())
+                        )
+                        _ = try await userProfileManager.createUser(from: googleUser)
+                    }
+                } catch {
+                    print("Failed to initialize profile data: \(error)")
+                }
             }
 
             // Request notification permissions in background
@@ -687,6 +1035,283 @@ struct MainDashboardView: View {
     private func openQRScanner() {
         // Implement QR scanner functionality
         print("QR scanner opened")
+    }
+
+    // MARK: - Profile Action Methods
+
+    private func loadProfileEditScreen() -> SDUIScreen? {
+        guard let url = Bundle.main.url(forResource: "ProfileEditScreen", withExtension: "json"),
+              let data = try? Data(contentsOf: url) else {
+            print("Failed to load ProfileEditScreen.json")
+            return nil
+        }
+
+        do {
+            return try JSONDecoder().decode(SDUIScreen.self, from: data)
+        } catch {
+            print("Failed to decode ProfileEditScreen.json: \(error)")
+            return nil
+        }
+    }
+
+    private func createProfileEditSDUIContext() -> SDUIContext {
+        let profileEditActions: [String: (Job?) -> Void] = [
+            "change_photo": { _ in
+                self.changeProfilePhoto()
+            },
+            "save_profile": { _ in
+                self.saveProfileChanges()
+            },
+            "cancel_edit": { _ in
+                self.showingProfileEditSheet = false
+            }
+        ]
+
+        return SDUIContext(
+            jobs: routeViewModel.jobs,
+            routeViewModel: routeViewModel,
+            actions: profileEditActions,
+            currentJob: nil,
+            persistenceController: persistenceController,
+            authManager: authManager
+        )
+    }
+
+    private func showProfileEditSheet() {
+        showingProfileEditSheet = true
+    }
+
+    private func showSecuritySettings() {
+        showingSecuritySheet = true
+    }
+
+    private func showPrivacySettings() {
+        showingPrivacySheet = true
+    }
+
+    private func showDataExportSheet() {
+        showingDataExportSheet = true
+    }
+
+    private func showNotificationSettings() {
+        showingNotificationSheet = true
+    }
+
+    private func showOfflineDataManagement() {
+        showingOfflineDataSheet = true
+    }
+
+    private func showSDUIDemo() {
+        showingSDUIDemoSheet = true
+    }
+
+    private func changeProfilePhoto() {
+        showingImageOptions = true
+    }
+
+    private func saveProfileChanges() {
+        guard !isUpdatingProfile else { return }
+
+        Task { @MainActor in
+            isUpdatingProfile = true
+            defer { isUpdatingProfile = false }
+
+            do {
+                // Collect form data from RouteViewModel SDUI values
+                let userName = routeViewModel.textFieldValues["user_name"] ?? ""
+                let notificationsEnabled = routeViewModel.toggleValues["notifications_enabled"] ?? true
+                let locationSharingEnabled = routeViewModel.toggleValues["location_sharing_enabled"] ?? true
+                let dataBackupEnabled = routeViewModel.toggleValues["data_backup_enabled"] ?? true
+                let biometricAuthEnabled = routeViewModel.toggleValues["biometric_auth_enabled"] ?? true
+                let themeIndex = routeViewModel.segmentedValues["app_theme"] ?? 0
+
+                // Create preferences from form data
+                var preferences = UserPreferences()
+                preferences.notificationsEnabled = notificationsEnabled
+                preferences.locationSharingEnabled = locationSharingEnabled
+                preferences.dataBackupEnabled = dataBackupEnabled
+                preferences.biometricAuthEnabled = biometricAuthEnabled
+
+                // Map theme index to enum
+                let themeOptions: [UserPreferences.AppTheme] = [.light, .dark, .system]
+                if themeIndex < themeOptions.count {
+                    preferences.theme = themeOptions[themeIndex]
+                }
+
+                // Create work info if needed
+                let workInfo = userProfileManager.currentProfile?.workInfo ?? WorkInformation(certifications: [])
+
+                // Get any custom profile image data
+                let customImageData = routeViewModel.textFieldValues["profile_image_data"]?.data(using: .utf8)
+
+                // Create profile update
+                let update = UserProfileUpdate(
+                    name: userName.isEmpty ? nil : userName,
+                    preferences: preferences,
+                    workInfo: workInfo,
+                    customProfileImage: customImageData,
+                    updatedFields: Set(["name", "preferences", "workInfo"])
+                )
+
+                // Update profile through manager
+                try await userProfileManager.updateProfile(update)
+
+                // Close the edit sheet on success
+                showingProfileEditSheet = false
+
+                // Show success feedback
+                await showTemporaryFeedback("Profile updated successfully")
+
+            } catch {
+                profileError = error.localizedDescription
+                showingProfileError = true
+            }
+        }
+    }
+
+    private func handleSignOut() {
+        Task {
+            await authManager.signOut()
+        }
+    }
+
+    private func populateProfileData() {
+        Task { @MainActor in
+            // Get comprehensive profile data
+            let profile = userProfileManager.currentProfile
+            let user = authManager.currentUser
+
+            // Populate user information
+            if let profile = profile {
+                routeViewModel.setSDUIValue("user.name", value: profile.name ?? "User")
+                routeViewModel.setSDUIValue("user.email", value: profile.email)
+
+                // Handle profile image - prefer custom image over Google image
+                if profile.customProfileImageData != nil {
+                    routeViewModel.setSDUIValue("user.profileImageURL", value: "custom://profile_image")
+                } else {
+                    routeViewModel.setSDUIValue("user.profileImageURL", value: profile.profileImageURL?.absoluteString ?? "")
+                }
+
+                // Populate form fields with current values
+                routeViewModel.setTextValue(forKey: "user_name", value: profile.name ?? "")
+                routeViewModel.setToggleValue(forKey: "notifications_enabled", value: profile.preferences.notificationsEnabled)
+                routeViewModel.setToggleValue(forKey: "location_sharing_enabled", value: profile.preferences.locationSharingEnabled)
+                routeViewModel.setToggleValue(forKey: "data_backup_enabled", value: profile.preferences.dataBackupEnabled)
+                routeViewModel.setToggleValue(forKey: "biometric_auth_enabled", value: profile.preferences.biometricAuthEnabled)
+
+                // Set theme segmented control
+                let themeOptions: [UserPreferences.AppTheme] = [.light, .dark, .system]
+                let themeIndex = themeOptions.firstIndex(of: profile.preferences.theme) ?? 2
+                routeViewModel.setSegmentedValue(forKey: "app_theme", value: themeIndex)
+
+            } else if let user = user {
+                // Fallback to authentication data
+                routeViewModel.setSDUIValue("user.name", value: user.name ?? "User")
+                routeViewModel.setSDUIValue("user.email", value: user.email)
+                routeViewModel.setSDUIValue("user.profileImageURL", value: user.profileImageURL?.absoluteString ?? "")
+
+                // Set default form values
+                routeViewModel.setTextValue(forKey: "user_name", value: user.name ?? "")
+            } else {
+                // No user data available
+                routeViewModel.setSDUIValue("user.name", value: "Guest User")
+                routeViewModel.setSDUIValue("user.email", value: "Not signed in")
+                routeViewModel.setSDUIValue("user.profileImageURL", value: "")
+            }
+
+            // Set activity summary data
+            routeViewModel.setSDUIValue("todayJobsCompleted", value: "\(routeViewModel.completedJobsCount)")
+            routeViewModel.setSDUIValue("weekJobsCompleted", value: "\(routeViewModel.weeklyJobsCompleted)")
+            routeViewModel.setSDUIValue("activeStreak", value: "\(routeViewModel.activeStreak)")
+
+            // Set sync status
+            let syncText = userProfileManager.syncStatus
+            routeViewModel.setSDUIValue("lastSync", value: syncText)
+
+            // Set profile completeness if available
+            if let completeness = profile?.profileCompleteness {
+                routeViewModel.setSDUIValue("profileCompleteness", value: String(format: "%.0f%%", completeness.score * 100))
+            }
+        }
+    }
+
+    // MARK: - Image Processing Methods
+
+    private func processSelectedImage(_ item: PhotosPickerItem) {
+        Task {
+            do {
+                let result = try await profileImageManager.processSelectedImage(item)
+                await handleProcessedImage(result)
+            } catch {
+                await MainActor.run {
+                    profileError = "Failed to process image: \(error.localizedDescription)"
+                    showingProfileError = true
+                }
+            }
+        }
+    }
+
+    private func processCameraImage(_ image: UIImage) {
+        Task {
+            do {
+                let result = try await profileImageManager.processCameraImage(image)
+                await handleProcessedImage(result)
+            } catch {
+                await MainActor.run {
+                    profileError = "Failed to process image: \(error.localizedDescription)"
+                    showingProfileError = true
+                }
+            }
+        }
+    }
+
+    private func handleProcessedImage(_ result: ProcessedImageResult) async {
+        await MainActor.run {
+            // Store the processed image data for saving
+            routeViewModel.setTextValue(forKey: "profile_image_data", value: result.optimizedData.base64EncodedString())
+
+            // Update the UI immediately for better UX
+            routeViewModel.setSDUIValue("user.profileImageURL", value: "custom://profile_image")
+        }
+    }
+
+    private func removeCustomProfilePhoto() {
+        Task { @MainActor in
+            do {
+                let update = UserProfileUpdate(
+                    name: nil,
+                    preferences: nil,
+                    workInfo: nil,
+                    customProfileImage: nil,
+                    updatedFields: Set(["profileImage"])
+                )
+
+                try await userProfileManager.updateProfile(update)
+
+                // Update UI to show Google account image again
+                if let user = authManager.currentUser {
+                    routeViewModel.setSDUIValue("user.profileImageURL", value: user.profileImageURL?.absoluteString ?? "")
+                }
+
+                await showTemporaryFeedback("Profile photo removed")
+
+            } catch {
+                profileError = error.localizedDescription
+                showingProfileError = true
+            }
+        }
+    }
+
+    private func retryProfileOperation() {
+        // Implement retry logic based on the last operation
+        // For now, just retry saving profile changes
+        saveProfileChanges()
+    }
+
+    private func showTemporaryFeedback(_ message: String) async {
+        // In a real implementation, you might show a toast or temporary overlay
+        print("Success: \(message)")
     }
 }
 

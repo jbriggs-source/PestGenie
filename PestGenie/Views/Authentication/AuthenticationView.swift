@@ -61,14 +61,13 @@ struct AuthenticationView: View {
 
                     // Primary Authentication Options
                     VStack(spacing: 16) {
-                        // Enhanced Google Sign-In Button
-                        EnhancedGoogleSignInButton(
-                            isLoading: authManager.isLoading,
-                            authStep: currentAuthStep,
-                            networkConnected: networkMonitor.isConnected
-                        ) {
-                            await handleGoogleSignIn()
-                        }
+                        // Official Google Sign-In Button with proper branding
+                        GoogleSignInButton(action: {
+                            Task { await handleGoogleSignIn() }
+                        })
+                        .frame(height: 50)
+                        .disabled(authManager.isLoading || !networkMonitor.isConnected)
+                        .opacity((authManager.isLoading || !networkMonitor.isConnected) ? 0.7 : 1.0)
 
                         // Authentication Status Message
                         if !authenticationMessage.isEmpty {
@@ -277,60 +276,6 @@ struct SecurityFeatureItem: View {
 
 // MARK: - Enhanced Authentication Components
 
-struct EnhancedGoogleSignInButton: View {
-    let isLoading: Bool
-    let authStep: AuthenticationStep
-    let networkConnected: Bool
-    let action: () async -> Void
-
-    var body: some View {
-        Button {
-            Task { await action() }
-        } label: {
-            HStack(spacing: 12) {
-                if isLoading {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                        .tint(.white)
-                } else {
-                    Image("google-logo") // Add Google logo asset
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                }
-
-                Text(buttonText)
-                    .font(.system(.body, design: .rounded, weight: .medium))
-                    .foregroundColor(.primary)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .fill(.white)
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-            )
-        }
-        .disabled(isLoading || !networkConnected)
-        .opacity((isLoading || !networkConnected) ? 0.7 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isLoading)
-    }
-
-    private var buttonText: String {
-        if isLoading {
-            switch authStep {
-            case .initiating:
-                return "Connecting..."
-            case .authenticating:
-                return "Signing in..."
-            case .verifying:
-                return "Verifying..."
-            default:
-                return "Please wait..."
-            }
-        }
-        return "Continue with Google"
-    }
-}
 
 struct BiometricQuickUnlockButton: View {
     @StateObject private var biometricManager = BiometricAuthenticationManager.shared

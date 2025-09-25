@@ -25,8 +25,6 @@
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
-		<string>location-services</string>
-		<string>gps</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>PestGenie uses your location to navigate to job sites and track service completion.</string>

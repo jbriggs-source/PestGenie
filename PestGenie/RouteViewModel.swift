@@ -298,6 +298,23 @@ final class RouteViewModel: ObservableObject {
         return Double(completedJobsCount) / Double(jobs.count)
     }
 
+    /// Weekly jobs completed (mock data for now)
+    var weeklyJobsCompleted: Int {
+        // In production, this would calculate actual weekly completion
+        return completedJobsCount * 7 + 12 // Mock weekly data
+    }
+
+    /// Active streak days (mock data for now)
+    var activeStreak: Int {
+        // In production, this would track consecutive days with completed jobs
+        return 5 // Mock streak data
+    }
+
+    /// Set SDUI template value for profile screen data binding
+    func setSDUIValue(_ key: String, value: String) {
+        setTextValue(forKey: key, value: value)
+    }
+
     /// Load today's route data (placeholder for production implementation)
     func loadTodaysRoute() {
         // In production, this would fetch today's specific route from the server

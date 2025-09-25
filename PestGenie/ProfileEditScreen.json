@@ -1,0 +1,399 @@
+{
+  "version": 4,
+  "component": {
+    "type": "scroll",
+    "backgroundColor": "#F2F2F7",
+    "children": [
+      {
+        "type": "vstack",
+        "spacing": 24,
+        "padding": 20,
+        "children": [
+          {
+            "type": "vstack",
+            "spacing": 16,
+            "padding": 20,
+            "backgroundColor": "#FFFFFF",
+            "cornerRadius": 12,
+            "shadow": {
+              "color": "#000000",
+              "radius": 2,
+              "offset": { "x": 0, "y": 1 },
+              "opacity": 0.05
+            },
+            "children": [
+              {
+                "type": "text",
+                "text": "Profile Information",
+                "font": "headlineLarge",
+                "fontWeight": "semibold",
+                "foregroundColor": "#1C1C1E"
+              },
+              {
+                "type": "vstack",
+                "spacing": 16,
+                "children": [
+                  {
+                    "type": "vstack",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "Profile Picture",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1C1C1E"
+                      },
+                      {
+                        "type": "hstack",
+                        "spacing": 16,
+                        "children": [
+                          {
+                            "type": "image",
+                            "url": "{{user.profileImageURL}}",
+                            "imageName": "person.circle.fill",
+                            "foregroundColor": "#007AFF",
+                            "cornerRadius": 40,
+                            "borderWidth": 2,
+                            "borderColor": "#E5E5EA"
+                          },
+                          {
+                            "type": "vstack",
+                            "spacing": 8,
+                            "children": [
+                              {
+                                "type": "button",
+                                "text": "Change Photo",
+                                "actionId": "change_photo",
+                                "backgroundColor": "#007AFF",
+                                "foregroundColor": "#FFFFFF",
+                                "cornerRadius": 8,
+                                "padding": 10,
+                                "fontWeight": "medium"
+                              },
+                              {
+                                "type": "text",
+                                "text": "Synced with Google Account",
+                                "font": "caption",
+                                "foregroundColor": "#8E8E93"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "backgroundColor": "#E5E5EA"
+                  },
+                  {
+                    "type": "vstack",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "Name",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1C1C1E"
+                      },
+                      {
+                        "type": "textField",
+                        "placeholder": "Enter your name",
+                        "valueKey": "user_name",
+                        "backgroundColor": "#F2F2F7",
+                        "cornerRadius": 8,
+                        "padding": 12,
+                        "font": "bodyMedium"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "vstack",
+                    "spacing": 8,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "Email Address",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1C1C1E"
+                      },
+                      {
+                        "type": "hstack",
+                        "spacing": 12,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "{{user.email}}",
+                            "font": "bodyMedium",
+                            "foregroundColor": "#8E8E93",
+                            "backgroundColor": "#F2F2F7",
+                            "cornerRadius": 8,
+                            "padding": 12
+                          },
+                          {
+                            "type": "image",
+                            "imageName": "lock.fill",
+                            "foregroundColor": "#8E8E93",
+                            "font": "bodyMedium"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": "Email is managed by Google Account",
+                        "font": "caption",
+                        "foregroundColor": "#8E8E93"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "vstack",
+            "spacing": 16,
+            "padding": 20,
+            "backgroundColor": "#FFFFFF",
+            "cornerRadius": 12,
+            "shadow": {
+              "color": "#000000",
+              "radius": 2,
+              "offset": { "x": 0, "y": 1 },
+              "opacity": 0.05
+            },
+            "children": [
+              {
+                "type": "text",
+                "text": "App Preferences",
+                "font": "headlineMedium",
+                "fontWeight": "semibold",
+                "foregroundColor": "#1C1C1E"
+              },
+              {
+                "type": "vstack",
+                "spacing": 16,
+                "children": [
+                  {
+                    "type": "hstack",
+                    "spacing": 12,
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 4,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "Theme",
+                            "font": "bodyMedium",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#1C1C1E"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Choose your preferred appearance",
+                            "font": "bodySmall",
+                            "foregroundColor": "#8E8E93"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "segmentedControl",
+                        "valueKey": "app_theme",
+                        "options": [
+                          { "text": "Light", "value": "light" },
+                          { "text": "Dark", "value": "dark" },
+                          { "text": "Auto", "value": "system" }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "backgroundColor": "#E5E5EA"
+                  },
+                  {
+                    "type": "hstack",
+                    "spacing": 12,
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 4,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "Notifications",
+                            "font": "bodyMedium",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#1C1C1E"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Receive job alerts and updates",
+                            "font": "bodySmall",
+                            "foregroundColor": "#8E8E93"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "toggle",
+                        "valueKey": "notifications_enabled"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "backgroundColor": "#E5E5EA"
+                  },
+                  {
+                    "type": "hstack",
+                    "spacing": 12,
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 4,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "Location Sharing",
+                            "font": "bodyMedium",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#1C1C1E"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Share location for route optimization",
+                            "font": "bodySmall",
+                            "foregroundColor": "#8E8E93"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "toggle",
+                        "valueKey": "location_sharing_enabled"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "backgroundColor": "#E5E5EA"
+                  },
+                  {
+                    "type": "hstack",
+                    "spacing": 12,
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 4,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "Data Backup",
+                            "font": "bodyMedium",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#1C1C1E"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Automatic cloud backup of work data",
+                            "font": "bodySmall",
+                            "foregroundColor": "#8E8E93"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "toggle",
+                        "valueKey": "data_backup_enabled"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "divider",
+                    "backgroundColor": "#E5E5EA"
+                  },
+                  {
+                    "type": "hstack",
+                    "spacing": 12,
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 4,
+                        "children": [
+                          {
+                            "type": "text",
+                            "text": "Biometric Authentication",
+                            "font": "bodyMedium",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#1C1C1E"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Use Face ID or Touch ID for security",
+                            "font": "bodySmall",
+                            "foregroundColor": "#8E8E93"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "toggle",
+                        "valueKey": "biometric_auth_enabled"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "hstack",
+            "spacing": 16,
+            "children": [
+              {
+                "type": "button",
+                "text": "Cancel",
+                "actionId": "cancel_edit",
+                "backgroundColor": "#F2F2F7",
+                "foregroundColor": "#007AFF",
+                "cornerRadius": 12,
+                "padding": 16,
+                "fontWeight": "medium"
+              },
+              {
+                "type": "button",
+                "text": "Save Changes",
+                "actionId": "save_profile",
+                "backgroundColor": "#007AFF",
+                "foregroundColor": "#FFFFFF",
+                "cornerRadius": 12,
+                "padding": 16,
+                "fontWeight": "semibold"
+              }
+            ]
+          },
+          {
+            "type": "spacer",
+            "minLength": 40
+          }
+        ]
+      }
+    ]
+  }
+}

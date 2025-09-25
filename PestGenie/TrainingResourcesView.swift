@@ -8,7 +8,7 @@ struct TrainingResourcesView: View {
     @State private var showingCourseDetails = false
     @State private var showingCertificationDetails = false
     @State private var selectedCourse: TrainingCourse?
-    @State private var selectedCertification: Certification?
+    @State private var selectedCertification: TrainingCertification?
     @State private var searchText = ""
     @StateObject private var trainingManager = TrainingManager()
 
@@ -552,7 +552,7 @@ struct TrainingResourcesView: View {
         }
     }
 
-    private func certificationCard(_ certification: Certification) -> some View {
+    private func certificationCard(_ certification: TrainingCertification) -> some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack(spacing: PestGenieDesignSystem.Spacing.md) {
                 // Certification badge
@@ -1031,7 +1031,7 @@ struct TrainingResourcesView: View {
         }
     }
 
-    private func certificationDetailsSheet(_ certification: Certification) -> some View {
+    private func certificationDetailsSheet(_ certification: TrainingCertification) -> some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
@@ -1105,11 +1105,11 @@ struct TrainingResourcesView: View {
         showingCourseDetails = false
     }
 
-    private func renewCertification(_ certification: Certification) {
+    private func renewCertification(_ certification: TrainingCertification) {
         print("Renewing certification: \(certification.name)")
     }
 
-    private func startCertification(_ certification: Certification) {
+    private func startCertification(_ certification: TrainingCertification) {
         print("Starting certification: \(certification.name)")
     }
 
@@ -1307,7 +1307,7 @@ struct TrainingCourse: Identifiable {
     let isNew: Bool
 }
 
-struct Certification: Identifiable {
+struct TrainingCertification: Identifiable {
     let id = UUID()
     let name: String
     let issuingOrganization: String
@@ -1350,8 +1350,8 @@ struct KnowledgeResource: Identifiable {
 class TrainingManager: ObservableObject {
     @Published var allCourses: [TrainingCourse] = []
     @Published var featuredCourses: [TrainingCourse] = []
-    @Published var activeCertifications: [Certification] = []
-    @Published var availableCertifications: [Certification] = []
+    @Published var activeCertifications: [TrainingCertification] = []
+    @Published var availableCertifications: [TrainingCertification] = []
     @Published var safetyGuidelines: [SafetyGuideline] = []
     @Published var libraryCategories: [LibraryCategory] = []
     @Published var recentResources: [KnowledgeResource] = []
@@ -1439,13 +1439,13 @@ class TrainingManager: ObservableObject {
 
         // Mock certifications
         activeCertifications = [
-            Certification(
+            TrainingCertification(
                 name: "Certified Pest Control Technician",
                 issuingOrganization: "National Pest Management Association",
                 isActive: true,
                 expirationDate: Calendar.current.date(byAdding: .month, value: 8, to: Date())
             ),
-            Certification(
+            TrainingCertification(
                 name: "Commercial Pesticide Applicator",
                 issuingOrganization: "State Department of Agriculture",
                 isActive: true,
@@ -1454,13 +1454,13 @@ class TrainingManager: ObservableObject {
         ]
 
         availableCertifications = [
-            Certification(
+            TrainingCertification(
                 name: "Structural Fumigation License",
                 issuingOrganization: "State Structural Pest Control Board",
                 isActive: false,
                 expirationDate: nil
             ),
-            Certification(
+            TrainingCertification(
                 name: "Integrated Pest Management Specialist",
                 issuingOrganization: "IPM Institute of North America",
                 isActive: false,

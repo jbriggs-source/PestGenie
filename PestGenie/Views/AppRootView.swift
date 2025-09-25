@@ -7,47 +7,15 @@ struct AppRootView: View {
     @StateObject private var complianceManager = AppStoreComplianceManager.shared
     @StateObject private var routeViewModel = RouteViewModel()
     @StateObject private var locationManager = LocationManager.shared
-    @AppStorage("demoMode") private var useDashboardView = false
 
     var body: some View {
         Group {
             if authManager.isAuthenticated {
-                // Demo toggle interface
-                VStack(spacing: 0) {
-                    // Demo mode toggle bar
-                    HStack {
-                        Text("Demo Mode:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        Picker("Interface", selection: $useDashboardView) {
-                            Text("SDUI Demo").tag(false)
-                            Text("Dashboard").tag(true)
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .font(.caption)
-
-                        Spacer()
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(Color(UIColor.systemGray6))
-
-                    // Main content based on selection
-                    if useDashboardView {
-                        // MainDashboard interface with profile pictures
-                        MainDashboardView()
-                            .environmentObject(authManager)
-                            .environmentObject(routeViewModel)
-                            .environmentObject(locationManager)
-                    } else {
-                        // SDUI interface with profile pictures
-                        SDUIContentView()
-                            .environmentObject(authManager)
-                            .environmentObject(routeViewModel)
-                            .environmentObject(locationManager)
-                    }
-                }
+                // Main dashboard interface (no more demo toggle)
+                MainDashboardView()
+                    .environmentObject(authManager)
+                    .environmentObject(routeViewModel)
+                    .environmentObject(locationManager)
             } else {
                 // Authentication flow
                 AuthenticationView()
