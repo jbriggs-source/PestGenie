@@ -2,71 +2,87 @@
   "version": 4,
   "component": {
     "type": "scroll",
-    "backgroundColor": "#FAFAFA",
+    "backgroundColor": "#F8F9FA",
     "children": [
       {
         "type": "vstack",
-        "spacing": 0,
+        "spacing": 16,
+        "padding": 16,
         "children": [
           {
             "type": "vstack",
-            "spacing": 16,
-            "padding": 20,
+            "spacing": 20,
+            "padding": 24,
             "backgroundColor": "#FFFFFF",
-            "cornerRadius": 0,
+            "cornerRadius": 20,
+            "shadowColor": "#000000",
+            "shadowRadius": 8,
+            "shadowOffset": { "x": 0, "y": 2 },
+            "opacity": 0.08,
             "children": [
               {
                 "type": "hstack",
-                "spacing": 16,
+                "spacing": 20,
+                "alignment": "center",
                 "children": [
                   {
                     "type": "image",
                     "url": "{{user.profileImageURL}}",
-                    "imageName": "person.circle",
-                    "foregroundColor": "#0080CC",
-                    "cornerRadius": 32,
-                    "borderWidth": 3,
-                    "borderColor": "#00B74A",
-                    "shadow": {
-                      "color": "#000000",
-                      "radius": 4,
-                      "offset": { "x": 0, "y": 2 },
-                      "opacity": 0.1
-                    }
+                    "imageName": "person.circle.fill",
+                    "foregroundColor": "#0066CC",
+                    "cornerRadius": 64,
+                    "width": 120,
+                    "height": 120
                   },
                   {
                     "type": "vstack",
-                    "spacing": 4,
+                    "spacing": 8,
+                    "alignment": "leading",
                     "children": [
                       {
                         "type": "text",
                         "text": "{{user.name}}",
-                        "font": "headlineLarge",
-                        "fontWeight": "semibold",
-                        "foregroundColor": "#1C1C1E"
+                        "font": "title2",
+                        "fontWeight": "bold",
+                        "foregroundColor": "#1A1D29"
                       },
                       {
                         "type": "text",
                         "text": "{{user.email}}",
                         "font": "bodyMedium",
-                        "foregroundColor": "#8E8E93"
+                        "foregroundColor": "#6B7280"
                       },
                       {
                         "type": "hstack",
-                        "spacing": 8,
+                        "spacing": 10,
+                        "padding": 12,
+                        "backgroundColor": "#EEF7FF",
+                        "cornerRadius": 8,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "checkmark.circle",
-                            "foregroundColor": "#00B74A",
-                            "font": "captionEmphasis"
+                            "imageName": "briefcase.fill",
+                            "foregroundColor": "#0066CC",
+                            "font": "caption2"
                           },
                           {
                             "type": "text",
-                            "text": "Google Account Active",
+                            "text": "Senior Technician",
                             "font": "caption",
-                            "foregroundColor": "#00B74A",
-                            "fontWeight": "medium"
+                            "fontWeight": "semibold",
+                            "foregroundColor": "#0066CC"
+                          },
+                          {
+                            "type": "text",
+                            "text": "•",
+                            "foregroundColor": "#9CA3AF"
+                          },
+                          {
+                            "type": "text",
+                            "text": "5 Years",
+                            "font": "caption",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#6B7280"
                           }
                         ]
                       }
@@ -75,69 +91,134 @@
                 ]
               },
               {
-                "type": "button",
-                "text": "Edit Profile",
-                "actionId": "edit_profile",
-                "backgroundColor": "#007AFF",
-                "foregroundColor": "#FFFFFF",
-                "cornerRadius": 8,
-                "padding": 12,
-                "fontWeight": "medium"
+                "type": "divider",
+                "backgroundColor": "#F1F5F9"
+              },
+              {
+                "type": "hstack",
+                "spacing": 0,
+                "children": [
+                  {
+                    "type": "vstack",
+                    "spacing": 6,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{todayJobsCompleted}}",
+                        "font": "title",
+                        "fontWeight": "bold",
+                        "foregroundColor": "#0066CC"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Today",
+                        "font": "caption",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#6B7280"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "spacer"
+                  },
+                  {
+                    "type": "vstack",
+                    "spacing": 6,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "4.9",
+                        "font": "title",
+                        "fontWeight": "bold",
+                        "foregroundColor": "#F59E0B"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Rating",
+                        "font": "caption",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#6B7280"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "spacer"
+                  },
+                  {
+                    "type": "vstack",
+                    "spacing": 6,
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{activeStreak}}",
+                        "font": "title",
+                        "fontWeight": "bold",
+                        "foregroundColor": "#10B981"
+                      },
+                      {
+                        "type": "text",
+                        "text": "Streak",
+                        "font": "caption",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#6B7280"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
-          },
-          {
-            "type": "spacer",
-            "minLength": 12
           },
           {
             "type": "vstack",
             "spacing": 16,
             "padding": 20,
             "backgroundColor": "#FFFFFF",
-            "cornerRadius": 12,
-            "margin": 20,
-            "shadow": {
-              "color": "#000000",
-              "radius": 2,
-              "offset": { "x": 0, "y": 1 },
-              "opacity": 0.05
-            },
+            "cornerRadius": 20,
+            "shadowColor": "#000000",
+            "shadowRadius": 8,
+            "shadowOffset": { "x": 0, "y": 2 },
+            "opacity": 0.08,
             "children": [
               {
                 "type": "text",
                 "text": "Quick Actions",
                 "font": "headlineSmall",
-                "fontWeight": "semibold",
-                "foregroundColor": "#1C1C1E"
+                "fontWeight": "bold",
+                "foregroundColor": "#1A1D29"
               },
               {
-                "type": "hstack",
+                "type": "grid",
+                "columns": 2,
                 "spacing": 12,
                 "children": [
                   {
                     "type": "button",
-                    "actionId": "account_settings",
-                    "backgroundColor": "#F2F2F7",
-                    "cornerRadius": 8,
-                    "padding": 16,
+                    "actionId": "edit_profile",
+                    "backgroundColor": "transparent",
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 8,
+                        "padding": 18,
+                        "backgroundColor": "#EEF7FF",
+                        "cornerRadius": 16,
+                        "shadowColor": "#0066CC",
+                        "shadowRadius": 3,
+                        "shadowOffset": { "x": 0, "y": 1 },
+                        "opacity": 0.1,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "gear",
-                            "foregroundColor": "#007AFF",
-                            "font": "titleMedium"
+                            "imageName": "pencil.circle.fill",
+                            "foregroundColor": "#0066CC",
+                            "font": "bodyMedium"
                           },
                           {
                             "type": "text",
-                            "text": "Settings",
+                            "text": "Edit Profile",
                             "font": "caption",
-                            "foregroundColor": "#1C1C1E",
-                            "fontWeight": "medium"
+                            "fontWeight": "semibold",
+                            "foregroundColor": "#0066CC"
                           }
                         ]
                       }
@@ -145,27 +226,32 @@
                   },
                   {
                     "type": "button",
-                    "actionId": "security_settings",
-                    "backgroundColor": "#F2F2F7",
-                    "cornerRadius": 8,
-                    "padding": 16,
+                    "actionId": "view_schedule",
+                    "backgroundColor": "transparent",
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 8,
+                        "padding": 18,
+                        "backgroundColor": "#ECFDF5",
+                        "cornerRadius": 16,
+                        "shadowColor": "#10B981",
+                        "shadowRadius": 3,
+                        "shadowOffset": { "x": 0, "y": 1 },
+                        "opacity": 0.1,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "lock.shield",
-                            "foregroundColor": "#00B74A",
-                            "font": "titleMedium"
+                            "imageName": "calendar",
+                            "foregroundColor": "#10B981",
+                            "font": "bodyMedium"
                           },
                           {
                             "type": "text",
-                            "text": "Security",
+                            "text": "Schedule",
                             "font": "caption",
-                            "foregroundColor": "#1C1C1E",
-                            "fontWeight": "medium"
+                            "fontWeight": "semibold",
+                            "foregroundColor": "#10B981"
                           }
                         ]
                       }
@@ -173,27 +259,65 @@
                   },
                   {
                     "type": "button",
-                    "actionId": "privacy_settings",
-                    "backgroundColor": "#F2F2F7",
-                    "cornerRadius": 8,
-                    "padding": 16,
+                    "actionId": "time_clock",
+                    "backgroundColor": "transparent",
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 8,
+                        "padding": 18,
+                        "backgroundColor": "#FEF3C7",
+                        "cornerRadius": 16,
+                        "shadowColor": "#F59E0B",
+                        "shadowRadius": 3,
+                        "shadowOffset": { "x": 0, "y": 1 },
+                        "opacity": 0.1,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "hand.raised",
-                            "foregroundColor": "#FF9500",
-                            "font": "titleMedium"
+                            "imageName": "clock.fill",
+                            "foregroundColor": "#F59E0B",
+                            "font": "bodyMedium"
                           },
                           {
                             "type": "text",
-                            "text": "Privacy",
+                            "text": "Time Clock",
                             "font": "caption",
-                            "foregroundColor": "#1C1C1E",
-                            "fontWeight": "medium"
+                            "fontWeight": "semibold",
+                            "foregroundColor": "#F59E0B"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "button",
+                    "actionId": "certifications",
+                    "backgroundColor": "transparent",
+                    "children": [
+                      {
+                        "type": "vstack",
+                        "spacing": 8,
+                        "padding": 18,
+                        "backgroundColor": "#F3F4F6",
+                        "cornerRadius": 16,
+                        "shadowColor": "#6366F1",
+                        "shadowRadius": 3,
+                        "shadowOffset": { "x": 0, "y": 1 },
+                        "opacity": 0.1,
+                        "children": [
+                          {
+                            "type": "image",
+                            "imageName": "rosette",
+                            "foregroundColor": "#6366F1",
+                            "font": "bodyMedium"
+                          },
+                          {
+                            "type": "text",
+                            "text": "Certificates",
+                            "font": "caption",
+                            "fontWeight": "semibold",
+                            "foregroundColor": "#6366F1"
                           }
                         ]
                       }
@@ -205,476 +329,230 @@
           },
           {
             "type": "vstack",
-            "spacing": 16,
-            "padding": 20,
+            "spacing": 0,
+            "padding": 0,
             "backgroundColor": "#FFFFFF",
-            "cornerRadius": 12,
-            "margin": 20,
-            "shadow": {
-              "color": "#000000",
-              "radius": 2,
-              "offset": { "x": 0, "y": 1 },
-              "opacity": 0.05
-            },
-            "children": [
-              {
-                "type": "text",
-                "text": "Account Status",
-                "font": "headlineSmall",
-                "fontWeight": "semibold",
-                "foregroundColor": "#1C1C1E"
-              },
-              {
-                "type": "vstack",
-                "spacing": 12,
-                "children": [
-                  {
-                    "type": "hstack",
-                    "spacing": 12,
-                    "children": [
-                      {
-                        "type": "image",
-                        "imageName": "shield",
-                        "foregroundColor": "#00B74A",
-                        "font": "bodyLarge"
-                      },
-                      {
-                        "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "Security Status",
-                            "font": "bodyMedium",
-                            "fontWeight": "medium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Excellent",
-                            "font": "bodySmall",
-                            "foregroundColor": "#00B74A",
-                            "fontWeight": "semibold"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "hstack",
-                    "spacing": 12,
-                    "children": [
-                      {
-                        "type": "image",
-                        "imageName": "checkmark.circle",
-                        "foregroundColor": "#007AFF",
-                        "font": "bodyLarge"
-                      },
-                      {
-                        "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "Profile Completeness",
-                            "font": "bodyMedium",
-                            "fontWeight": "medium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "hstack",
-                            "spacing": 8,
-                            "children": [
-                              {
-                                "type": "progressView",
-                                "progress": 0.85,
-                                "foregroundColor": "#007AFF",
-                                "backgroundColor": "#E5E5EA"
-                              },
-                              {
-                                "type": "text",
-                                "text": "85%",
-                                "font": "bodySmall",
-                                "foregroundColor": "#007AFF",
-                                "fontWeight": "semibold"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "hstack",
-                    "spacing": 12,
-                    "children": [
-                      {
-                        "type": "image",
-                        "imageName": "arrow.clockwise",
-                        "foregroundColor": "#00B74A",
-                        "font": "bodyLarge"
-                      },
-                      {
-                        "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "Last Sync",
-                            "font": "bodyMedium",
-                            "fontWeight": "medium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "text",
-                            "text": "{{lastSync}}",
-                            "font": "bodySmall",
-                            "foregroundColor": "#8E8E93"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "vstack",
-            "spacing": 16,
-            "padding": 20,
-            "backgroundColor": "#FFFFFF",
-            "cornerRadius": 12,
-            "margin": 20,
-            "shadow": {
-              "color": "#000000",
-              "radius": 2,
-              "offset": { "x": 0, "y": 1 },
-              "opacity": 0.05
-            },
+            "cornerRadius": 20,
+            "shadowColor": "#000000",
+            "shadowRadius": 8,
+            "shadowOffset": { "x": 0, "y": 2 },
+            "opacity": 0.08,
             "children": [
               {
                 "type": "hstack",
-                "spacing": 8,
+                "spacing": 12,
+                "padding": 20,
                 "children": [
-                  {
-                    "type": "image",
-                    "imageName": "chart.bar",
-                    "foregroundColor": "#FF9500",
-                    "font": "headlineSmall"
-                  },
                   {
                     "type": "text",
-                    "text": "Activity Summary",
+                    "text": "Settings",
                     "font": "headlineSmall",
-                    "fontWeight": "semibold",
-                    "foregroundColor": "#1C1C1E"
+                    "fontWeight": "bold",
+                    "foregroundColor": "#1A1D29"
+                  },
+                  {
+                    "type": "spacer"
                   }
                 ]
               },
               {
-                "type": "vstack",
-                "spacing": 12,
+                "type": "button",
+                "actionId": "notifications",
+                "backgroundColor": "transparent",
                 "children": [
                   {
                     "type": "hstack",
                     "spacing": 12,
+                    "padding": 16,
                     "children": [
                       {
                         "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "{{todayJobsCompleted}}",
-                            "font": "displaySmall",
-                            "fontWeight": "bold",
-                            "foregroundColor": "#00B74A"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Today",
-                            "font": "caption",
-                            "foregroundColor": "#8E8E93"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "divider",
-                        "backgroundColor": "#E5E5EA"
-                      },
-                      {
-                        "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "{{weekJobsCompleted}}",
-                            "font": "displaySmall",
-                            "fontWeight": "bold",
-                            "foregroundColor": "#007AFF"
-                          },
-                          {
-                            "type": "text",
-                            "text": "This Week",
-                            "font": "caption",
-                            "foregroundColor": "#8E8E93"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "divider",
-                        "backgroundColor": "#E5E5EA"
-                      },
-                      {
-                        "type": "vstack",
-                        "spacing": 4,
-                        "children": [
-                          {
-                            "type": "text",
-                            "text": "{{activeStreak}}",
-                            "font": "displaySmall",
-                            "fontWeight": "bold",
-                            "foregroundColor": "#FF9500"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Day Streak",
-                            "font": "caption",
-                            "foregroundColor": "#8E8E93"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "vstack",
-            "spacing": 16,
-            "padding": 20,
-            "backgroundColor": "#FFFFFF",
-            "cornerRadius": 12,
-            "margin": 20,
-            "shadow": {
-              "color": "#000000",
-              "radius": 2,
-              "offset": { "x": 0, "y": 1 },
-              "opacity": 0.05
-            },
-            "children": [
-              {
-                "type": "text",
-                "text": "Advanced Options",
-                "font": "headlineSmall",
-                "fontWeight": "semibold",
-                "foregroundColor": "#1C1C1E"
-              },
-              {
-                "type": "vstack",
-                "spacing": 4,
-                "children": [
-                  {
-                    "type": "button",
-                    "actionId": "data_export",
-                    "backgroundColor": "transparent",
-                    "children": [
-                      {
-                        "type": "hstack",
-                        "spacing": 12,
-                        "padding": 12,
-                        "children": [
-                          {
-                            "type": "image",
-                            "imageName": "square.and.arrow.up",
-                            "foregroundColor": "#007AFF",
-                            "font": "bodyLarge"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Data Export & Privacy",
-                            "font": "bodyMedium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "spacer"
-                          },
-                          {
-                            "type": "image",
-                            "imageName": "chevron.right",
-                            "foregroundColor": "#C7C7CC",
-                            "font": "bodyMedium"
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "divider",
-                    "backgroundColor": "#E5E5EA"
-                  },
-                  {
-                    "type": "button",
-                    "actionId": "notification_preferences",
-                    "backgroundColor": "transparent",
-                    "children": [
-                      {
-                        "type": "hstack",
-                        "spacing": 12,
-                        "padding": 12,
+                        "spacing": 0,
+                        "padding": 6,
+                        "backgroundColor": "#FEE2E2",
+                        "cornerRadius": 8,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "bell",
-                            "foregroundColor": "#FF9500",
-                            "font": "bodyLarge"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Notification Preferences",
-                            "font": "bodyMedium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "spacer"
-                          },
-                          {
-                            "type": "image",
-                            "imageName": "chevron.right",
-                            "foregroundColor": "#C7C7CC",
+                            "foregroundColor": "#EF4444",
                             "font": "bodyMedium"
                           }
                         ]
+                      },
+                      {
+                        "type": "text",
+                        "text": "Notifications",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1A1D29"
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "image",
+                        "imageName": "chevron.right",
+                        "foregroundColor": "#9CA3AF",
+                        "font": "bodySmall"
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              {
+                "type": "divider",
+                "backgroundColor": "#F1F5F9"
+              },
+              {
+                "type": "button",
+                "actionId": "privacy",
+                "backgroundColor": "transparent",
+                "children": [
                   {
-                    "type": "divider",
-                    "backgroundColor": "#E5E5EA"
-                  },
-                  {
-                    "type": "button",
-                    "actionId": "offline_data",
-                    "backgroundColor": "transparent",
+                    "type": "hstack",
+                    "spacing": 12,
+                    "padding": 16,
                     "children": [
                       {
-                        "type": "hstack",
-                        "spacing": 12,
-                        "padding": 12,
+                        "type": "vstack",
+                        "spacing": 0,
+                        "padding": 6,
+                        "backgroundColor": "#EEF7FF",
+                        "cornerRadius": 8,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "icloud.and.arrow.down",
-                            "foregroundColor": "#00B74A",
-                            "font": "bodyLarge"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Offline Data Management",
-                            "font": "bodyMedium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "spacer"
-                          },
-                          {
-                            "type": "image",
-                            "imageName": "chevron.right",
-                            "foregroundColor": "#C7C7CC",
+                            "imageName": "lock.shield",
+                            "foregroundColor": "#0066CC",
                             "font": "bodyMedium"
                           }
                         ]
+                      },
+                      {
+                        "type": "text",
+                        "text": "Privacy & Security",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1A1D29"
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "image",
+                        "imageName": "chevron.right",
+                        "foregroundColor": "#9CA3AF",
+                        "font": "bodySmall"
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              {
+                "type": "divider",
+                "backgroundColor": "#F1F5F9"
+              },
+              {
+                "type": "button",
+                "actionId": "help",
+                "backgroundColor": "transparent",
+                "children": [
                   {
-                    "type": "divider",
-                    "backgroundColor": "#E5E5EA"
-                  },
-                  {
-                    "type": "button",
-                    "actionId": "help_support",
-                    "backgroundColor": "transparent",
+                    "type": "hstack",
+                    "spacing": 12,
+                    "padding": 16,
                     "children": [
                       {
-                        "type": "hstack",
-                        "spacing": 12,
-                        "padding": 12,
+                        "type": "vstack",
+                        "spacing": 0,
+                        "padding": 6,
+                        "backgroundColor": "#ECFDF5",
+                        "cornerRadius": 8,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "questionmark.circle",
-                            "foregroundColor": "#8E8E93",
-                            "font": "bodyLarge"
-                          },
-                          {
-                            "type": "text",
-                            "text": "Help & Support",
-                            "font": "bodyMedium",
-                            "foregroundColor": "#1C1C1E"
-                          },
-                          {
-                            "type": "spacer"
-                          },
-                          {
-                            "type": "image",
-                            "imageName": "chevron.right",
-                            "foregroundColor": "#C7C7CC",
+                            "foregroundColor": "#10B981",
                             "font": "bodyMedium"
                           }
                         ]
+                      },
+                      {
+                        "type": "text",
+                        "text": "Help & Support",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1A1D29"
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "image",
+                        "imageName": "chevron.right",
+                        "foregroundColor": "#9CA3AF",
+                        "font": "bodySmall"
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              {
+                "type": "divider",
+                "backgroundColor": "#F1F5F9"
+              },
+              {
+                "type": "button",
+                "actionId": "about",
+                "backgroundColor": "transparent",
+                "children": [
                   {
-                    "type": "divider",
-                    "backgroundColor": "#E5E5EA"
-                  },
-                  {
-                    "type": "button",
-                    "actionId": "sdui_demo",
-                    "backgroundColor": "transparent",
+                    "type": "hstack",
+                    "spacing": 12,
+                    "padding": 16,
                     "children": [
                       {
-                        "type": "hstack",
-                        "spacing": 12,
-                        "padding": 12,
+                        "type": "vstack",
+                        "spacing": 0,
+                        "padding": 6,
+                        "backgroundColor": "#F3F4F6",
+                        "cornerRadius": 8,
                         "children": [
                           {
                             "type": "image",
-                            "imageName": "hammer.fill",
-                            "foregroundColor": "#FF9500",
-                            "font": "bodyLarge"
-                          },
+                            "imageName": "info.circle",
+                            "foregroundColor": "#6B7280",
+                            "font": "bodyMedium"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": "About",
+                        "font": "bodyMedium",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#1A1D29"
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "hstack",
+                        "spacing": 8,
+                        "children": [
                           {
-                            "type": "vstack",
-                            "spacing": 2,
-                            "alignment": "leading",
-                            "children": [
-                              {
-                                "type": "text",
-                                "text": "SDUI Components Demo",
-                                "font": "bodyMedium",
-                                "foregroundColor": "#1C1C1E"
-                              },
-                              {
-                                "type": "text",
-                                "text": "Explore Server-Driven UI capabilities",
-                                "font": "caption",
-                                "foregroundColor": "#8E8E93"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "spacer"
+                            "type": "text",
+                            "text": "Version 1.0.0",
+                            "font": "caption",
+                            "fontWeight": "medium",
+                            "foregroundColor": "#6B7280"
                           },
                           {
                             "type": "image",
                             "imageName": "chevron.right",
-                            "foregroundColor": "#C7C7CC",
-                            "font": "bodyMedium"
+                            "foregroundColor": "#9CA3AF",
+                            "font": "bodySmall"
                           }
                         ]
                       }
@@ -683,25 +561,24 @@
                 ]
               }
             ]
-          },
-          {
-            "type": "spacer",
-            "minLength": 20
           },
           {
             "type": "button",
             "text": "Sign Out",
             "actionId": "sign_out",
-            "backgroundColor": "#FF3B30",
+            "backgroundColor": "#DC2626",
             "foregroundColor": "#FFFFFF",
-            "cornerRadius": 12,
+            "cornerRadius": 16,
             "padding": 16,
-            "fontWeight": "semibold",
-            "margin": 20
+            "fontWeight": "bold",
+            "shadowColor": "#DC2626",
+            "shadowRadius": 4,
+            "shadowOffset": { "x": 0, "y": 2 },
+            "opacity": 0.12
           },
           {
             "type": "spacer",
-            "minLength": 40
+            "minLength": 16
           }
         ]
       }
