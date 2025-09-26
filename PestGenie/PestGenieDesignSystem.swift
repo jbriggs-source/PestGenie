@@ -41,6 +41,9 @@ struct PestGenieDesignSystem {
         static let surfaceElevated = Color(.systemGray5)
         static let surfaceSecondary = Color(.systemGray4)
 
+        // MARK: - Card Colors
+        static let cardBackground = Color(.systemGray5)
+
         // MARK: - Text Colors
         static let textPrimary = Color(.label)
         static let textSecondary = Color(.secondaryLabel)
@@ -101,6 +104,8 @@ struct PestGenieDesignSystem {
         static let bodyLarge = Font.system(size: 16, weight: .regular, design: .default)
         static let bodyMedium = Font.system(size: 14, weight: .regular, design: .default)
         static let bodySmall = Font.system(size: 12, weight: .regular, design: .default)
+        static let body = bodyMedium // Alias for compatibility
+        static let bodyEmphasis = Font.system(size: 14, weight: .medium, design: .default)
 
         // MARK: - Label Typography
         static let labelLarge = Font.system(size: 14, weight: .medium, design: .default)
@@ -110,6 +115,9 @@ struct PestGenieDesignSystem {
         // MARK: - Caption Typography
         static let caption = Font.system(size: 12, weight: .regular, design: .default)
         static let captionEmphasis = Font.system(size: 12, weight: .medium, design: .default)
+
+        // MARK: - Button Typography
+        static let buttonText = Font.system(size: 14, weight: .medium, design: .default)
 
         // MARK: - Monospace Typography (for technical data)
         static let monospaceBody = Font.system(size: 14, weight: .regular, design: .monospaced)
@@ -155,7 +163,13 @@ struct PestGenieDesignSystem {
         static let button = sm
         static let field = xs
         static let badge = full
+        static let medium = md // Alias for compatibility
     }
+
+    // MARK: - Corner Radius (Alias for BorderRadius)
+
+    /// Alias for BorderRadius for backward compatibility
+    typealias CornerRadius = BorderRadius
 
     // MARK: - Shadows
 

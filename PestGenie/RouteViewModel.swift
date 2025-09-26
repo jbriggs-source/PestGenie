@@ -9,6 +9,12 @@ import Network
 /// example.
 final class RouteViewModel: ObservableObject {
 
+    // MARK: - Health Tracking Integration
+    @Published var healthManager: HealthKitManager
+    @Published var isHealthTrackingEnabled: Bool = true
+    @Published var currentActivitySummary: ActivitySummary?
+    private var healthCancellables = Set<AnyCancellable>()
+
     // MARK: - Authentication
     private var authManager: AuthenticationManager? = nil
     @Published var currentUserName: String = "Technician"
@@ -82,9 +88,15 @@ final class RouteViewModel: ObservableObject {
 
 
     init() {
+        // Initialize health manager
+        self.healthManager = HealthKitManager.shared
+
         // Preload sample jobs immediately
         loadSampleData()
-        
+
+        // Setup health tracking integration
+        setupHealthTracking()
+
         // Defer network monitoring until first access
         // setupNetworkMonitoring()
     }
@@ -217,6 +229,12 @@ final class RouteViewModel: ObservableObject {
         if let index = jobs.firstIndex(of: job) {
             jobs[index].status = .inProgress
             jobs[index].startTime = Date()
+
+            // Start health tracking for this job
+            Task { @MainActor in
+                healthManager.handleJobStart(jobs[index])
+            }
+
             // Queue action if offline
             if !isOnline {
                 let action = PendingAction(type: .start, jobId: job.id, valueKey: nil, value: nil, timestamp: Date())
@@ -230,6 +248,12 @@ final class RouteViewModel: ObservableObject {
             jobs[index].status = .completed
             jobs[index].completionTime = Date()
             jobs[index].signatureData = signature
+
+            // End health tracking for this job
+            Task { @MainActor in
+                healthManager.handleJobComplete(jobs[index])
+            }
+
             // Queue action if offline
             if !isOnline {
                 let action = PendingAction(type: .complete, jobId: job.id, valueKey: nil, value: nil, timestamp: Date())
@@ -511,6 +535,104 @@ final class RouteViewModel: ObservableObject {
         routeStartTime = Date().addingTimeInterval(-900) // Started 15 min ago
         hasActiveEmergency = true
         currentEmergency = "🚨 ACTIVE EMERGENCY: Bee swarm at elementary school"
+    }
+
+    // MARK: - Health Tracking Integration
+
+    /// Setup health tracking integration
+    private func setupHealthTracking() {
+        Task { @MainActor in
+            // Subscribe to health manager updates
+            healthManager.$currentActivitySummary
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] activitySummary in
+                    self?.currentActivitySummary = activitySummary
+                }
+                .store(in: &healthCancellables)
+
+            // Update health tracking enabled state
+            healthManager.$isTrackingEnabled
+                .receive(on: DispatchQueue.main)
+                .assign(to: \.isHealthTrackingEnabled, on: self)
+                .store(in: &healthCancellables)
+
+            // Request health authorization if enabled
+            if isHealthTrackingEnabled {
+                let authorized = await healthManager.requestAuthorization()
+                if authorized {
+                    await healthManager.loadTodaysData()
+                }
+            }
+        }
+    }
+
+    /// Get health data for a specific job
+    @MainActor
+    func getJobHealthData(for jobId: UUID) -> JobHealthSession? {
+        return healthManager.loadHealthSession(for: jobId)
+    }
+
+    /// Get all health sessions for analytics
+    @MainActor
+    func getAllHealthSessions() -> [JobHealthSession] {
+        return healthManager.getAllHealthSessions()
+    }
+
+    /// Update health privacy settings
+    @MainActor
+    func updateHealthPrivacySettings(_ settings: HealthPrivacySettings) {
+        healthManager.updatePrivacySettings(settings)
+        isHealthTrackingEnabled = settings.allowHealthTracking
+    }
+
+    /// Toggle health tracking
+    @MainActor
+    func toggleHealthTracking() {
+        let newSettings = HealthPrivacySettings(
+            allowHealthTracking: !isHealthTrackingEnabled,
+            allowDataSharing: healthManager.privacySettings.allowDataSharing,
+            allowWeeklyReports: healthManager.privacySettings.allowWeeklyReports,
+            trackOnlyDuringJobs: healthManager.privacySettings.trackOnlyDuringJobs,
+            shareWithAppleHealth: healthManager.privacySettings.shareWithAppleHealth,
+            privacyLevel: healthManager.privacySettings.privacyLevel
+        )
+        updateHealthPrivacySettings(newSettings)
+    }
+
+    /// Get health summary for dashboard
+    @MainActor
+    var healthSummaryForDashboard: ActivitySummary? {
+        return currentActivitySummary ?? healthManager.currentActivitySummary
+    }
+
+    /// Health insights for the current week
+    @MainActor
+    func getWeeklyHealthInsights() -> [HealthInsight] {
+        let sessions = getAllHealthSessions()
+        let weekStart = Calendar.current.dateInterval(of: .weekOfYear, for: Date())?.start ?? Date()
+        let weekEnd = Calendar.current.dateInterval(of: .weekOfYear, for: Date())?.end ?? Date()
+
+        let weekSessions = sessions.filter { session in
+            session.startTime >= weekStart && session.startTime <= weekEnd
+        }
+
+        let totalSteps = weekSessions.reduce(0) { $0 + $1.totalStepsWalked }
+        let totalDistance = weekSessions.reduce(0.0) { $0 + $1.totalDistanceWalked }
+        let totalActiveTime = weekSessions.reduce(0.0) { $0 + $1.duration }
+
+        let report = WeeklyHealthReport(
+            weekStartDate: weekStart,
+            weekEndDate: weekEnd,
+            totalSteps: totalSteps,
+            totalDistance: totalDistance,
+            totalActiveTime: totalActiveTime,
+            averageDailySteps: weekSessions.isEmpty ? 0 : totalSteps / 7,
+            averageDailyDistance: weekSessions.isEmpty ? 0.0 : totalDistance / 7.0,
+            jobSessions: weekSessions,
+            insights: []
+        )
+
+        return WeeklyHealthReport.generateInsights(from: report)
     }
 }
 
