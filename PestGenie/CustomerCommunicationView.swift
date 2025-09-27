@@ -19,8 +19,14 @@ struct CustomerCommunicationView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Tab selection
-                communicationTabBar
+                // Tab selection - positioned optimally below navigation/search
+                VStack(spacing: 0) {
+                    // Small spacing from search bar for better positioning
+                    Spacer()
+                        .frame(height: PestGenieDesignSystem.Spacing.xs)
+
+                    communicationTabBar
+                }
 
                 // Content area
                 Group {
@@ -86,48 +92,99 @@ struct CustomerCommunicationView: View {
     // MARK: - Communication Tab Bar
 
     private var communicationTabBar: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
             ForEach(CommunicationTab.allCases, id: \.self) { tab in
                 Button(action: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(.easeInOut(duration: 0.25)) {
                         selectedTab = tab
                     }
                 }) {
                     VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
-                        HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
-                            Image(systemName: tab.icon)
-                                .font(.system(size: 16))
+                        // Icon with properly positioned badge
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22, weight: selectedTab == tab ? .semibold : .medium))
+                            .foregroundColor(selectedTab == tab ? PestGenieDesignSystem.Colors.primary : PestGenieDesignSystem.Colors.textSecondary)
+                            .overlay(
+                                // iOS-style badge positioning
+                                Group {
+                                    if tab.unreadCount > 0 {
+                                        Text("\(tab.unreadCount)")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, tab.unreadCount > 9 ? 4 : 5)
+                                            .padding(.vertical, 2)
+                                            .background(tab.badgeColor)
+                                            .clipShape(Capsule())
+                                            .offset(x: 12, y: -10)
+                                            .shadow(
+                                                color: PestGenieDesignSystem.Shadows.sm.color,
+                                                radius: PestGenieDesignSystem.Shadows.sm.radius,
+                                                x: PestGenieDesignSystem.Shadows.sm.x,
+                                                y: PestGenieDesignSystem.Shadows.sm.y
+                                            )
+                                    }
+                                },
+                                alignment: .topTrailing
+                            )
 
-                            Text(tab.shortTitle)
-                                .font(PestGenieDesignSystem.Typography.labelMedium)
-                                .lineLimit(1)
-
-                            if tab.unreadCount > 0 {
-                                Text("\(tab.unreadCount)")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 1)
-                                    .background(PestGenieDesignSystem.Colors.error)
-                                    .clipShape(Capsule())
-                            }
+                        // Enhanced selection indicator
+                        if selectedTab == tab {
+                            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.xs)
+                                .fill(PestGenieDesignSystem.Colors.primary)
+                                .frame(width: 24, height: 3)
+                        } else {
+                            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.xs)
+                                .fill(Color.clear)
+                                .frame(width: 24, height: 3)
                         }
-                        .foregroundColor(selectedTab == tab ? PestGenieDesignSystem.Colors.primary : PestGenieDesignSystem.Colors.textSecondary)
-
-                        Rectangle()
-                            .fill(selectedTab == tab ? PestGenieDesignSystem.Colors.primary : Color.clear)
-                            .frame(height: 2)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .background(
+                        // Enhanced active state background with elevated appearance
+                        Group {
+                            if selectedTab == tab {
+                                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                                    .fill(PestGenieDesignSystem.Colors.primary.opacity(0.08))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                                            .stroke(PestGenieDesignSystem.Colors.primary.opacity(0.2), lineWidth: 1)
+                                    )
+                                    .shadow(
+                                        color: PestGenieDesignSystem.Colors.primary.opacity(0.15),
+                                        radius: 4,
+                                        x: 0,
+                                        y: 2
+                                    )
+                            } else {
+                                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                                    .fill(Color.clear)
+                            }
+                        }
+                    )
+                    .contentShape(Rectangle())
+                    .scaleEffect(selectedTab == tab ? 1.02 : 1.0)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
-        .background(PestGenieDesignSystem.Colors.surface)
+        .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+        .background(
+            // Tab bar background with subtle shadow
+            RoundedRectangle(cornerRadius: 0)
+                .fill(PestGenieDesignSystem.Colors.background)
+                .shadow(
+                    color: PestGenieDesignSystem.Shadows.sm.color,
+                    radius: PestGenieDesignSystem.Shadows.sm.radius,
+                    x: 0,
+                    y: 1
+                )
+        )
         .overlay(
             Rectangle()
-                .fill(PestGenieDesignSystem.Colors.border)
+                .fill(PestGenieDesignSystem.Colors.border.opacity(0.3))
                 .frame(height: 0.5),
             alignment: .bottom
         )
@@ -147,63 +204,90 @@ struct CustomerCommunicationView: View {
     }
 
     private func messageCard(_ message: CustomerMessage) -> some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
-                    Text(message.customerName)
-                        .font(PestGenieDesignSystem.Typography.titleSmall)
-                        .fontWeight(.semibold)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Priority/Status indicator strip
+            Rectangle()
+                .fill(message.priority.color)
+                .frame(width: 4)
+                .cornerRadius(2)
 
-                    Text(message.address)
-                        .font(PestGenieDesignSystem.Typography.caption)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-                }
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                // Header row with customer info and status
+                HStack {
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        Text(message.customerName)
+                            .font(PestGenieDesignSystem.Typography.titleSmall)
+                            .fontWeight(.semibold)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                            .lineLimit(1)
 
-                Spacer()
+                        statusBadge(message.status)
+                    }
 
-                VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xxs) {
-                    statusBadge(message.status)
+                    Spacer()
 
                     Text(message.timestamp, style: .relative)
                         .font(PestGenieDesignSystem.Typography.caption)
                         .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
                 }
-            }
 
-            // Message content
-            Text(message.content)
-                .font(PestGenieDesignSystem.Typography.bodyMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-                .lineLimit(3)
+                // Address and message preview
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Text(message.address)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .lineLimit(1)
 
-            // Action buttons
-            HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-                Button(action: { replyToMessage(message) }) {
-                    HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Text(message.content)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                        .lineLimit(2)
+                }
+
+                // Compact action row
+                HStack(spacing: PestGenieDesignSystem.Spacing.md) {
+                    Button(action: { replyToMessage(message) }) {
                         Image(systemName: "arrowshape.turn.up.left")
-                        Text("Reply")
+                            .font(.system(size: 16))
+                            .foregroundColor(PestGenieDesignSystem.Colors.primary)
                     }
-                    .font(PestGenieDesignSystem.Typography.caption)
-                    .foregroundColor(PestGenieDesignSystem.Colors.primary)
-                }
+                    .buttonStyle(PlainButtonStyle())
 
-                Button(action: { callCustomer(message) }) {
-                    HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Button(action: { callCustomer(message) }) {
                         Image(systemName: "phone")
-                        Text("Call")
+                            .font(.system(size: 16))
+                            .foregroundColor(PestGenieDesignSystem.Colors.accent)
                     }
-                    .font(PestGenieDesignSystem.Typography.caption)
-                    .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                    .buttonStyle(PlainButtonStyle())
+
+                    Spacer()
+
+                    // Priority indicator
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                        Circle()
+                            .fill(message.priority.color)
+                            .frame(width: 6, height: 6)
+                        Text(message.priority.displayName)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundColor(message.priority.color)
+                    }
                 }
-
-                Spacer()
-
-                priorityIndicator(message.priority)
             }
         }
-        .pestGenieCard()
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .fill(message.status == .unread ?
+                      PestGenieDesignSystem.Colors.surface.opacity(0.8) :
+                      PestGenieDesignSystem.Colors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                        .stroke(message.status == .unread ?
+                               PestGenieDesignSystem.Colors.warning.opacity(0.3) :
+                               PestGenieDesignSystem.Colors.border.opacity(0.3),
+                               lineWidth: message.status == .unread ? 1 : 0.5)
+                )
+        )
         .onTapGesture {
             viewMessageDetails(message)
         }
@@ -227,75 +311,85 @@ struct CustomerCommunicationView: View {
     }
 
     private var quickNotificationSection: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
-            Text("Quick Notifications")
-                .font(PestGenieDesignSystem.Typography.headlineSmall)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                Text("Quick Send")
+                    .font(PestGenieDesignSystem.Typography.titleSmall)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: PestGenieDesignSystem.Spacing.sm) {
+                Spacer()
+
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(PestGenieDesignSystem.Colors.accent)
+            }
+
+            HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
                 quickNotificationButton(
                     title: "Arrival",
-                    subtitle: "On my way",
                     icon: "car.fill",
                     color: PestGenieDesignSystem.Colors.info
                 )
 
                 quickNotificationButton(
                     title: "Completed",
-                    subtitle: "Service done",
                     icon: "checkmark.circle.fill",
                     color: PestGenieDesignSystem.Colors.success
                 )
 
                 quickNotificationButton(
                     title: "Delayed",
-                    subtitle: "Running late",
                     icon: "clock.fill",
                     color: PestGenieDesignSystem.Colors.warning
                 )
 
                 quickNotificationButton(
                     title: "Rescheduled",
-                    subtitle: "Need to reschedule",
                     icon: "calendar.badge.exclamationmark",
                     color: PestGenieDesignSystem.Colors.error
                 )
             }
         }
-        .pestGenieCard()
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .fill(PestGenieDesignSystem.Colors.background)
+                .overlay(
+                    RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                        .stroke(PestGenieDesignSystem.Colors.border.opacity(0.5), lineWidth: 0.5)
+                )
+        )
     }
 
     private func quickNotificationButton(
         title: String,
-        subtitle: String,
         icon: String,
         color: Color
     ) -> some View {
         Button(action: {
             sendQuickNotification(type: title)
         }) {
-            VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: 20, weight: .medium))
                     .foregroundColor(color)
 
-                VStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
-                    Text(title)
-                        .font(PestGenieDesignSystem.Typography.captionEmphasis)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-
-                    Text(subtitle)
-                        .font(PestGenieDesignSystem.Typography.caption)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-                }
+                Text(title)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.xxs)
             .background(color.opacity(0.1))
-            .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+            .overlay(
+                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.xs)
+                    .stroke(color.opacity(0.3), lineWidth: 0.5)
+            )
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -345,49 +439,73 @@ struct CustomerCommunicationView: View {
     }
 
     private func feedbackCard(_ feedback: CustomerFeedback) -> some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
-            HStack {
-                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Rating indicator strip
+            Rectangle()
+                .fill(ratingColor(feedback.rating))
+                .frame(width: 4)
+                .cornerRadius(2)
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                // Header with customer and rating
+                HStack {
                     Text(feedback.customerName)
                         .font(PestGenieDesignSystem.Typography.titleSmall)
+                        .fontWeight(.semibold)
                         .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
-                    Text(feedback.serviceDate, style: .date)
-                        .font(PestGenieDesignSystem.Typography.caption)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Spacer()
+
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                        ratingView(feedback.rating)
+                        Text(feedback.serviceDate, style: .date)
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                    }
                 }
 
-                Spacer()
+                // Comments
+                Text(feedback.comments)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    .lineLimit(3)
 
-                ratingView(feedback.rating)
-            }
+                // Response status or action
+                HStack {
+                    if !feedback.responseText.isEmpty {
+                        HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(PestGenieDesignSystem.Colors.success)
+                            Text("Responded")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(PestGenieDesignSystem.Colors.success)
+                        }
+                    } else {
+                        Button(action: { respondToFeedback(feedback) }) {
+                            HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                                Image(systemName: "arrowshape.turn.up.left")
+                                Text("Respond")
+                            }
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(PestGenieDesignSystem.Colors.primary)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
 
-            Text(feedback.comments)
-                .font(PestGenieDesignSystem.Typography.bodyMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-
-            if !feedback.responseText.isEmpty {
-                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
-                    Text("Your Response:")
-                        .font(PestGenieDesignSystem.Typography.captionEmphasis)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-
-                    Text(feedback.responseText)
-                        .font(PestGenieDesignSystem.Typography.bodySmall)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
-                        .padding(PestGenieDesignSystem.Spacing.sm)
-                        .background(PestGenieDesignSystem.Colors.surface)
-                        .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
-                }
-            } else {
-                Button(action: { respondToFeedback(feedback) }) {
-                    Text("Respond to Feedback")
-                        .font(PestGenieDesignSystem.Typography.labelMedium)
-                        .foregroundColor(PestGenieDesignSystem.Colors.primary)
+                    Spacer()
                 }
             }
         }
-        .pestGenieCard()
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .fill(PestGenieDesignSystem.Colors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                        .stroke(PestGenieDesignSystem.Colors.border.opacity(0.3), lineWidth: 0.5)
+                )
+        )
     }
 
     // MARK: - Service Updates View
@@ -404,54 +522,75 @@ struct CustomerCommunicationView: View {
     }
 
     private func serviceUpdateCard(_ update: ServiceUpdate) -> some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
-            HStack {
-                Image(systemName: update.type.icon)
-                    .foregroundColor(update.type.color)
-                    .font(.system(size: 20))
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Type indicator
+            Circle()
+                .fill(update.type.color.opacity(0.2))
+                .frame(width: 40, height: 40)
+                .overlay(
+                    Image(systemName: update.type.icon)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(update.type.color)
+                )
 
-                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                // Header
+                HStack {
                     Text(update.title)
                         .font(PestGenieDesignSystem.Typography.titleSmall)
+                        .fontWeight(.semibold)
                         .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
-                    Text(update.customerName)
+                    Spacer()
+
+                    Text(update.timestamp, style: .relative)
                         .font(PestGenieDesignSystem.Typography.caption)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
                 }
 
-                Spacer()
-
-                Text(update.timestamp, style: .relative)
+                // Customer and description
+                Text(update.customerName)
                     .font(PestGenieDesignSystem.Typography.caption)
-                    .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
-            }
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
 
-            Text(update.description)
-                .font(PestGenieDesignSystem.Typography.bodyMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                Text(update.description)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    .lineLimit(2)
 
-            if let nextAction = update.nextAction {
-                HStack {
-                    Image(systemName: "arrow.right.circle")
-                        .foregroundColor(PestGenieDesignSystem.Colors.accent)
-                    Text("Next: \(nextAction)")
-                        .font(PestGenieDesignSystem.Typography.captionEmphasis)
-                        .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                // Next action
+                if let nextAction = update.nextAction {
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        Image(systemName: "arrow.right.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                        Text(nextAction)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                            .lineLimit(1)
+                    }
                 }
             }
         }
-        .pestGenieCard()
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .fill(PestGenieDesignSystem.Colors.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                        .stroke(update.type.color.opacity(0.2), lineWidth: 1)
+                )
+        )
     }
 
     // MARK: - Helper Views
 
     private func statusBadge(_ status: MessageStatus) -> some View {
         Text(status.displayName)
-            .font(PestGenieDesignSystem.Typography.captionEmphasis)
+            .font(.system(size: 10, weight: .bold))
             .foregroundColor(.white)
-            .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.xxs)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
             .background(status.color)
             .clipShape(Capsule())
     }
@@ -468,12 +607,27 @@ struct CustomerCommunicationView: View {
     }
 
     private func ratingView(_ rating: Int) -> some View {
-        HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+        HStack(spacing: 1) {
             ForEach(1...5, id: \.self) { star in
                 Image(systemName: star <= rating ? "star.fill" : "star")
                     .foregroundColor(star <= rating ? PestGenieDesignSystem.Colors.warning : PestGenieDesignSystem.Colors.textTertiary)
-                    .font(.system(size: 14))
+                    .font(.system(size: 10))
             }
+        }
+    }
+
+    private func ratingColor(_ rating: Int) -> Color {
+        switch rating {
+        case 5:
+            return PestGenieDesignSystem.Colors.success
+        case 4:
+            return PestGenieDesignSystem.Colors.info
+        case 3:
+            return PestGenieDesignSystem.Colors.warning
+        case 1...2:
+            return PestGenieDesignSystem.Colors.error
+        default:
+            return PestGenieDesignSystem.Colors.textTertiary
         }
     }
 
@@ -800,10 +954,10 @@ enum CommunicationTab: String, CaseIterable {
 
     var icon: String {
         switch self {
-        case .messages: return "message.fill"
-        case .notifications: return "bell.fill"
-        case .feedback: return "star.fill"
-        case .serviceUpdates: return "info.circle.fill"
+        case .messages: return "bubble.left.and.text.bubble.right.fill"
+        case .notifications: return "bell.badge.fill"
+        case .feedback: return "star.bubble.fill"
+        case .serviceUpdates: return "checkmark.seal.fill"
         }
     }
 
@@ -813,6 +967,15 @@ enum CommunicationTab: String, CaseIterable {
         case .notifications: return 0
         case .feedback: return 2
         case .serviceUpdates: return 1
+        }
+    }
+
+    var badgeColor: Color {
+        switch self {
+        case .messages: return PestGenieDesignSystem.Colors.primary
+        case .notifications: return PestGenieDesignSystem.Colors.info
+        case .feedback: return PestGenieDesignSystem.Colors.warning
+        case .serviceUpdates: return PestGenieDesignSystem.Colors.accent
         }
     }
 }

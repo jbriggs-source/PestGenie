@@ -23,6 +23,16 @@ struct MainDashboardView: View {
     @State private var showingMenu = false
     @State private var selectedMenuItem: MenuItem?
 
+    // Chemical inventory management views
+    @State private var showingChemicalUsageView = false
+    @State private var showingInventoryAdjustmentView = false
+    @State private var showingReorderView = false
+    @State private var showingUsageReportView = false
+
+    // Equipment Management State
+    @State private var showingEquipmentInspection = false
+    @State private var selectedEquipmentForInspection: Equipment?
+
     // Profile-specific sheet states
     @State private var showingProfileEditSheet = false
     @State private var showingSecuritySheet = false
@@ -213,6 +223,23 @@ struct MainDashboardView: View {
                 routeViewModel: routeViewModel,
                 emergency: .beeSwarm
             )
+        }
+        .sheet(isPresented: $showingChemicalUsageView) {
+            ChemicalUsageView(routeViewModel: routeViewModel)
+        }
+        .sheet(isPresented: $showingInventoryAdjustmentView) {
+            InventoryAdjustmentView(routeViewModel: routeViewModel)
+        }
+        .sheet(isPresented: $showingReorderView) {
+            ReorderManagementView(routeViewModel: routeViewModel)
+        }
+        .sheet(isPresented: $showingUsageReportView) {
+            ChemicalUsageReportView(routeViewModel: routeViewModel)
+        }
+        .sheet(isPresented: $showingEquipmentInspection) {
+            if let equipment = selectedEquipmentForInspection {
+                EquipmentInspectionView(equipment: equipment, routeViewModel: routeViewModel)
+            }
         }
     }
 
@@ -1464,9 +1491,9 @@ struct MainDashboardView: View {
 
                     HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
                         Circle()
-                            .fill(Color.green)
+                            .fill(equipmentStatusColor)
                             .frame(width: 8, height: 8)
-                        Text("All Equipment Ready")
+                        Text(equipmentStatusText)
                             .font(PestGenieDesignSystem.Typography.bodyMedium)
                             .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                     }
@@ -1475,7 +1502,7 @@ struct MainDashboardView: View {
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
-                    Text("6")
+                    Text("\(routeViewModel.assignedEquipment.count)")
                         .font(PestGenieDesignSystem.Typography.displaySmall)
                         .fontWeight(.bold)
                         .foregroundColor(PestGenieDesignSystem.Colors.primary)
@@ -1492,14 +1519,14 @@ struct MainDashboardView: View {
                         .font(PestGenieDesignSystem.Typography.bodySmall)
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                     Spacer()
-                    Text("5/6 Complete")
+                    Text(preServiceChecklistStatus)
                         .font(PestGenieDesignSystem.Typography.bodySmall)
                         .fontWeight(.semibold)
-                        .foregroundColor(.orange)
+                        .foregroundColor(preServiceChecklistColor)
                 }
 
-                ProgressView(value: 0.83)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .orange))
+                ProgressView(value: preServiceChecklistProgress)
+                    .progressViewStyle(LinearProgressViewStyle(tint: preServiceChecklistColor))
                     .scaleEffect(x: 1, y: 2, anchor: .center)
             }
         }
@@ -1510,25 +1537,25 @@ struct MainDashboardView: View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.md) {
             equipmentMetricCard(
                 title: "Jobs Today",
-                value: "8/12",
-                change: "4 remaining",
-                changePositive: true,
+                value: "\(routeViewModel.completedJobsCount)/\(routeViewModel.jobs.count)",
+                change: "\(routeViewModel.jobs.count - routeViewModel.completedJobsCount) remaining",
+                changePositive: routeViewModel.completedJobsCount > 0,
                 icon: "list.clipboard",
                 color: .blue
             )
 
             equipmentMetricCard(
                 title: "Equipment Check",
-                value: "5/6",
-                change: "1 pending",
-                changePositive: false,
+                value: "\(getInspectedEquipmentCount())/\(routeViewModel.assignedEquipment.count)",
+                change: getInspectedEquipmentCount() == routeViewModel.assignedEquipment.count ? "Complete" : "\(routeViewModel.assignedEquipment.count - getInspectedEquipmentCount()) pending",
+                changePositive: getInspectedEquipmentCount() == routeViewModel.assignedEquipment.count,
                 icon: "checkmark.circle.fill",
-                color: .orange
+                color: getInspectedEquipmentCount() == routeViewModel.assignedEquipment.count ? .green : .orange
             )
 
             equipmentMetricCard(
                 title: "Customer Updates",
-                value: "6 sent",
+                value: "\(routeViewModel.completedJobsCount) sent",
                 change: "All current",
                 changePositive: true,
                 icon: "message.fill",
@@ -1537,8 +1564,8 @@ struct MainDashboardView: View {
 
             equipmentMetricCard(
                 title: "Next Service",
-                value: "Due 2:30 PM",
-                change: "Johnson Property",
+                value: nextJobTime,
+                change: nextJobLocation,
                 changePositive: true,
                 icon: "clock.badge.checkmark",
                 color: .purple
@@ -1682,37 +1709,29 @@ struct MainDashboardView: View {
             }
 
             VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-                technicianEquipmentRow(
-                    name: "Backpack Sprayer",
-                    model: "BS-1025",
-                    status: .operational,
-                    lastCheck: "Today 7:30 AM",
-                    action: "Ready"
-                )
+                if routeViewModel.assignedEquipment.isEmpty {
+                    VStack(spacing: PestGenieDesignSystem.Spacing.md) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 30))
+                            .foregroundColor(.orange)
 
-                technicianEquipmentRow(
-                    name: "Moisture Meter",
-                    model: "MM-3012",
-                    status: .needsAttention,
-                    lastCheck: "Pending",
-                    action: "Check Required"
-                )
+                        Text("No Equipment Assigned")
+                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .fontWeight(.medium)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
-                technicianEquipmentRow(
-                    name: "Inspection Camera",
-                    model: "IC-2024",
-                    status: .operational,
-                    lastCheck: "Today 7:35 AM",
-                    action: "Ready"
-                )
-
-                technicianEquipmentRow(
-                    name: "Digital Scale",
-                    model: "DS-Pro",
-                    status: .operational,
-                    lastCheck: "Today 7:32 AM",
-                    action: "Ready"
-                )
+                        Text("Contact your supervisor to assign equipment")
+                            .font(PestGenieDesignSystem.Typography.bodySmall)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, PestGenieDesignSystem.Spacing.lg)
+                } else {
+                    ForEach(routeViewModel.assignedEquipment) { equipment in
+                        realEquipmentRow(equipment: equipment)
+                    }
+                }
             }
         }
         .pestGenieCard()
@@ -1762,6 +1781,240 @@ struct MainDashboardView: View {
             }
         }
         .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+    }
+
+    private func realEquipmentRow(equipment: Equipment) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Status indicator
+            Circle()
+                .fill(equipmentStatusColor(for: equipment))
+                .frame(width: 12, height: 12)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(equipment.name)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Spacer()
+
+                    Text(equipmentActionText(for: equipment))
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(equipmentStatusColor(for: equipment))
+                }
+
+                HStack {
+                    Text("\(equipment.brand) \(equipment.model)")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+
+                    Spacer()
+
+                    Text("Last: \(lastInspectionText(for: equipment))")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+
+            Button(action: {
+                // Show equipment inspection view
+                showingEquipmentInspection = true
+                selectedEquipmentForInspection = equipment
+            }) {
+                Image(systemName: inspectionStatusIcon(for: equipment))
+                    .font(.title3)
+                    .foregroundColor(equipmentStatusColor(for: equipment))
+            }
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+    }
+
+    // MARK: - Equipment Computed Properties
+
+    private var equipmentStatusColor: Color {
+        let failedEquipment = routeViewModel.assignedEquipment.filter { equipment in
+            getLastInspectionResult(equipment.id) == .failed
+        }
+
+        let needsAttentionEquipment = routeViewModel.assignedEquipment.filter { equipment in
+            let result = getLastInspectionResult(equipment.id)
+            return result == .needsCalibration || result == .needsMaintenance
+        }
+
+        if !failedEquipment.isEmpty {
+            return .red
+        } else if !needsAttentionEquipment.isEmpty {
+            return .orange
+        } else {
+            return .green
+        }
+    }
+
+    private var equipmentStatusText: String {
+        let failedEquipment = routeViewModel.assignedEquipment.filter { equipment in
+            getLastInspectionResult(equipment.id) == .failed
+        }
+
+        let needsAttentionEquipment = routeViewModel.assignedEquipment.filter { equipment in
+            let result = getLastInspectionResult(equipment.id)
+            return result == .needsCalibration || result == .needsMaintenance
+        }
+
+        if !failedEquipment.isEmpty {
+            return "Equipment Issues Detected"
+        } else if !needsAttentionEquipment.isEmpty {
+            return "Attention Required"
+        } else {
+            return "All Equipment Ready"
+        }
+    }
+
+    private var preServiceChecklistProgress: Double {
+        guard !routeViewModel.assignedEquipment.isEmpty else { return 0 }
+
+        let inspectedCount = getInspectedEquipmentCount()
+        return Double(inspectedCount) / Double(routeViewModel.assignedEquipment.count)
+    }
+
+    private var preServiceChecklistStatus: String {
+        let total = routeViewModel.assignedEquipment.count
+        let inspected = getInspectedEquipmentCount()
+
+        if total == 0 {
+            return "No Equipment"
+        } else if inspected == total {
+            return "Complete"
+        } else {
+            return "\(inspected)/\(total) Complete"
+        }
+    }
+
+    private var preServiceChecklistColor: Color {
+        let total = routeViewModel.assignedEquipment.count
+        let inspected = getInspectedEquipmentCount()
+
+        if total == 0 || inspected == total {
+            return .green
+        } else {
+            return .orange
+        }
+    }
+
+    // MARK: - Helper Functions
+
+    private func equipmentStatusColor(for equipment: Equipment) -> Color {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return .green
+        case .failed:
+            return .red
+        case .conditionalPass:
+            return .yellow
+        case .needsCalibration, .needsMaintenance:
+            return .orange
+        case .pending:
+            return .blue
+        case .none:
+            return .gray
+        }
+    }
+
+    private func equipmentActionText(for equipment: Equipment) -> String {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return "Ready"
+        case .failed:
+            return "Failed"
+        case .conditionalPass:
+            return "Conditional Pass"
+        case .needsCalibration:
+            return "Calibration"
+        case .needsMaintenance:
+            return "Maintenance"
+        case .pending:
+            return "Pending"
+        case .none:
+            return "Check Required"
+        }
+    }
+
+    private func inspectionStatusIcon(for equipment: Equipment) -> String {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return "checkmark.circle.fill"
+        case .failed:
+            return "xmark.circle.fill"
+        case .conditionalPass:
+            return "checkmark.circle"
+        case .needsCalibration:
+            return "gauge.open.with.lines.needle.33percent.exclamation"
+        case .needsMaintenance:
+            return "wrench.and.screwdriver.fill"
+        case .pending:
+            return "clock.circle"
+        case .none:
+            return "circle"
+        }
+    }
+
+    private func lastInspectionText(for equipment: Equipment) -> String {
+        let inspections = routeViewModel.equipmentInspections
+            .filter { $0.equipmentId == equipment.id }
+            .sorted { $0.inspectionDate > $1.inspectionDate }
+
+        guard let lastInspection = inspections.first else {
+            return "Never"
+        }
+
+        let formatter = DateFormatter()
+        if Calendar.current.isDateInToday(lastInspection.inspectionDate) {
+            formatter.dateFormat = "h:mm a"
+            return "Today \(formatter.string(from: lastInspection.inspectionDate))"
+        } else {
+            formatter.dateStyle = .short
+            return formatter.string(from: lastInspection.inspectionDate)
+        }
+    }
+
+    private func getLastInspectionResult(_ equipmentId: UUID) -> InspectionResult? {
+        let inspections = routeViewModel.equipmentInspections
+            .filter { $0.equipmentId == equipmentId }
+            .sorted { $0.inspectionDate > $1.inspectionDate }
+
+        return inspections.first?.result
+    }
+
+    private func getInspectedEquipmentCount() -> Int {
+        let todayInspections = routeViewModel.equipmentInspections.filter { inspection in
+            Calendar.current.isDate(inspection.inspectionDate, inSameDayAs: Date())
+        }
+        let inspectedEquipmentIds = Set(todayInspections.map { $0.equipmentId })
+        return inspectedEquipmentIds.count
+    }
+
+    private var nextJobTime: String {
+        let pendingJobs = routeViewModel.jobs.filter { $0.status == .pending }
+        guard let nextJob = pendingJobs.first else {
+            return "No jobs"
+        }
+
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return "Due \(formatter.string(from: nextJob.scheduledDate))"
+    }
+
+    private var nextJobLocation: String {
+        let pendingJobs = routeViewModel.jobs.filter { $0.status == .pending }
+        guard let nextJob = pendingJobs.first else {
+            return "Schedule complete"
+        }
+
+        return nextJob.customerName
     }
 
     private func equipmentFleetCard(name: String, model: String, status: EquipmentDemoStatus, efficiency: Double, lastMaintenance: String) -> some View {
@@ -2213,37 +2466,23 @@ struct MainDashboardView: View {
             }
 
             VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-                technicianChemicalRow(
-                    name: "Termidor SC",
-                    activeIngredient: "Fipronil 9.1%",
-                    quantity: "2.5 gal",
-                    signalWord: .warning,
-                    needsAttention: false
-                )
+                ForEach(routeViewModel.chemicals) { chemical in
+                    technicianChemicalRow(
+                        name: chemical.name,
+                        activeIngredient: chemical.activeIngredient,
+                        quantity: chemical.quantityFormatted,
+                        signalWord: SignalWordDemo(from: chemical.signalWord),
+                        needsAttention: chemical.isLowStock || chemical.isNearExpiration
+                    )
+                }
 
-                technicianChemicalRow(
-                    name: "Premise 2",
-                    activeIngredient: "Imidacloprid 21.4%",
-                    quantity: "1.2 gal",
-                    signalWord: .caution,
-                    needsAttention: false
-                )
-
-                technicianChemicalRow(
-                    name: "Phantom II",
-                    activeIngredient: "Chlorfenapyr 21.45%",
-                    quantity: "0.8 gal",
-                    signalWord: .caution,
-                    needsAttention: true
-                )
-
-                technicianChemicalRow(
-                    name: "Suspend SC",
-                    activeIngredient: "Deltamethrin 4.75%",
-                    quantity: "3.0 gal",
-                    signalWord: .caution,
-                    needsAttention: false
-                )
+                if routeViewModel.chemicals.isEmpty {
+                    Text("No chemicals loaded")
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(PestGenieDesignSystem.Spacing.md)
+                }
             }
         }
         .pestGenieCard()
@@ -2606,50 +2845,50 @@ struct MainDashboardView: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: PestGenieDesignSystem.Spacing.sm) {
                 chemicalQuickActionButton(
                     icon: "drop.circle.fill",
-                    title: "Mix Calculator",
-                    color: .cyan
+                    title: "Record Usage",
+                    color: .blue
                 ) {
-                    // Demo: Mixing calculator
+                    showingChemicalUsageView = true
                 }
 
                 chemicalQuickActionButton(
-                    icon: "exclamationmark.triangle.fill",
-                    title: "Safety Check",
+                    icon: "plus.circle.fill",
+                    title: "Adjust Stock",
+                    color: .green
+                ) {
+                    showingInventoryAdjustmentView = true
+                }
+
+                chemicalQuickActionButton(
+                    icon: "cart.badge.plus",
+                    title: "Reorder Alert",
+                    color: .orange
+                ) {
+                    showingReorderView = true
+                }
+
+                chemicalQuickActionButton(
+                    icon: "clock.badge.exclamationmark",
+                    title: "Expiration Check",
                     color: .red
                 ) {
-                    // Demo: Safety verification
+                    // Demo: Check expiring chemicals
                 }
 
                 chemicalQuickActionButton(
                     icon: "message.badge.filled.fill",
                     title: "Treatment Report",
-                    color: .green
+                    color: .purple
                 ) {
                     // Demo: Send treatment summary to customer
                 }
 
                 chemicalQuickActionButton(
-                    icon: "timer",
-                    title: "Re-entry Timer",
-                    color: .orange
+                    icon: "chart.bar.fill",
+                    title: "Usage Report",
+                    color: .cyan
                 ) {
-                    // Demo: Customer re-entry timing
-                }
-
-                chemicalQuickActionButton(
-                    icon: "info.circle.fill",
-                    title: "Product Info",
-                    color: .blue
-                ) {
-                    // Demo: Chemical information for customers
-                }
-
-                chemicalQuickActionButton(
-                    icon: "calendar.badge.plus",
-                    title: "Next Treatment",
-                    color: .purple
-                ) {
-                    // Demo: Schedule follow-up treatment
+                    showingUsageReportView = true
                 }
             }
         }
@@ -3043,6 +3282,8 @@ struct MainDashboardView: View {
             // Load route data after initial render
             await MainActor.run {
                 routeViewModel.loadTodaysRoute()
+                routeViewModel.loadDemoChemicals()
+                routeViewModel.loadDemoEquipment()
             }
 
             // Initialize profile data if user is authenticated
@@ -3489,6 +3730,14 @@ enum SignalWordDemo {
         case .danger: return .red
         case .warning: return .orange
         case .caution: return .yellow
+        }
+    }
+
+    init(from signalWord: SignalWord) {
+        switch signalWord {
+        case .danger: self = .danger
+        case .warning: self = .warning
+        case .caution: self = .caution
         }
     }
 }

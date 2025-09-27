@@ -5,6 +5,7 @@ struct RouteStartView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var showingDemoOptions = false
+    @State private var showingPreServiceChecklist = false
 
     var body: some View {
         NavigationView {
@@ -75,13 +76,38 @@ struct RouteStartView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
                             Image(systemName: "checkmark.shield")
-                                .foregroundColor(.green)
-                            Text("Pre-Route Checklist")
+                                .foregroundColor(equipmentChecklistStatusColor)
+                            Text("Pre-Service Equipment Check")
                                 .font(.headline)
                                 .fontWeight(.semibold)
                         }
 
-                        EquipmentChecklistView()
+                        RealEquipmentChecklistView(routeViewModel: routeViewModel)
+
+                        // Button to open detailed checklist
+                        Button(action: {
+                            showingPreServiceChecklist = true
+                        }) {
+                            HStack {
+                                Image(systemName: "list.clipboard")
+                                    .font(.title3)
+                                Text(routeViewModel.preServiceChecklistCompleted ? "Review Equipment Checklist" : "Complete Equipment Checklist")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .foregroundColor(routeViewModel.preServiceChecklistCompleted ? .blue : .orange)
+                            .padding()
+                            .background(Color(.systemBackground))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(routeViewModel.preServiceChecklistCompleted ? Color.blue.opacity(0.3) : Color.orange.opacity(0.3), lineWidth: 1)
+                            )
+                        }
                     }
                     .padding()
                     .background(Color(.systemGray6))
@@ -93,18 +119,25 @@ struct RouteStartView: View {
                             startRouteAction()
                         }) {
                             HStack {
-                                Image(systemName: "play.circle.fill")
+                                Image(systemName: canStartRoute ? "play.circle.fill" : "exclamationmark.triangle.fill")
                                     .font(.title2)
-                                Text("Start Route")
+                                Text(startButtonText)
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.green)
+                            .background(startButtonColor)
                             .cornerRadius(12)
                         }
-                        .disabled(routeViewModel.isRouteStarted)
+                        .disabled(!canStartRoute || routeViewModel.isRouteStarted)
+
+                        if !canStartRoute && !routeViewModel.preServiceChecklistCompleted {
+                            Text("Complete equipment checklist before starting route")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .multilineTextAlignment(.center)
+                        }
 
                         // Demo Controls
                         Button("Demo Options") {
@@ -143,6 +176,9 @@ struct RouteStartView: View {
         } message: {
             Text("Choose a demo scenario to showcase PestGenie's capabilities")
         }
+        .sheet(isPresented: $showingPreServiceChecklist) {
+            PreServiceChecklistView(routeViewModel: routeViewModel)
+        }
     }
 
     private var estimatedDuration: String {
@@ -153,6 +189,38 @@ struct RouteStartView: View {
     private var estimatedDistance: String {
         let miles = max(15, routeViewModel.jobs.count * 3)
         return "\(miles) miles"
+    }
+
+    private var canStartRoute: Bool {
+        return routeViewModel.preServiceChecklistCompleted && !routeViewModel.assignedEquipment.isEmpty
+    }
+
+    private var startButtonText: String {
+        if routeViewModel.isRouteStarted {
+            return "Route in Progress"
+        } else if !routeViewModel.preServiceChecklistCompleted {
+            return "Complete Equipment Check First"
+        } else {
+            return "Start Route"
+        }
+    }
+
+    private var startButtonColor: Color {
+        if routeViewModel.isRouteStarted {
+            return .gray
+        } else if !canStartRoute {
+            return .orange
+        } else {
+            return .green
+        }
+    }
+
+    private var equipmentChecklistStatusColor: Color {
+        if routeViewModel.preServiceChecklistCompleted {
+            return .green
+        } else {
+            return .orange
+        }
     }
 
     private func startRouteAction() {
@@ -187,36 +255,161 @@ struct RouteMetricRow: View {
     }
 }
 
-struct EquipmentChecklistView: View {
-    @State private var checklistItems = [
-        ChecklistItem(title: "Spray Equipment", isChecked: true),
-        ChecklistItem(title: "Safety Gear (PPE)", isChecked: true),
-        ChecklistItem(title: "Chemical Inventory", isChecked: false),
-        ChecklistItem(title: "Documentation Forms", isChecked: true),
-        ChecklistItem(title: "Emergency Contacts", isChecked: true),
-        ChecklistItem(title: "Vehicle Inspection", isChecked: false)
-    ]
+struct RealEquipmentChecklistView: View {
+    @ObservedObject var routeViewModel: RouteViewModel
 
     var body: some View {
         VStack(spacing: 8) {
-            ForEach(checklistItems.indices, id: \.self) { index in
+            if routeViewModel.assignedEquipment.isEmpty {
                 HStack {
-                    Button(action: {
-                        checklistItems[index].isChecked.toggle()
-                    }) {
-                        Image(systemName: checklistItems[index].isChecked ? "checkmark.circle.fill" : "circle")
-                            .foregroundColor(checklistItems[index].isChecked ? .green : .gray)
-                            .font(.title3)
-                    }
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.title3)
 
-                    Text(checklistItems[index].title)
+                    Text("No equipment assigned")
                         .font(.body)
-                        .foregroundColor(checklistItems[index].isChecked ? .primary : .secondary)
+                        .foregroundColor(.orange)
 
                     Spacer()
                 }
+            } else {
+                ForEach(routeViewModel.assignedEquipment.prefix(4)) { equipment in
+                    HStack {
+                        Image(systemName: equipmentStatusIcon(for: equipment))
+                            .foregroundColor(equipmentStatusColor(for: equipment))
+                            .font(.title3)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(equipment.name)
+                                .font(.body)
+                                .foregroundColor(.primary)
+
+                            Text(equipmentStatusText(for: equipment))
+                                .font(.caption)
+                                .foregroundColor(equipmentStatusColor(for: equipment))
+                        }
+
+                        Spacer()
+                    }
+                }
+
+                if routeViewModel.assignedEquipment.count > 4 {
+                    HStack {
+                        Image(systemName: "ellipsis.circle")
+                            .foregroundColor(.secondary)
+                            .font(.title3)
+
+                        Text("+\(routeViewModel.assignedEquipment.count - 4) more items")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+                    }
+                }
+            }
+
+            // Overall status summary
+            Divider()
+
+            HStack {
+                Image(systemName: routeViewModel.preServiceChecklistCompleted ? "checkmark.circle.fill" : "clock.circle.fill")
+                    .foregroundColor(routeViewModel.preServiceChecklistCompleted ? .green : .orange)
+                    .font(.title3)
+
+                Text(overallStatusText)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundColor(routeViewModel.preServiceChecklistCompleted ? .green : .orange)
+
+                Spacer()
             }
         }
+    }
+
+    private var overallStatusText: String {
+        if routeViewModel.assignedEquipment.isEmpty {
+            return "No equipment to check"
+        } else if routeViewModel.preServiceChecklistCompleted {
+            return "All equipment checked and ready"
+        } else {
+            let inspected = getInspectedEquipmentCount()
+            let total = routeViewModel.assignedEquipment.count
+            return "\(inspected)/\(total) equipment checked"
+        }
+    }
+
+    private func equipmentStatusIcon(for equipment: Equipment) -> String {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return "checkmark.circle.fill"
+        case .failed:
+            return "xmark.circle.fill"
+        case .needsCalibration:
+            return "gauge.open.with.lines.needle.33percent.exclamation"
+        case .needsMaintenance:
+            return "wrench.and.screwdriver.fill"
+        case .pending:
+            return "clock.circle"
+        case .conditionalPass:
+            return "checkmark.circle"
+        case .none:
+            return "circle"
+        }
+    }
+
+    private func equipmentStatusColor(for equipment: Equipment) -> Color {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return .green
+        case .failed:
+            return .red
+        case .needsCalibration, .needsMaintenance:
+            return .orange
+        case .pending:
+            return .blue
+        case .conditionalPass:
+            return .yellow
+        case .none:
+            return .gray
+        }
+    }
+
+    private func equipmentStatusText(for equipment: Equipment) -> String {
+        let result = getLastInspectionResult(equipment.id)
+        switch result {
+        case .passed:
+            return "Ready"
+        case .failed:
+            return "Failed inspection"
+        case .needsCalibration:
+            return "Needs calibration"
+        case .needsMaintenance:
+            return "Needs maintenance"
+        case .pending:
+            return "Inspection pending"
+        case .conditionalPass:
+            return "Conditional pass"
+        case .none:
+            return "Not inspected"
+        }
+    }
+
+    private func getLastInspectionResult(_ equipmentId: UUID) -> InspectionResult? {
+        let inspections = routeViewModel.equipmentInspections
+            .filter { $0.equipmentId == equipmentId }
+            .sorted { $0.inspectionDate > $1.inspectionDate }
+
+        return inspections.first?.result
+    }
+
+    private func getInspectedEquipmentCount() -> Int {
+        let todayInspections = routeViewModel.equipmentInspections.filter { inspection in
+            Calendar.current.isDate(inspection.inspectionDate, inSameDayAs: Date())
+        }
+        let inspectedEquipmentIds = Set(todayInspections.map { $0.equipmentId })
+        return inspectedEquipmentIds.count
     }
 }
 

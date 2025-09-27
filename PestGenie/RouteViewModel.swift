@@ -230,6 +230,9 @@ final class RouteViewModel: ObservableObject {
             jobs[index].status = .inProgress
             jobs[index].startTime = Date()
 
+            // Record equipment start times for usage tracking
+            recordEquipmentStartTimes(for: jobs[index])
+
             // Start health tracking for this job
             Task { @MainActor in
                 healthManager.handleJobStart(jobs[index])
@@ -248,6 +251,9 @@ final class RouteViewModel: ObservableObject {
             jobs[index].status = .completed
             jobs[index].completionTime = Date()
             jobs[index].signatureData = signature
+
+            // Record equipment usage for completed job
+            recordEquipmentUsageForJob(jobs[index])
 
             // End health tracking for this job
             Task { @MainActor in
@@ -634,6 +640,664 @@ final class RouteViewModel: ObservableObject {
 
         return WeeklyHealthReport.generateInsights(from: report)
     }
+
+    // MARK: - Chemical Inventory Management
+
+    @Published var chemicals: [Chemical] = []
+    @Published var chemicalTreatments: [ChemicalTreatment] = []
+
+    // MARK: - Equipment Management
+
+    @Published var assignedEquipment: [Equipment] = []
+    @Published var equipmentInspections: [EquipmentInspection] = []
+    @Published var preServiceChecklistCompleted = false
+    @Published var equipmentUsageLog: [EquipmentUsageRecord] = []
+
+    /// Updates chemical inventory after a treatment application
+    func recordChemicalUsage(chemicalId: UUID, quantityUsed: Double, jobId: UUID, notes: String = "") {
+        // Update chemical inventory
+        if let index = chemicals.firstIndex(where: { $0.id == chemicalId }) {
+            chemicals[index].quantityInStock = max(0, chemicals[index].quantityInStock - quantityUsed)
+            chemicals[index].lastModified = Date()
+        }
+
+        // Create treatment record
+        let chemical = chemicals.first(where: { $0.id == chemicalId })
+        let treatment = ChemicalTreatment(
+            jobId: jobId,
+            chemicalId: chemicalId,
+            applicatorName: currentUserName,
+            applicationDate: Date(),
+            applicationMethod: .spray, // Default method
+            targetPests: chemical?.targetPests ?? [],
+            treatmentLocation: "Job Site", // Default location
+            areaTreated: 1000.0, // Default area in sq ft
+            quantityUsed: quantityUsed,
+            dosageRate: quantityUsed / 1000.0, // Simple dosage calculation
+            concentrationUsed: chemical?.concentration ?? 0.0,
+            dilutionRatio: "1:1",
+            weatherConditions: nil, // No weather snapshot for now
+            environmentalConditions: getCurrentWeatherSummary(),
+            notes: notes.isEmpty ? nil : notes
+        )
+
+        chemicalTreatments.append(treatment)
+
+        // Queue action for sync
+        if !isOnline {
+            let action = PendingAction(
+                type: .chemicalUsage,
+                jobId: jobId,
+                valueKey: "chemical_\(chemicalId.uuidString)",
+                value: "\(quantityUsed)",
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+
+        // Check for low stock and send notification
+        if let chemical = chemicals.first(where: { $0.id == chemicalId }), chemical.isLowStock {
+            Task {
+                await NotificationManager.shared.scheduleChemicalLowStockAlert(for: chemical)
+            }
+        }
+    }
+
+    /// Manually adjusts chemical inventory (restocking, corrections, etc.)
+    func adjustChemicalInventory(chemicalId: UUID, adjustment: Double, reason: InventoryAdjustmentReason, notes: String = "") {
+        if let index = chemicals.firstIndex(where: { $0.id == chemicalId }) {
+            chemicals[index].quantityInStock = max(0, chemicals[index].quantityInStock + adjustment)
+            chemicals[index].lastModified = Date()
+
+            // Log the adjustment
+            let record = InventoryAdjustment(
+                chemicalId: chemicalId,
+                adjustmentAmount: adjustment,
+                reason: reason,
+                notes: notes,
+                technicianName: currentUserName,
+                timestamp: Date()
+            )
+
+            // In production, this would be saved to Core Data
+            print("Inventory adjustment recorded: \(record)")
+
+            // Queue action for sync
+            if !isOnline {
+                let action = PendingAction(
+                    type: .inventoryAdjustment,
+                    jobId: nil,
+                    valueKey: "adjust_\(chemicalId.uuidString)",
+                    value: "\(adjustment)|\(reason.rawValue)|\(notes)",
+                    timestamp: Date()
+                )
+                pendingActions.append(action)
+            }
+        }
+    }
+
+    /// Adds new chemical to inventory (initial stocking or new product)
+    func addChemicalToInventory(_ chemical: Chemical) {
+        if let existingIndex = chemicals.firstIndex(where: { $0.id == chemical.id }) {
+            // Update existing chemical
+            chemicals[existingIndex] = chemical
+        } else {
+            // Add new chemical
+            chemicals.append(chemical)
+        }
+
+        // Queue action for sync
+        if !isOnline {
+            let action = PendingAction(
+                type: .addChemical,
+                jobId: nil,
+                valueKey: "add_chemical_\(chemical.id.uuidString)",
+                value: chemical.name,
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+    }
+
+    /// Gets chemicals that are low in stock
+    func getLowStockChemicals() -> [Chemical] {
+        return chemicals.filter { $0.isLowStock }
+    }
+
+    /// Gets chemicals that are expired or near expiration
+    func getExpiringChemicals() -> [Chemical] {
+        return chemicals.filter { $0.isExpired || $0.isNearExpiration }
+    }
+
+    /// Calculates recommended order quantities for low stock chemicals
+    func getReorderRecommendations() -> [ReorderRecommendation] {
+        return getLowStockChemicals().map { chemical in
+            ReorderRecommendation(
+                chemical: chemical,
+                recommendedQuantity: calculateReorderQuantity(for: chemical),
+                priority: chemical.quantityInStock < 5.0 ? .high : .medium,
+                estimatedDaysUntilEmpty: estimateDaysUntilEmpty(for: chemical)
+            )
+        }
+    }
+
+    // MARK: - Private Helper Methods
+
+    private func getCurrentWeatherSummary() -> String {
+        // In production, this would get actual weather data
+        return "Clear, 72°F, 5mph wind"
+    }
+
+    private func calculateReentryTime(for chemicalId: UUID) -> Date {
+        guard let chemical = chemicals.first(where: { $0.id == chemicalId }) else {
+            return Date()
+        }
+
+        return Calendar.current.date(byAdding: .hour, value: chemical.reentryInterval, to: Date()) ?? Date()
+    }
+
+    private func calculateReorderQuantity(for chemical: Chemical) -> Double {
+        // Simple algorithm: order enough for 30 days based on recent usage
+        let recentUsage = chemicalTreatments
+            .filter { $0.chemicalId == chemical.id }
+            .filter { Calendar.current.dateComponents([.day], from: $0.applicationDate, to: Date()).day ?? 0 <= 30 }
+            .reduce(0.0) { $0 + $1.quantityUsed }
+
+        let dailyUsage = recentUsage / 30.0
+        return max(dailyUsage * 30.0, 10.0) // Minimum 10 units
+    }
+
+    private func estimateDaysUntilEmpty(for chemical: Chemical) -> Int {
+        let recentUsage = chemicalTreatments
+            .filter { $0.chemicalId == chemical.id }
+            .filter { Calendar.current.dateComponents([.day], from: $0.applicationDate, to: Date()).day ?? 0 <= 7 }
+            .reduce(0.0) { $0 + $1.quantityUsed }
+
+        let dailyUsage = recentUsage / 7.0
+
+        if dailyUsage > 0 {
+            return Int(chemical.quantityInStock / dailyUsage)
+        } else {
+            return 999 // Unknown usage pattern
+        }
+    }
+
+    // MARK: - Equipment Management Methods
+
+    /// Records equipment inspection before route start
+    func recordEquipmentInspection(equipmentId: UUID, inspectionType: EquipmentInspectionType, result: InspectionResult, notes: String = "") {
+        let inspection = EquipmentInspection(
+            equipmentId: equipmentId,
+            inspectorName: currentUserName,
+            inspectionType: inspectionType,
+            result: result,
+            notes: notes,
+            inspectionDate: Date()
+        )
+
+        equipmentInspections.append(inspection)
+
+        // Update equipment status based on inspection result
+        if let index = assignedEquipment.firstIndex(where: { $0.id == equipmentId }) {
+            switch result {
+            case .passed:
+                assignedEquipment[index].status = .available
+                assignedEquipment[index].lastInspectionDate = Date()
+            case .failed:
+                assignedEquipment[index].status = .maintenance
+            case .conditionalPass:
+                assignedEquipment[index].status = .available
+                assignedEquipment[index].lastInspectionDate = Date()
+            case .needsCalibration:
+                assignedEquipment[index].status = .calibration
+            case .needsMaintenance:
+                assignedEquipment[index].status = .maintenance
+            case .pending:
+                // Keep current status for pending inspections
+                break
+            }
+            assignedEquipment[index].lastModified = Date()
+        }
+
+        // Queue action for sync
+        if !isOnline {
+            let action = PendingAction(
+                type: .equipmentInspection,
+                jobId: nil,
+                valueKey: "inspection_\(equipmentId.uuidString)",
+                value: "\(result.rawValue)|\(notes)",
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+    }
+
+    /// Records equipment usage during a job
+    func recordEquipmentUsage(equipmentId: UUID, jobId: UUID, usageType: EquipmentUsageType, duration: TimeInterval, notes: String = "") {
+        let usageRecord = EquipmentUsageRecord(
+            equipmentId: equipmentId,
+            jobId: jobId,
+            technicianName: currentUserName,
+            usageType: usageType,
+            startTime: Date().addingTimeInterval(-duration),
+            endTime: Date(),
+            duration: duration,
+            notes: notes
+        )
+
+        equipmentUsageLog.append(usageRecord)
+
+        // Update equipment usage statistics
+        if let index = assignedEquipment.firstIndex(where: { $0.id == equipmentId }) {
+            var usageLog = UsageRecord(
+                equipmentId: equipmentId,
+                operatorId: "", // Will need to set from current user context
+                operatorName: "" // Will need to set from current user context
+            )
+            usageLog.jobId = jobId
+            usageLog.startTime = usageRecord.startTime
+            usageLog.endTime = usageRecord.endTime
+            usageLog.hours = duration / 3600.0 // Convert to hours
+            usageLog.conditions = UsageConditions(
+                temperature: nil,
+                humidity: nil,
+                terrain: nil,
+                chemicalType: nil,
+                workload: .moderate
+            )
+            usageLog.notes = notes
+            assignedEquipment[index].usageLog.append(usageLog)
+            assignedEquipment[index].lastModified = Date()
+        }
+
+        // Queue action for sync
+        if !isOnline {
+            let action = PendingAction(
+                type: .equipmentUsage,
+                jobId: jobId,
+                valueKey: "usage_\(equipmentId.uuidString)",
+                value: "\(duration)|\(usageType.rawValue)",
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+    }
+
+    /// Completes pre-service checklist
+    func completePreServiceChecklist() -> Bool {
+        // Check that all assigned equipment has been inspected today
+        let todayInspections = equipmentInspections.filter { inspection in
+            Calendar.current.isDate(inspection.inspectionDate, inSameDayAs: Date())
+        }
+
+        let inspectedEquipmentIds = Set(todayInspections.map { $0.equipmentId })
+        let assignedEquipmentIds = Set(assignedEquipment.map { $0.id })
+
+        let allEquipmentInspected = assignedEquipmentIds.isSubset(of: inspectedEquipmentIds)
+        let allInspectionsPassed = todayInspections.allSatisfy { $0.result == .passed }
+
+        preServiceChecklistCompleted = allEquipmentInspected && allInspectionsPassed
+
+        if preServiceChecklistCompleted {
+            // Queue action for sync
+            if !isOnline {
+                let action = PendingAction(
+                    type: .preServiceChecklist,
+                    jobId: nil,
+                    valueKey: "checklist_completed",
+                    value: "true",
+                    timestamp: Date()
+                )
+                pendingActions.append(action)
+            }
+        }
+
+        return preServiceChecklistCompleted
+    }
+
+    /// Gets equipment that needs attention (maintenance, calibration, etc.)
+    func getEquipmentNeedingAttention() -> [Equipment] {
+        return assignedEquipment.filter { equipment in
+            equipment.isMaintenanceDue || equipment.isCalibrationDue || equipment.status != .available
+        }
+    }
+
+    /// Gets equipment ready for use
+    func getReadyEquipment() -> [Equipment] {
+        return assignedEquipment.filter { $0.isAvailable }
+    }
+
+    /// Gets recent equipment inspections
+    func getRecentInspections(days: Int = 7) -> [EquipmentInspection] {
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        return equipmentInspections.filter { $0.inspectionDate >= cutoffDate }
+    }
+
+    /// Initialize with demo equipment inventory
+    func loadDemoEquipment() {
+        assignedEquipment = [
+            Equipment(
+                name: "Backpack Sprayer",
+                brand: "Solo",
+                model: "BS-1025",
+                serialNumber: "BSP-2024-001",
+                type: .backpackSprayer,
+                category: .sprayEquipment,
+                purchaseDate: Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            ),
+            Equipment(
+                name: "Moisture Meter",
+                brand: "Protimeter",
+                model: "MM-3012",
+                serialNumber: "MM-2024-007",
+                type: .moistureMeter,
+                category: .detectionTools,
+                purchaseDate: Calendar.current.date(byAdding: .month, value: -8, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            ),
+            Equipment(
+                name: "Inspection Camera",
+                brand: "FLIR",
+                model: "IC-2024",
+                serialNumber: "IC-2024-015",
+                type: .borescope,
+                category: .detectionTools,
+                purchaseDate: Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            ),
+            Equipment(
+                name: "Digital Scale",
+                brand: "Ohaus",
+                model: "DS-Pro",
+                serialNumber: "DS-2024-022",
+                type: .thermometer,
+                category: .detectionTools,
+                purchaseDate: Calendar.current.date(byAdding: .month, value: -10, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            ),
+            Equipment(
+                name: "Tank Sprayer",
+                brand: "Chapin",
+                model: "TS-200",
+                serialNumber: "TS-2024-003",
+                type: .tankSprayer,
+                category: .sprayEquipment,
+                purchaseDate: Calendar.current.date(byAdding: .year, value: -2, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            ),
+            Equipment(
+                name: "Bait Station Tool",
+                brand: "Xcluder",
+                model: "BST-100",
+                serialNumber: "BST-2024-012",
+                type: .baitGun,
+                category: .applicationTools,
+                purchaseDate: Calendar.current.date(byAdding: .month, value: -4, to: Date()) ?? Date(),
+                specifications: EquipmentSpecifications()
+            )
+        ]
+
+        // Set some equipment to need attention for demo purposes
+        if assignedEquipment.count >= 2 {
+            assignedEquipment[1].status = .maintenance
+            assignedEquipment[1].nextMaintenanceDate = Calendar.current.date(byAdding: .day, value: -2, to: Date())
+        }
+
+        // Set additional equipment maintenance dates and inspection dates for demo
+        if assignedEquipment.count >= 3 {
+            assignedEquipment[2].lastInspectionDate = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+            assignedEquipment[2].nextMaintenanceDate = Calendar.current.date(byAdding: .month, value: 4, to: Date())
+        }
+
+        if assignedEquipment.count >= 4 {
+            assignedEquipment[3].lastInspectionDate = Calendar.current.date(byAdding: .day, value: -2, to: Date())
+            assignedEquipment[3].nextMaintenanceDate = Calendar.current.date(byAdding: .month, value: 5, to: Date())
+        }
+
+        if assignedEquipment.count >= 5 {
+            assignedEquipment[4].lastInspectionDate = Calendar.current.date(byAdding: .day, value: -1, to: Date())
+            assignedEquipment[4].nextMaintenanceDate = Calendar.current.date(byAdding: .month, value: 3, to: Date())
+        }
+
+        if assignedEquipment.count >= 6 {
+            assignedEquipment[5].lastInspectionDate = Calendar.current.date(byAdding: .day, value: -3, to: Date())
+            assignedEquipment[5].nextMaintenanceDate = Calendar.current.date(byAdding: .year, value: 1, to: Date())
+        }
+    }
+
+    // MARK: - Equipment Usage Tracking
+
+    /// Records equipment start times when a job begins
+    func recordEquipmentStartTimes(for job: Job) {
+        guard let startTime = job.startTime else { return }
+
+        // Mark all available equipment as in use for this job
+        for equipment in assignedEquipment where equipment.isAvailable {
+            // Update equipment status to in use
+            if let index = assignedEquipment.firstIndex(where: { $0.id == equipment.id }) {
+                assignedEquipment[index].status = .inUse
+                assignedEquipment[index].lastUsageDate = startTime
+            }
+        }
+    }
+
+    /// Records equipment usage for a completed job
+    func recordEquipmentUsageForJob(_ job: Job) {
+        guard let startTime = job.startTime,
+              let completionTime = job.completionTime else { return }
+
+        let usageDuration = completionTime.timeIntervalSince(startTime)
+
+        // Record usage for all assigned equipment used during the job
+        for equipment in assignedEquipment {
+            // Only record usage for equipment that was in use or available
+            if equipment.status == .inUse || equipment.isAvailable {
+                let usageRecord = EquipmentUsageRecord(
+                    equipmentId: equipment.id,
+                    jobId: job.id,
+                    technicianName: "Current Technician", // TODO: Get from user profile
+                    usageType: determineUsageType(for: equipment),
+                    startTime: startTime,
+                    endTime: completionTime,
+                    duration: usageDuration,
+                    notes: "Used for job: \(job.customerName)"
+                )
+
+                equipmentUsageLog.append(usageRecord)
+
+                // Update equipment usage statistics
+                updateEquipmentUsageStatistics(equipmentId: equipment.id, duration: usageDuration)
+
+                // Reset equipment status to available after job completion
+                if let index = assignedEquipment.firstIndex(where: { $0.id == equipment.id }) {
+                    if assignedEquipment[index].status == .inUse {
+                        assignedEquipment[index].status = .available
+                    }
+                }
+            }
+        }
+
+        // Queue action for sync if offline
+        if !isOnline {
+            let action = PendingAction(
+                type: .equipmentUsage,
+                jobId: job.id,
+                valueKey: "equipment_usage_recorded",
+                value: "true",
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+    }
+
+    /// Records individual equipment usage
+    func recordEquipmentUsage(equipmentId: UUID, jobId: UUID, customerName: String, startTime: Date, endTime: Date, notes: String = "") {
+        let usageDuration = endTime.timeIntervalSince(startTime)
+
+        guard let equipment = assignedEquipment.first(where: { $0.id == equipmentId }) else { return }
+
+        let usageRecord = EquipmentUsageRecord(
+            equipmentId: equipmentId,
+            jobId: jobId,
+            technicianName: "Current Technician", // TODO: Get from user profile
+            usageType: determineUsageType(for: equipment),
+            startTime: startTime,
+            endTime: endTime,
+            duration: usageDuration,
+            notes: notes
+        )
+
+        equipmentUsageLog.append(usageRecord)
+        updateEquipmentUsageStatistics(equipmentId: equipmentId, duration: usageDuration)
+
+        // Queue action for sync if offline
+        if !isOnline {
+            let action = PendingAction(
+                type: .equipmentUsage,
+                jobId: jobId,
+                valueKey: "individual_equipment_usage",
+                value: equipmentId.uuidString,
+                timestamp: Date()
+            )
+            pendingActions.append(action)
+        }
+    }
+
+    /// Gets equipment usage records for a specific equipment item
+    func getEquipmentUsageHistory(equipmentId: UUID, days: Int = 30) -> [EquipmentUsageRecord] {
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        return equipmentUsageLog
+            .filter { $0.equipmentId == equipmentId && $0.startTime >= cutoffDate }
+            .sorted { $0.startTime > $1.startTime }
+    }
+
+    /// Gets total usage hours for equipment over a period
+    func getTotalUsageHours(equipmentId: UUID, days: Int = 30) -> Double {
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        let recentUsage = equipmentUsageLog.filter {
+            $0.equipmentId == equipmentId && $0.startTime >= cutoffDate
+        }
+
+        let totalSeconds = recentUsage.reduce(into: 0) { $0 += $1.duration }
+        return totalSeconds / 3600.0 // Convert to hours
+    }
+
+    /// Gets equipment usage for today
+    func getTodaysEquipmentUsage() -> [EquipmentUsageRecord] {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today) ?? Date()
+
+        return equipmentUsageLog.filter {
+            $0.startTime >= today && $0.startTime < tomorrow
+        }
+    }
+
+    // MARK: - Private Equipment Usage Helpers
+
+    private func determineUsageType(for equipment: Equipment) -> EquipmentUsageType {
+        switch equipment.category {
+        case .sprayEquipment:
+            return .spraying
+        case .detectionTools:
+            return .inspection
+        case .safetyGear:
+            return .transport
+        case .applicationTools:
+            return .spraying
+        case .maintenanceTools:
+            return .cleaning
+        }
+    }
+
+
+    private func updateEquipmentUsageStatistics(equipmentId: UUID, duration: TimeInterval) {
+        guard let index = assignedEquipment.firstIndex(where: { $0.id == equipmentId }) else { return }
+
+        // Update total usage time
+        assignedEquipment[index].totalUsageHours += duration / 3600.0
+
+        // Update last usage date
+        assignedEquipment[index].lastUsageDate = Date()
+
+        // Check if maintenance is needed based on usage
+        checkMaintenanceSchedule(for: assignedEquipment[index])
+    }
+
+    private func checkMaintenanceSchedule(for equipment: Equipment) {
+        // Example: Schedule maintenance every 100 hours of usage
+        let maintenanceInterval: Double = 100.0
+
+        if equipment.totalUsageHours >= maintenanceInterval && equipment.nextMaintenanceDate == nil {
+            if let index = assignedEquipment.firstIndex(where: { $0.id == equipment.id }) {
+                assignedEquipment[index].nextMaintenanceDate = Calendar.current.date(byAdding: .day, value: 7, to: Date())
+                assignedEquipment[index].status = .maintenance
+            }
+        }
+    }
+
+    /// Initialize with demo chemical inventory
+    func loadDemoChemicals() {
+        chemicals = [
+            Chemical(
+                name: "Termidor SC",
+                activeIngredient: "Fipronil 9.1%",
+                manufacturerName: "BASF",
+                epaRegistrationNumber: "7969-210",
+                concentration: 9.1,
+                unitOfMeasure: "gal",
+                quantityInStock: 5.2,
+                expirationDate: Calendar.current.date(byAdding: .year, value: 1, to: Date()) ?? Date(),
+                batchNumber: "TM2024-001",
+                targetPests: ["Termites", "Ants"],
+                signalWord: .caution,
+                reentryInterval: 0
+            ),
+            Chemical(
+                name: "Premise 2",
+                activeIngredient: "Imidacloprid 21.4%",
+                manufacturerName: "Bayer",
+                epaRegistrationNumber: "432-1483",
+                concentration: 21.4,
+                unitOfMeasure: "gal",
+                quantityInStock: 3.8,
+                expirationDate: Calendar.current.date(byAdding: .month, value: 8, to: Date()) ?? Date(),
+                batchNumber: "PR2024-055",
+                targetPests: ["Termites"],
+                signalWord: .caution,
+                reentryInterval: 0
+            ),
+            Chemical(
+                name: "Phantom II",
+                activeIngredient: "Chlorfenapyr 21.45%",
+                manufacturerName: "BASF",
+                epaRegistrationNumber: "241-392",
+                concentration: 21.45,
+                unitOfMeasure: "gal",
+                quantityInStock: 0.8,
+                expirationDate: Calendar.current.date(byAdding: .month, value: 6, to: Date()) ?? Date(),
+                batchNumber: "PH2024-012",
+                targetPests: ["Ants", "Cockroaches", "Bed bugs"],
+                signalWord: .caution,
+                reentryInterval: 24,
+                storageRequirements: "Store in cool, dry place"
+            ),
+            Chemical(
+                name: "Suspend SC",
+                activeIngredient: "Deltamethrin 4.75%",
+                manufacturerName: "Bayer",
+                epaRegistrationNumber: "432-763",
+                concentration: 4.75,
+                unitOfMeasure: "gal",
+                quantityInStock: 3.0,
+                expirationDate: Calendar.current.date(byAdding: .year, value: 2, to: Date()) ?? Date(),
+                batchNumber: "SU2024-089",
+                targetPests: ["Ants", "Spiders", "Wasps"],
+                signalWord: .caution,
+                reentryInterval: 0
+            )
+        ]
+    }
 }
 
 /// Represents an action performed while offline. These actions are queued and
@@ -655,6 +1319,12 @@ struct PendingAction: CustomStringConvertible {
         case multiSelectInput
         case routeStart
         case routeEnd
+        case chemicalUsage
+        case inventoryAdjustment
+        case addChemical
+        case equipmentInspection
+        case equipmentUsage
+        case preServiceChecklist
     }
     let type: ActionType
     let jobId: UUID?

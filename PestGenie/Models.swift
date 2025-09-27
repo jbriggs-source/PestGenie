@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import CoreData
+import SwiftUI
 
 
 // MARK: - Weather Data Models
@@ -596,6 +597,10 @@ struct Equipment: Identifiable, Codable {
     var createdDate: Date
     var lastModified: Date
 
+    // Usage tracking properties
+    var totalUsageHours: Double
+    var lastUsageDate: Date?
+
     /// Equipment is due for maintenance
     var isMaintenanceDue: Bool {
         guard let nextMaintenance = nextMaintenanceDate else { return false }
@@ -649,6 +654,8 @@ struct Equipment: Identifiable, Codable {
         self.usageLog = []
         self.createdDate = Date()
         self.lastModified = Date()
+        self.totalUsageHours = 0
+        self.lastUsageDate = nil
     }
 }
 
@@ -783,15 +790,15 @@ enum EquipmentStatus: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    var color: String {
+    var color: Color {
         switch self {
-        case .available: return "green"
-        case .inUse: return "blue"
-        case .maintenance: return "orange"
-        case .repair: return "red"
-        case .calibration: return "purple"
-        case .retired: return "gray"
-        case .lost: return "black"
+        case .available: return .green
+        case .inUse: return .blue
+        case .maintenance: return .orange
+        case .repair: return .red
+        case .calibration: return .purple
+        case .retired: return .gray
+        case .lost: return .black
         }
     }
 }
@@ -934,6 +941,8 @@ enum InspectionResult: String, CaseIterable, Codable {
     case passed = "passed"
     case failed = "failed"
     case conditionalPass = "conditional_pass"
+    case needsCalibration = "needs_calibration"
+    case needsMaintenance = "needs_maintenance"
 
     var displayName: String {
         switch self {
@@ -941,6 +950,8 @@ enum InspectionResult: String, CaseIterable, Codable {
         case .passed: return "Passed"
         case .failed: return "Failed"
         case .conditionalPass: return "Conditional Pass"
+        case .needsCalibration: return "Needs Calibration"
+        case .needsMaintenance: return "Needs Maintenance"
         }
     }
 
@@ -950,6 +961,8 @@ enum InspectionResult: String, CaseIterable, Codable {
         case .passed: return "green"
         case .failed: return "red"
         case .conditionalPass: return "orange"
+        case .needsCalibration: return "yellow"
+        case .needsMaintenance: return "orange"
         }
     }
 }
@@ -1319,6 +1332,332 @@ enum WorkloadLevel: Int, CaseIterable, Codable {
         case .heavy: return "Heavy"
         case .extreme: return "Extreme"
         }
+    }
+}
+
+// MARK: - Equipment Inspection and Usage Models
+
+/// Equipment inspection record
+struct EquipmentInspection: Identifiable, Codable, Equatable {
+    let id: UUID
+    let equipmentId: UUID
+    let inspectorName: String
+    let inspectionType: EquipmentInspectionType
+    let result: InspectionResult
+    let notes: String
+    let inspectionDate: Date
+
+    init(id: UUID = UUID(), equipmentId: UUID, inspectorName: String, inspectionType: EquipmentInspectionType, result: InspectionResult, notes: String, inspectionDate: Date) {
+        self.id = id
+        self.equipmentId = equipmentId
+        self.inspectorName = inspectorName
+        self.inspectionType = inspectionType
+        self.result = result
+        self.notes = notes
+        self.inspectionDate = inspectionDate
+    }
+}
+
+/// Types of equipment inspections
+enum EquipmentInspectionType: String, CaseIterable, Codable {
+    case preService = "pre_service"
+    case postService = "post_service"
+    case routine = "routine"
+    case calibration = "calibration"
+    case maintenance = "maintenance"
+    case safety = "safety"
+
+    var displayName: String {
+        switch self {
+        case .preService: return "Pre-Service Check"
+        case .postService: return "Post-Service Check"
+        case .routine: return "Routine Inspection"
+        case .calibration: return "Calibration Check"
+        case .maintenance: return "Maintenance Check"
+        case .safety: return "Safety Inspection"
+        }
+    }
+}
+
+/// Equipment usage record for job tracking
+struct EquipmentUsageRecord: Identifiable, Codable {
+    let id: UUID
+    let equipmentId: UUID
+    let jobId: UUID
+    let technicianName: String
+    let usageType: EquipmentUsageType
+    let startTime: Date
+    let endTime: Date
+    let duration: TimeInterval
+    let notes: String
+
+    init(id: UUID = UUID(), equipmentId: UUID, jobId: UUID, technicianName: String, usageType: EquipmentUsageType, startTime: Date, endTime: Date, duration: TimeInterval, notes: String) {
+        self.id = id
+        self.equipmentId = equipmentId
+        self.jobId = jobId
+        self.technicianName = technicianName
+        self.usageType = usageType
+        self.startTime = startTime
+        self.endTime = endTime
+        self.duration = duration
+        self.notes = notes
+    }
+}
+
+/// Types of equipment usage
+enum EquipmentUsageType: String, CaseIterable, Codable {
+    case spraying = "spraying"
+    case inspection = "inspection"
+    case measurement = "measurement"
+    case calibration = "calibration"
+    case cleaning = "cleaning"
+    case transport = "transport"
+
+    var displayName: String {
+        switch self {
+        case .spraying: return "Chemical Application"
+        case .inspection: return "Property Inspection"
+        case .measurement: return "Measurement/Testing"
+        case .calibration: return "Calibration"
+        case .cleaning: return "Equipment Cleaning"
+        case .transport: return "Transport/Setup"
+        }
+    }
+}
+
+/// Pre-service checklist item
+struct PreServiceChecklistItem: Identifiable, Codable {
+    let id: UUID
+    let equipmentId: UUID
+    let itemName: String
+    let description: String
+    let isRequired: Bool
+    let category: ChecklistCategory
+    var isCompleted: Bool
+    var completedBy: String?
+    var completedDate: Date?
+    var notes: String?
+
+    enum ChecklistCategory: String, CaseIterable, Codable {
+        case visual = "visual"
+        case functional = "functional"
+        case safety = "safety"
+        case calibration = "calibration"
+        case maintenance = "maintenance"
+
+        var displayName: String {
+            switch self {
+            case .visual: return "Visual Inspection"
+            case .functional: return "Functional Test"
+            case .safety: return "Safety Check"
+            case .calibration: return "Calibration Verification"
+            case .maintenance: return "Maintenance Check"
+            }
+        }
+
+        var color: String {
+            switch self {
+            case .visual: return "blue"
+            case .functional: return "green"
+            case .safety: return "red"
+            case .calibration: return "orange"
+            case .maintenance: return "purple"
+            }
+        }
+    }
+
+    init(id: UUID = UUID(), equipmentId: UUID, itemName: String, description: String, isRequired: Bool = true, category: ChecklistCategory, isCompleted: Bool = false) {
+        self.id = id
+        self.equipmentId = equipmentId
+        self.itemName = itemName
+        self.description = description
+        self.isRequired = isRequired
+        self.category = category
+        self.isCompleted = isCompleted
+    }
+}
+
+/// Pre-service checklist for equipment
+struct PreServiceChecklist: Identifiable, Codable {
+    let id: UUID
+    let technicianId: String
+    let technicianName: String
+    let checklistDate: Date
+    var items: [PreServiceChecklistItem]
+    var isCompleted: Bool
+    var completedDate: Date?
+    var supervisorApproval: Bool
+    var approvedBy: String?
+    var approvalDate: Date?
+
+    /// Completion percentage
+    var completionPercentage: Double {
+        guard !items.isEmpty else { return 0.0 }
+        let completedCount = items.filter { $0.isCompleted }.count
+        return Double(completedCount) / Double(items.count) * 100.0
+    }
+
+    /// All required items completed
+    var allRequiredItemsCompleted: Bool {
+        let requiredItems = items.filter { $0.isRequired }
+        return requiredItems.allSatisfy { $0.isCompleted }
+    }
+
+    /// Items that need attention
+    var itemsNeedingAttention: [PreServiceChecklistItem] {
+        return items.filter { !$0.isCompleted && $0.isRequired }
+    }
+
+    init(id: UUID = UUID(), technicianId: String, technicianName: String, checklistDate: Date = Date(), items: [PreServiceChecklistItem] = []) {
+        self.id = id
+        self.technicianId = technicianId
+        self.technicianName = technicianName
+        self.checklistDate = checklistDate
+        self.items = items
+        self.isCompleted = false
+        self.supervisorApproval = false
+    }
+}
+
+// MARK: - Chemical Inventory Management Models
+
+/// Reasons for manual inventory adjustments
+enum InventoryAdjustmentReason: String, CaseIterable, Codable {
+    case restock = "restock"
+    case spillage = "spillage"
+    case damage = "damage"
+    case transfer = "transfer"
+    case correction = "correction"
+    case `return` = "return"
+    case disposal = "disposal"
+    case calibration = "calibration"
+
+    var displayName: String {
+        switch self {
+        case .restock: return "Restock/Delivery"
+        case .spillage: return "Spillage"
+        case .damage: return "Damage/Loss"
+        case .transfer: return "Transfer to/from truck"
+        case .correction: return "Inventory Correction"
+        case .`return`: return "Return to Supplier"
+        case .disposal: return "Proper Disposal"
+        case .calibration: return "Calibration/Testing"
+        }
+    }
+
+    var isPositiveAdjustment: Bool {
+        switch self {
+        case .restock, .transfer, .correction:
+            return true
+        case .spillage, .damage, .`return`, .disposal, .calibration:
+            return false
+        }
+    }
+}
+
+/// Record of inventory adjustments
+struct InventoryAdjustment: Identifiable, Codable {
+    let id: UUID
+    let chemicalId: UUID
+    let adjustmentAmount: Double
+    let reason: InventoryAdjustmentReason
+    let notes: String
+    let technicianName: String
+    let timestamp: Date
+
+    init(id: UUID = UUID(), chemicalId: UUID, adjustmentAmount: Double, reason: InventoryAdjustmentReason, notes: String, technicianName: String, timestamp: Date) {
+        self.id = id
+        self.chemicalId = chemicalId
+        self.adjustmentAmount = adjustmentAmount
+        self.reason = reason
+        self.notes = notes
+        self.technicianName = technicianName
+        self.timestamp = timestamp
+    }
+}
+
+/// Reorder recommendation for low stock chemicals
+struct ReorderRecommendation: Identifiable {
+    let id: UUID
+    let chemical: Chemical
+    let recommendedQuantity: Double
+    let priority: Priority
+    let estimatedDaysUntilEmpty: Int
+    let lastOrderDate: Date?
+    let averageMonthlyUsage: Double
+
+    enum Priority: String, CaseIterable {
+        case low = "low"
+        case medium = "medium"
+        case high = "high"
+        case critical = "critical"
+
+        var color: String {
+            switch self {
+            case .low: return "blue"
+            case .medium: return "yellow"
+            case .high: return "orange"
+            case .critical: return "red"
+            }
+        }
+
+        var displayName: String {
+            switch self {
+            case .low: return "Low Priority"
+            case .medium: return "Medium Priority"
+            case .high: return "High Priority"
+            case .critical: return "Critical"
+            }
+        }
+    }
+
+    init(chemical: Chemical, recommendedQuantity: Double, priority: Priority, estimatedDaysUntilEmpty: Int, lastOrderDate: Date? = nil, averageMonthlyUsage: Double = 0.0) {
+        self.id = UUID()
+        self.chemical = chemical
+        self.recommendedQuantity = recommendedQuantity
+        self.priority = priority
+        self.estimatedDaysUntilEmpty = estimatedDaysUntilEmpty
+        self.lastOrderDate = lastOrderDate
+        self.averageMonthlyUsage = averageMonthlyUsage
+    }
+}
+
+/// Chemical usage summary for reporting
+struct ChemicalUsageSummary: Identifiable {
+    let id: UUID
+    let chemical: Chemical
+    let totalUsed: Double
+    let numberOfApplications: Int
+    let averagePerApplication: Double
+    let mostRecentApplication: Date?
+    let timeframe: TimeframePeriod
+
+    enum TimeframePeriod: String, CaseIterable {
+        case daily = "daily"
+        case weekly = "weekly"
+        case monthly = "monthly"
+        case quarterly = "quarterly"
+        case yearly = "yearly"
+
+        var displayName: String {
+            switch self {
+            case .daily: return "Today"
+            case .weekly: return "This Week"
+            case .monthly: return "This Month"
+            case .quarterly: return "This Quarter"
+            case .yearly: return "This Year"
+            }
+        }
+    }
+
+    init(chemical: Chemical, totalUsed: Double, numberOfApplications: Int, averagePerApplication: Double, mostRecentApplication: Date?, timeframe: TimeframePeriod) {
+        self.id = UUID()
+        self.chemical = chemical
+        self.totalUsed = totalUsed
+        self.numberOfApplications = numberOfApplications
+        self.averagePerApplication = averagePerApplication
+        self.mostRecentApplication = mostRecentApplication
+        self.timeframe = timeframe
     }
 }
 
