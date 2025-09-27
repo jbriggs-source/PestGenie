@@ -1661,5 +1661,262 @@ struct ChemicalUsageSummary: Identifiable {
     }
 }
 
+// MARK: - Emergency Management Models
+
+/// Emergency response contact information
+struct EmergencyResponseContact: Identifiable, Codable {
+    let id: UUID
+    let name: String
+    let phoneNumber: String
+    let type: EmergencyContactType
+    let description: String
+
+    init(id: UUID = UUID(), name: String, phoneNumber: String, type: EmergencyContactType, description: String) {
+        self.id = id
+        self.name = name
+        self.phoneNumber = phoneNumber
+        self.type = type
+        self.description = description
+    }
+}
+
+/// Types of emergency contacts
+enum EmergencyContactType: String, CaseIterable, Codable {
+    case emergency911 = "911"
+    case poisonControl = "poison_control"
+    case companyDispatch = "company_dispatch"
+    case supervisor = "supervisor"
+    case environmental = "environmental"
+    case roadside = "roadside"
+
+    var displayName: String {
+        switch self {
+        case .emergency911: return "911 Emergency"
+        case .poisonControl: return "Poison Control"
+        case .companyDispatch: return "Company Dispatch"
+        case .supervisor: return "Supervisor"
+        case .environmental: return "Environmental"
+        case .roadside: return "Roadside Assistance"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .emergency911: return "phone.fill.badge.plus"
+        case .poisonControl: return "cross.case.fill"
+        case .companyDispatch: return "antenna.radiowaves.left.and.right"
+        case .supervisor: return "person.badge.shield.checkmark"
+        case .environmental: return "leaf.fill"
+        case .roadside: return "car.fill"
+        }
+    }
+}
+
+/// Emergency incident types
+enum EmergencyIncidentType: String, CaseIterable, Codable {
+    case chemicalExposure = "chemical_exposure"
+    case chemicalSpill = "chemical_spill"
+    case medicalEmergency = "medical_emergency"
+    case technicianInjury = "technician_injury"
+    case equipmentMalfunction = "equipment_malfunction"
+    case vehicleBreakdown = "vehicle_breakdown"
+    case propertyDamage = "property_damage"
+    case customerSafety = "customer_safety"
+    case severeInfestation = "severe_infestation"
+    case weatherDelay = "weather_delay"
+    case accessIssue = "access_issue"
+    case epaViolation = "epa_violation"
+    case complianceIssue = "compliance_issue"
+    case emergencyCall = "emergency_call"
+
+    var displayName: String {
+        switch self {
+        case .chemicalExposure: return "Chemical Exposure"
+        case .chemicalSpill: return "Chemical Spill"
+        case .medicalEmergency: return "Medical Emergency"
+        case .technicianInjury: return "Technician Injury"
+        case .equipmentMalfunction: return "Equipment Malfunction"
+        case .vehicleBreakdown: return "Vehicle Breakdown"
+        case .propertyDamage: return "Property Damage"
+        case .customerSafety: return "Customer Safety Concern"
+        case .severeInfestation: return "Severe Infestation"
+        case .weatherDelay: return "Weather Delay"
+        case .accessIssue: return "Access Issue"
+        case .epaViolation: return "EPA Violation"
+        case .complianceIssue: return "Compliance Issue"
+        case .emergencyCall: return "Emergency Call"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chemicalExposure: return "drop.fill"
+        case .chemicalSpill: return "exclamationmark.triangle.fill"
+        case .medicalEmergency: return "cross.fill"
+        case .technicianInjury: return "bandage.fill"
+        case .equipmentMalfunction: return "wrench.fill"
+        case .vehicleBreakdown: return "car.fill"
+        case .propertyDamage: return "house.fill"
+        case .customerSafety: return "shield.fill"
+        case .severeInfestation: return "ant.fill"
+        case .weatherDelay: return "cloud.rain.fill"
+        case .accessIssue: return "key.fill"
+        case .epaViolation: return "leaf.fill"
+        case .complianceIssue: return "checkmark.seal.fill"
+        case .emergencyCall: return "phone.fill"
+        }
+    }
+
+    var category: EmergencyCategory {
+        switch self {
+        case .chemicalExposure, .chemicalSpill, .medicalEmergency, .technicianInjury:
+            return .safety
+        case .equipmentMalfunction, .vehicleBreakdown:
+            return .operational
+        case .propertyDamage, .customerSafety, .severeInfestation, .accessIssue:
+            return .customer
+        case .weatherDelay:
+            return .environmental
+        case .epaViolation, .complianceIssue:
+            return .compliance
+        case .emergencyCall:
+            return .communication
+        }
+    }
+}
+
+/// Emergency categories for organization
+enum EmergencyCategory: String, CaseIterable, Codable {
+    case safety = "safety"
+    case operational = "operational"
+    case customer = "customer"
+    case environmental = "environmental"
+    case compliance = "compliance"
+    case communication = "communication"
+
+    var displayName: String {
+        switch self {
+        case .safety: return "Safety Emergencies"
+        case .operational: return "Operational Issues"
+        case .customer: return "Customer Emergencies"
+        case .environmental: return "Environmental"
+        case .compliance: return "Compliance & Legal"
+        case .communication: return "Emergency Contacts"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .safety: return "red"
+        case .operational: return "orange"
+        case .customer: return "blue"
+        case .environmental: return "green"
+        case .compliance: return "purple"
+        case .communication: return "gray"
+        }
+    }
+}
+
+/// Emergency severity levels
+enum EmergencySeverity: String, CaseIterable, Codable {
+    case low = "low"
+    case medium = "medium"
+    case high = "high"
+    case critical = "critical"
+
+    var displayName: String {
+        switch self {
+        case .low: return "Low"
+        case .medium: return "Medium"
+        case .high: return "High"
+        case .critical: return "Critical"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .low: return "green"
+        case .medium: return "yellow"
+        case .high: return "orange"
+        case .critical: return "red"
+        }
+    }
+}
+
+/// Emergency incident status
+enum EmergencyIncidentStatus: String, CaseIterable, Codable {
+    case active = "active"
+    case resolved = "resolved"
+    case escalated = "escalated"
+    case followupRequired = "followup_required"
+
+    var displayName: String {
+        switch self {
+        case .active: return "Active"
+        case .resolved: return "Resolved"
+        case .escalated: return "Escalated"
+        case .followupRequired: return "Follow-up Required"
+        }
+    }
+}
+
+/// Emergency incident record
+struct EmergencyIncident: Identifiable, Codable {
+    let id: UUID
+    let type: EmergencyIncidentType
+    let severity: EmergencySeverity
+    let title: String
+    let description: String
+    let latitude: Double?
+    let longitude: Double?
+    let timestamp: Date
+    var status: EmergencyIncidentStatus
+    let contactCalled: EmergencyResponseContact?
+    let photos: [Data] // Store image data
+    let additionalNotes: String
+
+    init(id: UUID = UUID(), type: EmergencyIncidentType, severity: EmergencySeverity, title: String, description: String, location: CLLocation?, timestamp: Date, status: EmergencyIncidentStatus, contactCalled: EmergencyResponseContact?, photos: [UIImage], additionalNotes: String) {
+        self.id = id
+        self.type = type
+        self.severity = severity
+        self.title = title
+        self.description = description
+        self.latitude = location?.coordinate.latitude
+        self.longitude = location?.coordinate.longitude
+        self.timestamp = timestamp
+        self.status = status
+        self.contactCalled = contactCalled
+        self.additionalNotes = additionalNotes
+
+        // Convert UIImages to Data
+        self.photos = photos.compactMap { $0.jpegData(compressionQuality: 0.8) }
+    }
+
+    // Helper to get location as CLLocation
+    var location: CLLocation? {
+        guard let latitude = latitude, let longitude = longitude else { return nil }
+        return CLLocation(latitude: latitude, longitude: longitude)
+    }
+
+    // Helper to get photos as UIImages
+    var photosAsImages: [UIImage] {
+        return photos.compactMap { UIImage(data: $0) }
+    }
+}
+
+/// Emergency protocol with step-by-step instructions
+struct EmergencyProtocol: Identifiable {
+    let id = UUID()
+    let title: String
+    let steps: [String]
+    let criticalContacts: [EmergencyResponseContact]
+
+    init(title: String, steps: [String], criticalContacts: [EmergencyResponseContact]) {
+        self.title = title
+        self.steps = steps
+        self.criticalContacts = criticalContacts
+    }
+}
+
 // MARK: - Model Conversion Extensions
 // Note: Core Data entity extensions will be added here as needed

@@ -292,7 +292,11 @@ struct MainDashboardView: View {
                 menuFeatureWrapper {
                     DemoControlPanel(routeViewModel: routeViewModel)
                 }
-            case .callDispatch, .emergency, .equipmentStatus, .weatherConditions, .safetyChecklist, .emergencyProtocols, .performanceMetrics, .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
+            case .emergency:
+                menuFeatureWrapper {
+                    EmergencyActionView()
+                }
+            case .callDispatch, .equipmentStatus, .weatherConditions, .safetyChecklist, .emergencyProtocols, .performanceMetrics, .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
                 placeholderFeatureView(for: menuItem)
             }
         }

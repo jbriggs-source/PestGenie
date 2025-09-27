@@ -67,7 +67,7 @@ struct EmergencyAlertView: View {
                                 icon: "exclamationmark.circle.fill",
                                 title: "Severity",
                                 value: emergency.severity.rawValue.capitalized,
-                                color: emergency.severity.color
+                                color: Color(emergency.severity.color)
                             )
 
                             EmergencyDetailRow(
@@ -312,21 +312,6 @@ struct EmergencyScenario {
     )
 }
 
-enum EmergencySeverity: String, CaseIterable {
-    case low = "low"
-    case medium = "medium"
-    case high = "high"
-    case critical = "critical"
-
-    var color: Color {
-        switch self {
-        case .low: return .green
-        case .medium: return .yellow
-        case .high: return .orange
-        case .critical: return .red
-        }
-    }
-}
 
 struct EmergencyAlertView_Previews: PreviewProvider {
     static var previews: some View {
