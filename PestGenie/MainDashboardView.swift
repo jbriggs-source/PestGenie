@@ -106,12 +106,11 @@ struct MainDashboardView: View {
             if showingMenu {
                 MenuView(
                     isPresented: $showingMenu,
-                    selectedMenuItem: $selectedMenuItem,
-                    technicianName: routeViewModel.technicianName,
-                    technicianId: "T-12345",
-                    companyName: "PestControl Pro"
+                    selectedMenuItem: $selectedMenuItem
                 )
                 .environmentObject(routeViewModel)
+                .environmentObject(authManager)
+                .environmentObject(userProfileManager)
                 .transition(.asymmetric(
                     insertion: .move(edge: .leading),
                     removal: .move(edge: .leading)
@@ -293,7 +292,7 @@ struct MainDashboardView: View {
                 menuFeatureWrapper {
                     DemoControlPanel(routeViewModel: routeViewModel)
                 }
-            case .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
+            case .callDispatch, .emergency, .equipmentStatus, .weatherConditions, .safetyChecklist, .emergencyProtocols, .performanceMetrics, .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
                 placeholderFeatureView(for: menuItem)
             }
         }

@@ -3,29 +3,27 @@ import SwiftUI
 /// Comprehensive side menu for PestGenie navigation.
 /// Provides access to all major app features, settings, and support resources.
 /// Follows iOS Human Interface Guidelines and includes accessibility features.
+/// Now integrated with dynamic authentication and profile data.
 struct MenuView: View {
     @Binding var isPresented: Bool
     @Binding var selectedMenuItem: MenuItem?
     @EnvironmentObject private var routeViewModel: RouteViewModel
+    @EnvironmentObject private var authenticationManager: AuthenticationManager
+    @EnvironmentObject private var userProfileManager: UserProfileManager
     @State private var showingAppInfo = false
     @State private var showingLogout = false
 
-    let technicianName: String
-    let technicianId: String
-    let companyName: String
+    // Demo fallback values - used when no user is authenticated
+    private let demoTechnicianName = "John Smith"
+    private let demoTechnicianId = "T-12345"
+    private let demoCompanyName = "PestControl Pro"
 
     init(
         isPresented: Binding<Bool>,
-        selectedMenuItem: Binding<MenuItem?>,
-        technicianName: String = "John Smith",
-        technicianId: String = "T-12345",
-        companyName: String = "PestControl Pro"
+        selectedMenuItem: Binding<MenuItem?>
     ) {
         self._isPresented = isPresented
         self._selectedMenuItem = selectedMenuItem
-        self.technicianName = technicianName
-        self.technicianId = technicianId
-        self.companyName = companyName
     }
 
     var body: some View {
@@ -73,19 +71,19 @@ struct MenuView: View {
                 menuHeader
 
                 // Navigation sections
-                primaryNavigationSection
+                quickActionsSection
 
                 Divider()
                     .background(PestGenieDesignSystem.Colors.border)
                     .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
 
-                featuresSection
+                safetyResourcesSection
 
                 Divider()
                     .background(PestGenieDesignSystem.Colors.border)
                     .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
 
-                settingsSection
+                accountSettingsSection
 
                 Divider()
                     .background(PestGenieDesignSystem.Colors.border)
@@ -127,33 +125,78 @@ struct MenuView: View {
 
             // User profile section
             HStack(spacing: PestGenieDesignSystem.Spacing.md) {
-                // Profile avatar
-                ZStack {
-                    Circle()
-                        .fill(PestGenieDesignSystem.Colors.primary)
-                        .frame(width: 60, height: 60)
+                // Profile avatar - using dynamic profile picture or initials
+                if authenticationManager.isAuthenticated {
+                    UserProfilePictureView(
+                        profileImageURL: currentUser?.profileImageURL ?? userProfileManager.currentProfile?.profileImageURL,
+                        size: 60,
+                        fallbackColor: PestGenieDesignSystem.Colors.primary
+                    )
+                    .overlay(
+                        // Custom profile image overlay if available
+                        Group {
+                            if let customImageData = userProfileManager.currentProfile?.customProfileImageData,
+                               let uiImage = UIImage(data: customImageData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 60, height: 60)
+                                    .clipShape(Circle())
+                            }
+                        }
+                    )
+                } else {
+                    // Demo avatar with initials
+                    ZStack {
+                        Circle()
+                            .fill(PestGenieDesignSystem.Colors.primary)
+                            .frame(width: 60, height: 60)
 
-                    Text(technicianName.prefix(2).uppercased())
-                        .font(PestGenieDesignSystem.Typography.titleMedium)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        Text(displayName.prefix(2).uppercased())
+                            .font(PestGenieDesignSystem.Typography.titleMedium)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                    }
                 }
 
                 // User info
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
-                    Text(technicianName)
+                    Text(displayName)
                         .font(PestGenieDesignSystem.Typography.titleMedium)
                         .fontWeight(.semibold)
                         .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                        .accessibilityLabel("User name: \(displayName)")
 
-                    Text("ID: \(technicianId)")
+                    Text("ID: \(displayId)")
                         .font(PestGenieDesignSystem.Typography.caption)
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .accessibilityLabel("User ID: \(displayId)")
 
-                    Text(companyName)
-                        .font(PestGenieDesignSystem.Typography.caption)
-                        .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                        Text(displayCompany)
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                            .accessibilityLabel("Company: \(displayCompany)")
+
+                        // Authentication status indicator
+                        if authenticationManager.isAuthenticated {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(PestGenieDesignSystem.Colors.success)
+                                .accessibilityLabel("Authenticated user")
+                                .accessibilityHint("User is signed in and data is synced")
+                        } else {
+                            Image(systemName: "circle.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(PestGenieDesignSystem.Colors.warning)
+                                .accessibilityLabel("Demo mode")
+                                .accessibilityHint("Using demo data, sign in for personalized experience")
+                        }
+                    }
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(accessibilityUserInfoLabel)
+                .accessibilityHint("User profile information. Tap to edit profile if authenticated.")
 
                 Spacer()
             }
@@ -172,85 +215,120 @@ struct MenuView: View {
         )
     }
 
-    // MARK: - Primary Navigation
+    // MARK: - Quick Actions Section
 
-    private var primaryNavigationSection: some View {
+    private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
-            sectionHeader("Navigation")
+            sectionHeader("Quick Actions")
 
             menuItem(
-                title: "Dashboard",
-                icon: "house.fill",
-                badge: nil,
-                item: .dashboard
-            )
-
-            menuItem(
-                title: "Today's Route",
-                icon: "map.fill",
-                badge: routeViewModel.remainingJobsCount > 0 ? "\(routeViewModel.remainingJobsCount)" : nil,
-                item: .route
-            )
-
-            menuItem(
-                title: "Equipment",
-                icon: "wrench.and.screwdriver.fill",
-                badge: nil,
-                item: .equipment
-            )
-
-            menuItem(
-                title: "Chemicals",
-                icon: "testtube.2",
-                badge: nil,
-                item: .chemicals
-            )
-        }
-        .padding(.vertical, PestGenieDesignSystem.Spacing.md)
-    }
-
-    // MARK: - Features Section
-
-    private var featuresSection: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
-            sectionHeader("Features")
-
-            menuItem(
-                title: "Customer Communication",
-                icon: "message.fill",
-                badge: "3",
+                title: "Customer Communications",
+                icon: "message.circle.fill",
+                badge: customerCommunicationsBadge,
                 item: .customerCommunication
             )
 
             menuItem(
-                title: "Reports & Documentation",
-                icon: "doc.text.fill",
+                title: "Call Dispatch",
+                icon: "phone.circle.fill",
                 badge: nil,
-                item: .reportsDocumentation
+                item: .callDispatch
             )
 
             menuItem(
-                title: "Analytics Dashboard",
-                icon: "chart.bar.fill",
+                title: "Emergency",
+                icon: "exclamationmark.triangle.fill",
                 badge: nil,
-                item: .analyticsDashboard
+                item: .emergency
             )
 
             menuItem(
-                title: "Training & Resources",
-                icon: "graduationcap.fill",
-                badge: "New",
-                item: .trainingResources
+                title: "Equipment Status",
+                icon: "wrench.and.screwdriver.fill",
+                badge: equipmentStatusBadge,
+                item: .equipmentStatus
+            )
+
+            menuItem(
+                title: "Weather Conditions",
+                icon: "cloud.sun.fill",
+                badge: nil,
+                item: .weatherConditions
             )
         }
         .padding(.vertical, PestGenieDesignSystem.Spacing.md)
     }
 
-    // MARK: - Settings Section
+    // MARK: - Safety & Resources Section
 
-    private var settingsSection: some View {
+    private var safetyResourcesSection: some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
-            sectionHeader("Settings")
+            sectionHeader("Safety & Resources")
+
+            menuItem(
+                title: "Safety Checklist",
+                icon: "checkmark.shield.fill",
+                badge: nil,
+                item: .safetyChecklist
+            )
+
+            menuItem(
+                title: "Emergency Protocols",
+                icon: "cross.circle.fill",
+                badge: nil,
+                item: .emergencyProtocols
+            )
+
+            menuItem(
+                title: "Training Resources",
+                icon: "graduationcap.fill",
+                badge: "New",
+                item: .trainingResources
+            )
+
+            menuItem(
+                title: "Performance Metrics",
+                icon: "chart.bar.fill",
+                badge: performanceMetricsBadge,
+                item: .performanceMetrics
+            )
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+    }
+
+    // MARK: - Account & Settings Section
+
+    private var accountSettingsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+            sectionHeader("Account & Settings")
+
+            // Sync status with real-time indicator
+            HStack(spacing: PestGenieDesignSystem.Spacing.md) {
+                Image(systemName: syncStatusIcon)
+                    .font(.system(size: 20))
+                    .foregroundColor(syncStatusColor)
+                    .frame(width: 24, height: 24)
+
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Text("Sync Status")
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Text(syncStatusText)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+
+                Spacer()
+
+                if !routeViewModel.isOnline && routeViewModel.pendingActions.count > 0 {
+                    Image(systemName: "clock")
+                        .foregroundColor(PestGenieDesignSystem.Colors.warning)
+                        .font(.system(size: 14))
+                }
+            }
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
 
             menuItem(
                 title: "Preferences",
@@ -262,15 +340,8 @@ struct MenuView: View {
             menuItem(
                 title: "Notifications",
                 icon: "bell.fill",
-                badge: nil,
+                badge: notificationsBadge,
                 item: .notifications
-            )
-
-            menuItem(
-                title: "Sync & Backup",
-                icon: "icloud.fill",
-                badge: nil,
-                item: .syncBackup
             )
         }
         .padding(.vertical, PestGenieDesignSystem.Spacing.md)
@@ -283,7 +354,7 @@ struct MenuView: View {
             sectionHeader("Support")
 
             menuItem(
-                title: "Help & Support",
+                title: "Help & Documentation",
                 icon: "questionmark.circle.fill",
                 badge: nil,
                 item: .helpSupport
@@ -294,13 +365,6 @@ struct MenuView: View {
                 icon: "envelope.fill",
                 badge: nil,
                 item: .sendFeedback
-            )
-
-            menuItem(
-                title: "Emergency Contacts",
-                icon: "phone.badge.plus",
-                badge: nil,
-                item: .emergencyContacts
             )
         }
         .padding(.vertical, PestGenieDesignSystem.Spacing.md)
@@ -454,7 +518,7 @@ struct MenuView: View {
 
                     // App details
                     VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
-                        appInfoRow("Company", companyName)
+                        appInfoRow("Company", displayCompany)
                         appInfoRow("Device", "iPhone 15 Pro")
                         appInfoRow("iOS Version", "17.5")
                         appInfoRow("Last Update", "September 15, 2024")
@@ -500,15 +564,155 @@ struct MenuView: View {
     // MARK: - Helper Methods
 
     private func performLogout() {
-        // Implement logout functionality
-        print("Logging out user...")
-        // In a real app, this would clear user data, tokens, etc.
+        Task {
+            await authenticationManager.signOut()
+            // Menu will automatically update due to @EnvironmentObject binding
+        }
+    }
+
+    // MARK: - Computed Properties for Dynamic User Data
+
+    /// Current authenticated user from AuthenticationManager
+    private var currentUser: AuthenticatedUser? {
+        authenticationManager.currentUser
+    }
+
+    /// Current user profile from UserProfileManager
+    private var currentProfile: UserProfile? {
+        userProfileManager.currentProfile
+    }
+
+    /// Display name with fallback logic
+    private var displayName: String {
+        if authenticationManager.isAuthenticated {
+            // Try profile name first, then authenticated user name, then email prefix
+            if let profileName = currentProfile?.name, !profileName.isEmpty {
+                return profileName
+            } else if let userName = currentUser?.name, !userName.isEmpty {
+                return userName
+            } else if let email = currentUser?.email {
+                return String(email.prefix(while: { $0 != "@" }))
+            }
+        }
+        return demoTechnicianName
+    }
+
+    /// Display ID with fallback logic
+    private var displayId: String {
+        if authenticationManager.isAuthenticated {
+            // Try employee ID from work info, then user ID
+            if let employeeId = currentProfile?.workInfo.employeeId, !employeeId.isEmpty {
+                return employeeId
+            } else if let userId = currentUser?.id {
+                return "U-" + String(userId.prefix(8))
+            }
+        }
+        return demoTechnicianId
+    }
+
+    /// Display company with fallback logic
+    private var displayCompany: String {
+        if authenticationManager.isAuthenticated {
+            // Try department from work info first
+            if let department = currentProfile?.workInfo.department, !department.isEmpty {
+                return department
+            }
+            // Could also check for organization from authentication
+            return "PestControl Pro" // Default for authenticated users
+        }
+        return demoCompanyName
+    }
+
+    /// Comprehensive accessibility label for user information section
+    private var accessibilityUserInfoLabel: String {
+        let authStatus = authenticationManager.isAuthenticated ? "Authenticated user" : "Demo mode"
+        return "\(displayName), ID \(displayId), \(displayCompany), \(authStatus)"
+    }
+
+    // MARK: - Dynamic Badge Properties
+
+    /// Equipment status badge based on equipment health
+    private var equipmentStatusBadge: String? {
+        // Mock implementation - in real app, would check equipment status
+        let criticalEquipment = 2 // Example: 2 pieces of equipment need attention
+        return criticalEquipment > 0 ? "\(criticalEquipment)" : nil
+    }
+
+    /// Customer communications badge for unread messages
+    private var customerCommunicationsBadge: String? {
+        // Mock implementation - in real app, would show unread messages count
+        let unreadMessages = 3 // Example: 3 unread customer messages
+        return unreadMessages > 0 ? "\(unreadMessages)" : nil
+    }
+
+    /// Performance metrics badge for technician stats
+    private var performanceMetricsBadge: String? {
+        // Mock implementation - could show unread performance updates
+        return routeViewModel.completedJobsCount > 5 ? "Good" : nil
+    }
+
+    /// Notifications badge count
+    private var notificationsBadge: String? {
+        // Mock implementation - in real app, would check notification count
+        let unreadNotifications = 3
+        return unreadNotifications > 0 ? "\(unreadNotifications)" : nil
+    }
+
+    // MARK: - Sync Status Properties
+
+    /// Icon for current sync status
+    private var syncStatusIcon: String {
+        if !routeViewModel.isOnline {
+            return "wifi.slash"
+        } else {
+            return "checkmark.icloud.fill"
+        }
+    }
+
+    /// Color for sync status icon
+    private var syncStatusColor: Color {
+        if !routeViewModel.isOnline {
+            return PestGenieDesignSystem.Colors.warning
+        } else {
+            return PestGenieDesignSystem.Colors.success
+        }
+    }
+
+    /// Text description of sync status
+    private var syncStatusText: String {
+        if !routeViewModel.isOnline {
+            return "Offline mode - \(routeViewModel.pendingActions.count) actions queued"
+        } else {
+            let lastSync = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+            return "Last synced: \(lastSync)"
+        }
     }
 }
 
 // MARK: - Menu Item Enum
 
 enum MenuItem: String, CaseIterable, Identifiable {
+    // Quick Actions
+    case callDispatch = "call_dispatch"
+    case emergency = "emergency"
+    case equipmentStatus = "equipment_status"
+    case weatherConditions = "weather_conditions"
+
+    // Safety & Resources
+    case safetyChecklist = "safety_checklist"
+    case emergencyProtocols = "emergency_protocols"
+    case trainingResources = "training_resources"
+    case performanceMetrics = "performance_metrics"
+
+    // Account & Settings
+    case settingsPreferences = "settings_preferences"
+    case notifications = "notifications"
+
+    // Support
+    case helpSupport = "help_support"
+    case sendFeedback = "send_feedback"
+
+    // Legacy items (keep for backward compatibility)
     case dashboard = "dashboard"
     case route = "route"
     case equipment = "equipment"
@@ -516,12 +720,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case customerCommunication = "customer_communication"
     case reportsDocumentation = "reports_documentation"
     case analyticsDashboard = "analytics_dashboard"
-    case trainingResources = "training_resources"
-    case settingsPreferences = "settings_preferences"
-    case notifications = "notifications"
     case syncBackup = "sync_backup"
-    case helpSupport = "help_support"
-    case sendFeedback = "send_feedback"
     case emergencyContacts = "emergency_contacts"
     case demoControls = "demo_controls"
 
@@ -529,6 +728,27 @@ enum MenuItem: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
+        // Quick Actions
+        case .callDispatch: return "Call Dispatch"
+        case .emergency: return "Emergency"
+        case .equipmentStatus: return "Equipment Status"
+        case .weatherConditions: return "Weather Conditions"
+
+        // Safety & Resources
+        case .safetyChecklist: return "Safety Checklist"
+        case .emergencyProtocols: return "Emergency Protocols"
+        case .trainingResources: return "Training & Resources"
+        case .performanceMetrics: return "Performance Metrics"
+
+        // Account & Settings
+        case .settingsPreferences: return "Settings & Preferences"
+        case .notifications: return "Notifications"
+
+        // Support
+        case .helpSupport: return "Help & Support"
+        case .sendFeedback: return "Send Feedback"
+
+        // Legacy items
         case .dashboard: return "Dashboard"
         case .route: return "Route"
         case .equipment: return "Equipment"
@@ -536,12 +756,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .customerCommunication: return "Customer Communication"
         case .reportsDocumentation: return "Reports & Documentation"
         case .analyticsDashboard: return "Analytics Dashboard"
-        case .trainingResources: return "Training & Resources"
-        case .settingsPreferences: return "Settings & Preferences"
-        case .notifications: return "Notifications"
         case .syncBackup: return "Sync & Backup"
-        case .helpSupport: return "Help & Support"
-        case .sendFeedback: return "Send Feedback"
         case .emergencyContacts: return "Emergency Contacts"
         case .demoControls: return "Demo Controls"
         }
@@ -550,35 +765,72 @@ enum MenuItem: String, CaseIterable, Identifiable {
 
 // MARK: - Preview
 
-#Preview("Menu View") {
+#Preview("Menu View - Authenticated") {
     ZStack {
         Color.black.opacity(0.3)
             .ignoresSafeArea()
 
         MenuView(
             isPresented: .constant(true),
-            selectedMenuItem: .constant(nil),
-            technicianName: "John Smith",
-            technicianId: "T-12345",
-            companyName: "PestControl Pro"
+            selectedMenuItem: .constant(nil)
         )
         .environmentObject(RouteViewModel())
+        .environmentObject({
+            let authManager = AuthenticationManager.shared
+            authManager.isAuthenticated = true
+            authManager.currentUser = AuthenticatedUser(
+                id: "user123",
+                email: "john.smith@pestcontrol.com",
+                name: "John Smith",
+                profileImageURL: URL(string: "https://example.com/profile.jpg"),
+                createdAt: Date(),
+                lastSignInAt: Date()
+            )
+            return authManager
+        }())
+        .environmentObject({
+            let profileManager = UserProfileManager()
+            profileManager.currentProfile = UserProfile(
+                id: "user123",
+                email: "john.smith@pestcontrol.com",
+                name: "John Smith",
+                profileImageURL: URL(string: "https://example.com/profile.jpg"),
+                customProfileImageData: nil,
+                createdAt: Date(),
+                updatedAt: Date(),
+                lastSyncDate: Date(),
+                preferences: UserPreferences(),
+                workInfo: WorkInformation(
+                    jobTitle: "Senior Technician",
+                    department: "PestControl Pro",
+                    employeeId: "T-12345",
+                    startDate: Date(),
+                    certifications: []
+                ),
+                profileCompleteness: ProfileCompleteness(score: 0.8, missingFields: [], lastCalculated: Date())
+            )
+            return profileManager
+        }())
     }
 }
 
-#Preview("Menu View Dark Mode") {
+#Preview("Menu View - Demo Mode") {
     ZStack {
         Color.black.opacity(0.3)
             .ignoresSafeArea()
 
         MenuView(
             isPresented: .constant(true),
-            selectedMenuItem: .constant(nil),
-            technicianName: "Sarah Johnson",
-            technicianId: "T-67890",
-            companyName: "Elite Pest Solutions"
+            selectedMenuItem: .constant(nil)
         )
         .environmentObject(RouteViewModel())
+        .environmentObject({
+            let authManager = AuthenticationManager.shared
+            authManager.isAuthenticated = false
+            authManager.currentUser = nil
+            return authManager
+        }())
+        .environmentObject(UserProfileManager())
         .preferredColorScheme(.dark)
     }
 }
