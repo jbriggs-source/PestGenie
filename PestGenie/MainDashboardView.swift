@@ -1418,8 +1418,8 @@ struct MainDashboardView: View {
                     // Header with Live Status
                     equipmentHeaderCard
 
-                    // Key Metrics Dashboard
-                    equipmentMetricsGrid
+                    // Today's Progress
+                    technicianMetricsGrid
 
                     // Smart Alerts Section
                     smartAlertsSection
@@ -1457,7 +1457,7 @@ struct MainDashboardView: View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
             HStack {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
-                    Text("Fleet Status")
+                    Text("My Equipment")
                         .font(PestGenieDesignSystem.Typography.headlineLarge)
                         .fontWeight(.bold)
                         .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
@@ -1466,7 +1466,7 @@ struct MainDashboardView: View {
                         Circle()
                             .fill(Color.green)
                             .frame(width: 8, height: 8)
-                        Text("All Systems Operational")
+                        Text("All Equipment Ready")
                             .font(PestGenieDesignSystem.Typography.bodyMedium)
                             .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                     }
@@ -1475,72 +1475,72 @@ struct MainDashboardView: View {
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
-                    Text("42")
+                    Text("6")
                         .font(PestGenieDesignSystem.Typography.displaySmall)
                         .fontWeight(.bold)
                         .foregroundColor(PestGenieDesignSystem.Colors.primary)
-                    Text("Active Units")
+                    Text("Items Assigned")
                         .font(PestGenieDesignSystem.Typography.caption)
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                 }
             }
 
-            // Performance Bar
+            // Today's Checklist
             VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
                 HStack {
-                    Text("Fleet Efficiency")
+                    Text("Pre-Service Checklist")
                         .font(PestGenieDesignSystem.Typography.bodySmall)
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                     Spacer()
-                    Text("94%")
+                    Text("5/6 Complete")
                         .font(PestGenieDesignSystem.Typography.bodySmall)
                         .fontWeight(.semibold)
-                        .foregroundColor(.green)
+                        .foregroundColor(.orange)
                 }
 
-                ProgressView(value: 0.94)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                ProgressView(value: 0.83)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .orange))
                     .scaleEffect(x: 1, y: 2, anchor: .center)
             }
         }
         .pestGenieCard()
     }
 
-    private var equipmentMetricsGrid: some View {
+    private var technicianMetricsGrid: some View {
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.md) {
             equipmentMetricCard(
-                title: "Utilization Rate",
-                value: "87%",
-                change: "+5%",
+                title: "Jobs Today",
+                value: "8/12",
+                change: "4 remaining",
                 changePositive: true,
-                icon: "chart.bar.fill",
+                icon: "list.clipboard",
                 color: .blue
             )
 
             equipmentMetricCard(
-                title: "Maintenance Cost",
-                value: "$2,340",
-                change: "-12%",
-                changePositive: true,
-                icon: "wrench.and.screwdriver.fill",
+                title: "Equipment Check",
+                value: "5/6",
+                change: "1 pending",
+                changePositive: false,
+                icon: "checkmark.circle.fill",
                 color: .orange
             )
 
             equipmentMetricCard(
-                title: "Avg Response Time",
-                value: "4.2 min",
-                change: "-0.8 min",
+                title: "Customer Updates",
+                value: "6 sent",
+                change: "All current",
                 changePositive: true,
-                icon: "clock.fill",
+                icon: "message.fill",
                 color: .green
             )
 
             equipmentMetricCard(
-                title: "Predictive Savings",
-                value: "$8,750",
-                change: "+18%",
+                title: "Next Service",
+                value: "Due 2:30 PM",
+                change: "Johnson Property",
                 changePositive: true,
-                icon: "brain.head.profile",
+                icon: "clock.badge.checkmark",
                 color: .purple
             )
         }
@@ -1665,7 +1665,7 @@ struct MainDashboardView: View {
     private var equipmentFleetSection: some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
             HStack {
-                Text("Equipment Fleet")
+                Text("My Equipment")
                     .font(PestGenieDesignSystem.Typography.headlineMedium)
                     .fontWeight(.semibold)
                     .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
@@ -1681,41 +1681,87 @@ struct MainDashboardView: View {
                 }
             }
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.sm) {
-                equipmentFleetCard(
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                technicianEquipmentRow(
                     name: "Backpack Sprayer",
                     model: "BS-1025",
                     status: .operational,
-                    efficiency: 0.94,
-                    lastMaintenance: "3 days ago"
+                    lastCheck: "Today 7:30 AM",
+                    action: "Ready"
                 )
 
-                equipmentFleetCard(
-                    name: "Tank Sprayer",
-                    model: "TS-2041",
-                    status: .operational,
-                    efficiency: 0.87,
-                    lastMaintenance: "1 week ago"
-                )
-
-                equipmentFleetCard(
+                technicianEquipmentRow(
                     name: "Moisture Meter",
                     model: "MM-3012",
                     status: .needsAttention,
-                    efficiency: 0.76,
-                    lastMaintenance: "2 weeks ago"
+                    lastCheck: "Pending",
+                    action: "Check Required"
                 )
 
-                equipmentFleetCard(
-                    name: "Fogger Unit",
-                    model: "FG-4033",
+                technicianEquipmentRow(
+                    name: "Inspection Camera",
+                    model: "IC-2024",
                     status: .operational,
-                    efficiency: 0.91,
-                    lastMaintenance: "5 days ago"
+                    lastCheck: "Today 7:35 AM",
+                    action: "Ready"
+                )
+
+                technicianEquipmentRow(
+                    name: "Digital Scale",
+                    model: "DS-Pro",
+                    status: .operational,
+                    lastCheck: "Today 7:32 AM",
+                    action: "Ready"
                 )
             }
         }
         .pestGenieCard()
+    }
+
+    private func technicianEquipmentRow(name: String, model: String, status: EquipmentDemoStatus, lastCheck: String, action: String) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Status indicator
+            Circle()
+                .fill(status.color)
+                .frame(width: 12, height: 12)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(name)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Spacer()
+
+                    Text(action)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(status.color)
+                }
+
+                HStack {
+                    Text(model)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+
+                    Spacer()
+
+                    Text("Last: \(lastCheck)")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+
+            Button(action: {
+                // Demo: Equipment details/check-in
+            }) {
+                Image(systemName: status == .needsAttention ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
+                    .font(.title3)
+                    .foregroundColor(status.color)
+            }
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
     }
 
     private func equipmentFleetCard(name: String, model: String, status: EquipmentDemoStatus, efficiency: Double, lastMaintenance: String) -> some View {
@@ -1779,51 +1825,51 @@ struct MainDashboardView: View {
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: PestGenieDesignSystem.Spacing.sm) {
                 equipmentQuickActionButton(
-                    icon: "qrcode.viewfinder",
-                    title: "Scan QR",
+                    icon: "camera.fill",
+                    title: "Photo Report",
                     color: .blue
                 ) {
-                    // Demo: QR Scanner
+                    // Demo: Before/after photos
                 }
 
                 equipmentQuickActionButton(
-                    icon: "wrench.and.screwdriver",
-                    title: "Maintenance",
-                    color: .orange
-                ) {
-                    // Demo: Maintenance log
-                }
-
-                equipmentQuickActionButton(
-                    icon: "chart.line.uptrend.xyaxis",
-                    title: "Analytics",
-                    color: .purple
-                ) {
-                    // Demo: Analytics view
-                }
-
-                equipmentQuickActionButton(
-                    icon: "calendar.badge.plus",
-                    title: "Schedule",
+                    icon: "message.fill",
+                    title: "Customer Update",
                     color: .green
                 ) {
-                    // Demo: Scheduling
+                    // Demo: Send completion summary
                 }
 
                 equipmentQuickActionButton(
-                    icon: "doc.text.magnifyingglass",
-                    title: "Inspect",
+                    icon: "qrcode.viewfinder",
+                    title: "Equipment Check",
+                    color: .orange
+                ) {
+                    // Demo: QR Scanner for equipment
+                }
+
+                equipmentQuickActionButton(
+                    icon: "calendar.badge.checkmark",
+                    title: "Schedule Next",
+                    color: .purple
+                ) {
+                    // Demo: Schedule follow-up
+                }
+
+                equipmentQuickActionButton(
+                    icon: "doc.text.fill",
+                    title: "Job Notes",
                     color: .indigo
                 ) {
-                    // Demo: Inspection form
+                    // Demo: Service notes
                 }
 
                 equipmentQuickActionButton(
-                    icon: "gearshape.arrow.triangle.2.circlepath",
-                    title: "Calibrate",
+                    icon: "phone.fill",
+                    title: "Call Customer",
                     color: .teal
                 ) {
-                    // Demo: Calibration
+                    // Demo: Contact customer
                 }
             }
         }
@@ -2088,8 +2134,8 @@ struct MainDashboardView: View {
             VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
                 chemicalSafetyAlert(
                     icon: "clock.fill",
-                    title: "Diquat Dibromide - Re-entry Restriction",
-                    subtitle: "48-hour re-entry period active at Johnson Property until 3:30 PM",
+                    title: "Phantom II - Re-entry Restriction",
+                    subtitle: "24-hour re-entry period active at Johnson Property until 3:30 PM",
                     severity: .high,
                     action: "View Details"
                 )
@@ -2184,16 +2230,16 @@ struct MainDashboardView: View {
                 )
 
                 technicianChemicalRow(
-                    name: "Diquat Dibromide",
-                    activeIngredient: "Diquat 37.3%",
+                    name: "Phantom II",
+                    activeIngredient: "Chlorfenapyr 21.45%",
                     quantity: "0.8 gal",
-                    signalWord: .danger,
+                    signalWord: .caution,
                     needsAttention: true
                 )
 
                 technicianChemicalRow(
-                    name: "Roundup Pro",
-                    activeIngredient: "Glyphosate 50.2%",
+                    name: "Suspend SC",
+                    activeIngredient: "Deltamethrin 4.75%",
                     quantity: "3.0 gal",
                     signalWord: .caution,
                     needsAttention: false
@@ -2559,11 +2605,11 @@ struct MainDashboardView: View {
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: PestGenieDesignSystem.Spacing.sm) {
                 chemicalQuickActionButton(
-                    icon: "barcode.viewfinder",
-                    title: "Scan Label",
-                    color: .blue
+                    icon: "drop.circle.fill",
+                    title: "Mix Calculator",
+                    color: .cyan
                 ) {
-                    // Demo: Label scanner
+                    // Demo: Mixing calculator
                 }
 
                 chemicalQuickActionButton(
@@ -2575,35 +2621,35 @@ struct MainDashboardView: View {
                 }
 
                 chemicalQuickActionButton(
-                    icon: "doc.text.below.ecg",
-                    title: "SDS Lookup",
-                    color: .purple
-                ) {
-                    // Demo: Safety data sheets
-                }
-
-                chemicalQuickActionButton(
-                    icon: "drop.circle.fill",
-                    title: "Mix Calculator",
-                    color: .cyan
-                ) {
-                    // Demo: Mixing calculator
-                }
-
-                chemicalQuickActionButton(
-                    icon: "calendar.badge.clock",
-                    title: "PHI Tracker",
+                    icon: "message.badge.filled.fill",
+                    title: "Treatment Report",
                     color: .green
                 ) {
-                    // Demo: Pre-harvest intervals
+                    // Demo: Send treatment summary to customer
                 }
 
                 chemicalQuickActionButton(
-                    icon: "person.badge.shield.checkmark",
-                    title: "PPE Guide",
+                    icon: "timer",
+                    title: "Re-entry Timer",
                     color: .orange
                 ) {
-                    // Demo: PPE requirements
+                    // Demo: Customer re-entry timing
+                }
+
+                chemicalQuickActionButton(
+                    icon: "info.circle.fill",
+                    title: "Product Info",
+                    color: .blue
+                ) {
+                    // Demo: Chemical information for customers
+                }
+
+                chemicalQuickActionButton(
+                    icon: "calendar.badge.plus",
+                    title: "Next Treatment",
+                    color: .purple
+                ) {
+                    // Demo: Schedule follow-up treatment
                 }
             }
         }
