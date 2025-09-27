@@ -1918,5 +1918,289 @@ struct EmergencyProtocol: Identifiable {
     }
 }
 
+// MARK: - Safety Checklist Models
+
+/// Safety checklist categories for technician pre-service checks
+enum SafetyChecklistCategory: String, CaseIterable, Codable {
+    case personalProtectiveEquipment = "ppe"
+    case chemicalSafety = "chemical_safety"
+    case equipmentSafety = "equipment_safety"
+    case siteSafetyAssessment = "site_safety"
+    case healthMedical = "health_medical"
+    case regulatoryCompliance = "regulatory"
+    case communicationDocumentation = "communication"
+    case vehicleTransportation = "vehicle"
+
+    var displayName: String {
+        switch self {
+        case .personalProtectiveEquipment: return "Personal Protective Equipment"
+        case .chemicalSafety: return "Chemical Safety"
+        case .equipmentSafety: return "Equipment Safety"
+        case .siteSafetyAssessment: return "Site Safety Assessment"
+        case .healthMedical: return "Health & Medical"
+        case .regulatoryCompliance: return "Regulatory Compliance"
+        case .communicationDocumentation: return "Communication & Documentation"
+        case .vehicleTransportation: return "Vehicle & Transportation"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .personalProtectiveEquipment: return "shield.lefthalf.filled"
+        case .chemicalSafety: return "drop.triangle"
+        case .equipmentSafety: return "wrench.and.screwdriver"
+        case .siteSafetyAssessment: return "location.magnifyingglass"
+        case .healthMedical: return "cross.case"
+        case .regulatoryCompliance: return "checkmark.seal"
+        case .communicationDocumentation: return "doc.text"
+        case .vehicleTransportation: return "car"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .personalProtectiveEquipment: return "blue"
+        case .chemicalSafety: return "red"
+        case .equipmentSafety: return "orange"
+        case .siteSafetyAssessment: return "green"
+        case .healthMedical: return "red"
+        case .regulatoryCompliance: return "purple"
+        case .communicationDocumentation: return "blue"
+        case .vehicleTransportation: return "gray"
+        }
+    }
+}
+
+/// Priority levels for safety checklist items
+enum SafetyChecklistPriority: String, CaseIterable, Codable {
+    case critical = "critical"
+    case high = "high"
+    case medium = "medium"
+    case low = "low"
+
+    var displayName: String {
+        switch self {
+        case .critical: return "Critical"
+        case .high: return "High"
+        case .medium: return "Medium"
+        case .low: return "Low"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .critical: return "red"
+        case .high: return "orange"
+        case .medium: return "yellow"
+        case .low: return "green"
+        }
+    }
+}
+
+/// Individual safety checklist item
+struct SafetyChecklistItem: Identifiable, Codable {
+    let id: UUID
+    let category: SafetyChecklistCategory
+    let title: String
+    let description: String
+    let priority: SafetyChecklistPriority
+    let isRequired: Bool
+
+    init(
+        id: UUID = UUID(),
+        category: SafetyChecklistCategory,
+        title: String,
+        description: String,
+        priority: SafetyChecklistPriority = .medium,
+        isRequired: Bool = true
+    ) {
+        self.id = id
+        self.category = category
+        self.title = title
+        self.description = description
+        self.priority = priority
+        self.isRequired = isRequired
+    }
+}
+
+/// Completion record for a safety checklist item
+struct SafetyChecklistCompletion: Codable {
+    let itemId: UUID
+    let isCompliant: Bool
+    let completedAt: Date
+    let photos: [Data]
+    let notes: String
+}
+
+/// Daily safety checklist completion record
+struct SafetyChecklistRecord: Identifiable, Codable {
+    let id: UUID
+    let technicianId: String
+    let startedAt: Date
+    let items: [SafetyChecklistItem]
+    var completedItems: [SafetyChecklistCompletion]
+    var violations: [SafetyViolationReport]
+    var isCompleted: Bool
+    var completedAt: Date?
+    var supervisorSignature: String?
+    var notes: String
+
+    init(
+        id: UUID = UUID(),
+        technicianId: String,
+        startedAt: Date = Date(),
+        items: [SafetyChecklistItem],
+        completedItems: [SafetyChecklistCompletion] = [],
+        violations: [SafetyViolationReport] = [],
+        isCompleted: Bool = false,
+        completedAt: Date? = nil,
+        supervisorSignature: String? = nil,
+        notes: String = ""
+    ) {
+        self.id = id
+        self.technicianId = technicianId
+        self.startedAt = startedAt
+        self.items = items
+        self.completedItems = completedItems
+        self.violations = violations
+        self.isCompleted = isCompleted
+        self.completedAt = completedAt
+        self.supervisorSignature = supervisorSignature
+        self.notes = notes
+    }
+
+    // Statistics helpers
+    var completionPercentage: Double {
+        let totalItems = items.count
+        guard totalItems > 0 else { return 0.0 }
+        return Double(completedItems.count) / Double(totalItems) * 100.0
+    }
+
+    var requiredCompletionPercentage: Double {
+        let requiredItems = items.filter { $0.isRequired }
+        guard !requiredItems.isEmpty else { return 100.0 }
+        let completedRequiredIds = Set(completedItems.map { $0.itemId })
+        let completedRequired = requiredItems.filter { completedRequiredIds.contains($0.id) }.count
+        return Double(completedRequired) / Double(requiredItems.count) * 100.0
+    }
+
+    var incompleteRequiredItems: [SafetyChecklistItem] {
+        let completedIds = Set(completedItems.map { $0.itemId })
+        return items.filter { $0.isRequired && !completedIds.contains($0.id) }
+    }
+
+    var incompleteCriticalItems: [SafetyChecklistItem] {
+        let completedIds = Set(completedItems.map { $0.itemId })
+        return items.filter { $0.priority == .critical && !completedIds.contains($0.id) }
+    }
+}
+
+/// Safety violation or concern report
+struct SafetyViolationReport: Identifiable, Codable {
+    let id: UUID
+    let checklistId: UUID
+    let itemId: UUID
+    let category: SafetyChecklistCategory
+    let severity: EmergencySeverity
+    let title: String
+    let description: String
+    let reportedAt: Date
+    var photos: [Data]
+    var notes: String
+    var isResolved: Bool
+    var resolvedAt: Date?
+    var supervisorNotified: Bool
+
+    init(
+        id: UUID = UUID(),
+        checklistId: UUID,
+        itemId: UUID,
+        category: SafetyChecklistCategory,
+        severity: EmergencySeverity,
+        title: String,
+        description: String,
+        reportedAt: Date = Date(),
+        photos: [Data] = [],
+        notes: String = "",
+        isResolved: Bool = false,
+        resolvedAt: Date? = nil,
+        supervisorNotified: Bool = false
+    ) {
+        self.id = id
+        self.checklistId = checklistId
+        self.itemId = itemId
+        self.category = category
+        self.severity = severity
+        self.title = title
+        self.description = description
+        self.reportedAt = reportedAt
+        self.photos = photos
+        self.notes = notes
+        self.isResolved = isResolved
+        self.resolvedAt = resolvedAt
+        self.supervisorNotified = supervisorNotified
+    }
+
+    // Helper to get photos as UIImages
+    var photosAsImages: [UIImage] {
+        return photos.compactMap { UIImage(data: $0) }
+    }
+}
+
+/// Types of safety violations
+enum SafetyViolationType: String, CaseIterable, Codable {
+    case missingPPE = "missing_ppe"
+    case improperChemicalHandling = "improper_chemical"
+    case equipmentMalfunction = "equipment_malfunction"
+    case unsafeWorkPractice = "unsafe_practice"
+    case regulatoryViolation = "regulatory_violation"
+    case environmentalConcern = "environmental"
+    case customerSafety = "customer_safety"
+    case weatherHazard = "weather_hazard"
+
+    var displayName: String {
+        switch self {
+        case .missingPPE: return "Missing Personal Protective Equipment"
+        case .improperChemicalHandling: return "Improper Chemical Handling"
+        case .equipmentMalfunction: return "Equipment Malfunction"
+        case .unsafeWorkPractice: return "Unsafe Work Practice"
+        case .regulatoryViolation: return "Regulatory Violation"
+        case .environmentalConcern: return "Environmental Concern"
+        case .customerSafety: return "Customer Safety Issue"
+        case .weatherHazard: return "Weather Hazard"
+        }
+    }
+}
+
+/// Safety violation severity levels
+enum SafetyViolationSeverity: String, CaseIterable, Codable {
+    case low = "low"
+    case medium = "medium"
+    case high = "high"
+    case critical = "critical"
+
+    var displayName: String {
+        switch self {
+        case .low: return "Low"
+        case .medium: return "Medium"
+        case .high: return "High"
+        case .critical: return "Critical"
+        }
+    }
+
+    var color: String {
+        switch self {
+        case .low: return "green"
+        case .medium: return "yellow"
+        case .high: return "orange"
+        case .critical: return "red"
+        }
+    }
+
+    var requiresImmediateAction: Bool {
+        return self == .high || self == .critical
+    }
+}
+
 // MARK: - Model Conversion Extensions
 // Note: Core Data entity extensions will be added here as needed

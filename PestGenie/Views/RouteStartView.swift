@@ -6,6 +6,7 @@ struct RouteStartView: View {
 
     @State private var showingDemoOptions = false
     @State private var showingPreServiceChecklist = false
+    @State private var showingSafetyChecklist = false
 
     var body: some View {
         NavigationView {
@@ -65,6 +66,65 @@ struct RouteStartView: View {
                                 title: "Weather",
                                 value: routeViewModel.weatherConditions,
                                 color: .cyan
+                            )
+                        }
+                    }
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+
+                    // Safety Checklist Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Image(systemName: "checkmark.shield.fill")
+                                .foregroundColor(safetyChecklistStatusColor)
+                            Text("Safety Checklist")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                        }
+
+                        VStack(spacing: 8) {
+                            HStack {
+                                Image(systemName: safetyChecklistIcon)
+                                    .foregroundColor(safetyChecklistStatusColor)
+                                    .font(.title3)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(safetyChecklistStatusText)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+
+                                    Text("Required before route start")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+                            }
+                        }
+
+                        // Button to open safety checklist
+                        Button(action: {
+                            showingSafetyChecklist = true
+                        }) {
+                            HStack {
+                                Image(systemName: "checkmark.shield")
+                                    .font(.title3)
+                                Text(routeViewModel.safetyChecklistCompleted ? "Review Safety Checklist" : "Complete Safety Checklist")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .foregroundColor(routeViewModel.safetyChecklistCompleted ? .blue : .red)
+                            .padding()
+                            .background(Color(.systemBackground))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(routeViewModel.safetyChecklistCompleted ? Color.blue.opacity(0.3) : Color.red.opacity(0.3), lineWidth: 1)
                             )
                         }
                     }
@@ -132,11 +192,21 @@ struct RouteStartView: View {
                         }
                         .disabled(!canStartRoute || routeViewModel.isRouteStarted)
 
-                        if !canStartRoute && !routeViewModel.preServiceChecklistCompleted {
-                            Text("Complete equipment checklist before starting route")
-                                .font(.caption)
-                                .foregroundColor(.orange)
-                                .multilineTextAlignment(.center)
+                        if !canStartRoute {
+                            VStack(spacing: 4) {
+                                if !routeViewModel.safetyChecklistCompleted {
+                                    Text("Complete safety checklist before starting route")
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                        .multilineTextAlignment(.center)
+                                }
+                                if !routeViewModel.preServiceChecklistCompleted {
+                                    Text("Complete equipment checklist before starting route")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                        .multilineTextAlignment(.center)
+                                }
+                            }
                         }
 
                         // Demo Controls
@@ -179,6 +249,13 @@ struct RouteStartView: View {
         .sheet(isPresented: $showingPreServiceChecklist) {
             PreServiceChecklistView(routeViewModel: routeViewModel)
         }
+        .sheet(isPresented: $showingSafetyChecklist) {
+            SafetyChecklistView(technicianId: routeViewModel.currentTechnicianId)
+                .onDisappear {
+                    // Check if safety checklist was completed
+                    routeViewModel.checkSafetyChecklistCompletion()
+                }
+        }
     }
 
     private var estimatedDuration: String {
@@ -192,12 +269,14 @@ struct RouteStartView: View {
     }
 
     private var canStartRoute: Bool {
-        return routeViewModel.preServiceChecklistCompleted && !routeViewModel.assignedEquipment.isEmpty
+        return routeViewModel.safetyChecklistCompleted && routeViewModel.preServiceChecklistCompleted && !routeViewModel.assignedEquipment.isEmpty
     }
 
     private var startButtonText: String {
         if routeViewModel.isRouteStarted {
             return "Route in Progress"
+        } else if !routeViewModel.safetyChecklistCompleted {
+            return "Complete Safety Checklist First"
         } else if !routeViewModel.preServiceChecklistCompleted {
             return "Complete Equipment Check First"
         } else {
@@ -208,10 +287,36 @@ struct RouteStartView: View {
     private var startButtonColor: Color {
         if routeViewModel.isRouteStarted {
             return .gray
+        } else if !routeViewModel.safetyChecklistCompleted {
+            return .red
         } else if !canStartRoute {
             return .orange
         } else {
             return .green
+        }
+    }
+
+    private var safetyChecklistStatusColor: Color {
+        if routeViewModel.safetyChecklistCompleted {
+            return .green
+        } else {
+            return .red
+        }
+    }
+
+    private var safetyChecklistIcon: String {
+        if routeViewModel.safetyChecklistCompleted {
+            return "checkmark.circle.fill"
+        } else {
+            return "exclamationmark.triangle.fill"
+        }
+    }
+
+    private var safetyChecklistStatusText: String {
+        if routeViewModel.safetyChecklistCompleted {
+            return "Safety checklist completed"
+        } else {
+            return "Safety checklist required"
         }
     }
 
