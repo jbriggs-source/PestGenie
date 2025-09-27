@@ -97,6 +97,9 @@ final class RouteViewModel: ObservableObject {
         // Setup health tracking integration
         setupHealthTracking()
 
+        // Check safety checklist completion status
+        checkSafetyChecklistCompletion()
+
         // Defer network monitoring until first access
         // setupNetworkMonitoring()
     }
@@ -651,7 +654,14 @@ final class RouteViewModel: ObservableObject {
     @Published var assignedEquipment: [Equipment] = []
     @Published var equipmentInspections: [EquipmentInspection] = []
     @Published var preServiceChecklistCompleted = false
+    @Published var safetyChecklistCompleted = false
     @Published var equipmentUsageLog: [EquipmentUsageRecord] = []
+
+    // Current technician ID for safety checklist
+    var currentTechnicianId: String {
+        // In a real app, this would come from authentication
+        return "TECH001"
+    }
 
     /// Updates chemical inventory after a treatment application
     func recordChemicalUsage(chemicalId: UUID, quantityUsed: Double, jobId: UUID, notes: String = "") {
@@ -953,6 +963,38 @@ final class RouteViewModel: ObservableObject {
         }
 
         return preServiceChecklistCompleted
+    }
+
+    /// Checks if safety checklist has been completed for today
+    func checkSafetyChecklistCompletion() {
+        // Check if there's a completed safety checklist for today
+        let today = Date()
+        let calendar = Calendar.current
+
+        // In a real app, this would check persistent storage for completed safety checklists
+        // For now, we'll check UserDefaults for a completed checklist
+        let key = "safety_checklist_completed_\(calendar.dateInterval(of: .day, for: today)?.start.timeIntervalSince1970 ?? 0)"
+        safetyChecklistCompleted = UserDefaults.standard.bool(forKey: key)
+
+        // Also check if there's any completed checklist record for the current technician today
+        if let data = UserDefaults.standard.data(forKey: "safety_checklist_history") {
+            do {
+                let checklistHistory = try JSONDecoder().decode([SafetyChecklistRecord].self, from: data)
+                let todaysChecklists = checklistHistory.filter { checklist in
+                    guard let completedAt = checklist.completedAt else { return false }
+                    return calendar.isDate(completedAt, inSameDayAs: today) &&
+                           checklist.technicianId == currentTechnicianId &&
+                           checklist.isCompleted
+                }
+
+                if !todaysChecklists.isEmpty {
+                    safetyChecklistCompleted = true
+                    UserDefaults.standard.set(true, forKey: key)
+                }
+            } catch {
+                print("Failed to load safety checklist history: \(error)")
+            }
+        }
     }
 
     /// Gets equipment that needs attention (maintenance, calibration, etc.)

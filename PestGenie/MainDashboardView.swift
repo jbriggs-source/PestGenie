@@ -296,7 +296,11 @@ struct MainDashboardView: View {
                 menuFeatureWrapper {
                     EmergencyActionView()
                 }
-            case .callDispatch, .equipmentStatus, .weatherConditions, .safetyChecklist, .emergencyProtocols, .performanceMetrics, .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
+            case .safetyChecklist:
+                menuFeatureWrapper {
+                    SafetyChecklistView(technicianId: routeViewModel.currentTechnicianId)
+                }
+            case .callDispatch, .equipmentStatus, .weatherConditions, .emergencyProtocols, .performanceMetrics, .notifications, .syncBackup, .sendFeedback, .emergencyContacts:
                 placeholderFeatureView(for: menuItem)
             }
         }
