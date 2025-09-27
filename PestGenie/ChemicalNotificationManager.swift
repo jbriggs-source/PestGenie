@@ -227,13 +227,13 @@ extension NotificationManager {
 
     /// Create notification categories for chemical management
     func setupChemicalNotificationCategories() {
-        let chemicalExpirationCategory = createChemicalExpirationCategory()
-        let chemicalLowStockCategory = createChemicalLowStockCategory()
-        let chemicalSafetyCategory = createChemicalSafetyCategory()
-        let epaComplianceCategory = createEPAComplianceCategory()
+        _ = createChemicalExpirationCategory()
+        _ = createChemicalLowStockCategory()
+        _ = createChemicalSafetyCategory()
+        _ = createEPAComplianceCategory()
 
         // Add to existing categories
-        let existingCategories = UNUserNotificationCenter.current()
+        _ = UNUserNotificationCenter.current()
 
         // This would ideally be integrated into the main setupNotificationCategories method
         print("Chemical notification categories created")

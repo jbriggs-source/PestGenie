@@ -8,14 +8,32 @@ PestGenie is an enterprise-grade iOS SwiftUI application for pest control techni
 
 ## Build and Development Commands
 
-This is a standard iOS project built with Xcode:
+### Recommended: Use Makefile Commands (Prevents All Build Issues)
+
+- **Safe Build**: `make safe-build` - 🛡️ Safe build with GUID corruption prevention
+- **Clean Build**: `make clean-build` - Ensures fresh SDUI JSON files
+- **Build**: `make build` - Standard build
+- **Run**: `make run` - Clean build and launch in simulator
+- **Test**: `make test` - Run unit tests
+- **Fix Build**: `make fix-build` - 🔧 Fix GUID corruption and build issues
+- **Check Build**: `make check-build` - 🔍 Check for build issues
+- **Clean**: `make clean` - Clear all build caches
+- **Help**: `make help` - Show all available commands
+
+### Alternative: Standard Xcode Commands
 
 - **Build**: Open `PestGenie.xcodeproj` in Xcode and build (⌘+B)
 - **Run**: Build and run on simulator/device (⌘+R)
 - **Test**: Run tests (⌘+U)
 - **Clean**: Product → Clean Build Folder (⌘+Shift+K)
 
-No package managers (CocoaPods, SPM dependencies) are currently used.
+**⚠️ Important:**
+- For daily development, use `make safe-build` to prevent GUID corruption errors
+- When modifying SDUI JSON files, use `make clean-build` to prevent caching issues
+- If you encounter build errors, run `make fix-build` to automatically resolve them
+
+### Dependencies
+Uses Swift Package Manager for Google Sign-In and related dependencies.
 
 ## Architecture
 

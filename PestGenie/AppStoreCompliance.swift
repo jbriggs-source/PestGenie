@@ -203,7 +203,12 @@ final class AppStoreComplianceManager: ObservableObject {
                 // available in the current Xcode SDK. This will be updated when the framework
                 // becomes available.
                 // TODO: Update to AppStore.requestReview(in:) when AppStore framework becomes available
-                SKStoreReviewController.requestReview(in: scene)
+                if #available(iOS 18.0, *) {
+                    // AppStore.requestReview(in:) not available yet in current SDK
+                    SKStoreReviewController.requestReview(in: scene)
+                } else {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
             } else {
                 // Fallback for older iOS versions
                 SKStoreReviewController.requestReview()

@@ -228,6 +228,30 @@ struct SDUIScreenRenderer {
     }
 
     private static func renderImage(component: SDUIComponent, context: SDUIContext) -> AnyView {
+        // Special handling for profile images with proper circular styling
+        if let urlString = component.url {
+            let resolvedURL = SDUIDataResolver.resolveTemplateVariables(text: urlString, context: context)
+
+            // Check if this looks like a profile image (has corner radius set to 64 or uses person.circle icon)
+            let isProfileImage = component.cornerRadius == 64 || component.imageName == "person.circle.fill"
+
+            if isProfileImage {
+                // Use UserProfilePictureView for profile images
+                let profileURL = !resolvedURL.isEmpty ? URL(string: resolvedURL) : nil
+                let size: CGFloat = 128 // Default large size for profile screen
+                let color = SDUIStyleResolver.resolveColor(component.foregroundColor ?? "#007AFF", job: context.currentJob)
+
+                return AnyView(
+                    UserProfilePictureView(
+                        profileImageURL: profileURL,
+                        size: size,
+                        fallbackColor: color
+                    )
+                )
+            }
+        }
+
+        // Regular image rendering
         let imageView: AnyView
 
         // Check for special profile image identifier
@@ -237,22 +261,49 @@ struct SDUIScreenRenderer {
                 ProfileImageView(authManager: context.authManager)
             )
         } else if let imageName = component.imageName {
-            imageView = AnyView(Image(imageName)
+            // Check if we should use SF Symbol
+            imageView = AnyView(Image(systemName: imageName)
                                 .resizable()
                                 .scaledToFit())
-        } else if let urlString = component.url, let url = URL(string: urlString) {
-            imageView = AnyView(AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFit()
-                case .failure(_):
-                    Image(systemName: "photo").resizable().scaledToFit()
-                case .empty:
-                    ProgressView()
-                @unknown default:
-                    EmptyView()
-                }
-            })
+        } else if let urlString = component.url {
+            // Process template variables in URL
+            let resolvedURL = SDUIDataResolver.resolveTemplateVariables(text: urlString, context: context)
+
+            // Check if we have a valid URL after resolving templates
+            if !resolvedURL.isEmpty, let url = URL(string: resolvedURL) {
+                imageView = AnyView(AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFit()
+                    case .failure(_):
+                        // Fall back to system icon if URL fails
+                        if let fallbackIcon = component.imageName {
+                            Image(systemName: fallbackIcon).resizable().scaledToFit()
+                        } else {
+                            Image(systemName: "photo").resizable().scaledToFit()
+                        }
+                    case .empty:
+                        // Show fallback icon while loading
+                        if let fallbackIcon = component.imageName {
+                            Image(systemName: fallbackIcon)
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(SDUIStyleResolver.resolveColor(component.foregroundColor, job: context.currentJob))
+                        } else {
+                            ProgressView()
+                        }
+                    @unknown default:
+                        EmptyView()
+                    }
+                })
+            } else if let fallbackIcon = component.imageName {
+                // If no valid URL, use the fallback icon
+                imageView = AnyView(Image(systemName: fallbackIcon)
+                                    .resizable()
+                                    .scaledToFit())
+            } else {
+                imageView = AnyView(EmptyView())
+            }
         } else {
             imageView = AnyView(EmptyView())
         }

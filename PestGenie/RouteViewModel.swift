@@ -498,7 +498,7 @@ final class RouteViewModel: ObservableObject {
             }
 
             // Calculate time to next job
-            if let nextJob = self.jobs.first(where: { $0.status == .pending }) {
+            if self.jobs.first(where: { $0.status == .pending }) != nil {
                 self.estimatedTimeToNextJob = TimeInterval.random(in: 300...1800) // 5-30 minutes
             }
         }

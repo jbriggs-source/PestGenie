@@ -167,6 +167,7 @@ extension QRCodeScannerManager: AVCaptureMetadataOutputObjectsDelegate {
 
         // Process the scanned code
         let result = QRScanResult(
+            id: UUID(),
             code: stringValue,
             type: QRCodeType.fromString(stringValue),
             rawType: readableObject.type.rawValue,
@@ -218,7 +219,7 @@ extension QRCodeScannerManager: AVCaptureMetadataOutputObjectsDelegate {
 
 /// Represents a QR scan result
 struct QRScanResult: Identifiable, Codable, Equatable {
-    let id = UUID()
+    let id: UUID
     let code: String
     let type: QRCodeType
     let rawType: String

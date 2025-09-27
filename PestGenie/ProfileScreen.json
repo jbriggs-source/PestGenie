@@ -6,85 +6,91 @@
     "children": [
       {
         "type": "vstack",
-        "spacing": 16,
+        "spacing": 12,
         "padding": 16,
         "children": [
           {
             "type": "vstack",
-            "spacing": 20,
-            "padding": 24,
+            "spacing": 16,
+            "padding": 20,
             "backgroundColor": "#FFFFFF",
             "cornerRadius": 20,
             "shadowColor": "#000000",
             "shadowRadius": 8,
             "shadowOffset": { "x": 0, "y": 2 },
-            "opacity": 0.08,
+            "shadowOpacity": 0.08,
             "children": [
               {
-                "type": "hstack",
-                "spacing": 20,
-                "alignment": "center",
+                "type": "vstack",
+                "spacing": 16,
                 "children": [
                   {
-                    "type": "image",
-                    "url": "{{user.profileImageURL}}",
-                    "imageName": "person.circle.fill",
-                    "foregroundColor": "#0066CC",
-                    "cornerRadius": 64,
-                    "width": 120,
-                    "height": 120
-                  },
-                  {
-                    "type": "vstack",
-                    "spacing": 8,
-                    "alignment": "leading",
+                    "type": "hstack",
+                    "spacing": 16,
+                    "alignment": "top",
                     "children": [
                       {
-                        "type": "text",
-                        "text": "{{user.name}}",
-                        "font": "title2",
-                        "fontWeight": "bold",
-                        "foregroundColor": "#1A1D29"
+                        "type": "image",
+                        "url": "{{user.profileImageURL}}",
+                        "imageName": "person.circle.fill",
+                        "foregroundColor": "#0066CC",
+                        "cornerRadius": 40,
+                        "width": 80,
+                        "height": 80
                       },
                       {
-                        "type": "text",
-                        "text": "{{user.email}}",
-                        "font": "bodyMedium",
-                        "foregroundColor": "#6B7280"
-                      },
-                      {
-                        "type": "hstack",
-                        "spacing": 10,
-                        "padding": 12,
-                        "backgroundColor": "#EEF7FF",
-                        "cornerRadius": 8,
+                        "type": "vstack",
+                        "spacing": 8,
+                        "alignment": "leading",
                         "children": [
                           {
-                            "type": "image",
-                            "imageName": "briefcase.fill",
-                            "foregroundColor": "#0066CC",
-                            "font": "caption2"
+                            "type": "text",
+                            "text": "{{user.name}}",
+                            "font": "title2",
+                            "fontWeight": "bold",
+                            "foregroundColor": "#1A1D29"
                           },
                           {
                             "type": "text",
-                            "text": "Senior Technician",
+                            "text": "{{user.email}}",
                             "font": "caption",
-                            "fontWeight": "semibold",
-                            "foregroundColor": "#0066CC"
-                          },
-                          {
-                            "type": "text",
-                            "text": "•",
-                            "foregroundColor": "#9CA3AF"
-                          },
-                          {
-                            "type": "text",
-                            "text": "5 Years",
-                            "font": "caption",
-                            "fontWeight": "medium",
                             "foregroundColor": "#6B7280"
                           }
                         ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "hstack",
+                    "spacing": 10,
+                    "padding": 12,
+                    "backgroundColor": "#EEF7FF",
+                    "cornerRadius": 8,
+                    "children": [
+                      {
+                        "type": "image",
+                        "imageName": "briefcase.fill",
+                        "foregroundColor": "#0066CC",
+                        "font": "caption",
+                        "width": 16,
+                        "height": 16
+                      },
+                      {
+                        "type": "text",
+                        "text": "Senior Technician",
+                        "font": "caption",
+                        "fontWeight": "semibold",
+                        "foregroundColor": "#0066CC"
+                      },
+                      {
+                        "type": "spacer"
+                      },
+                      {
+                        "type": "text",
+                        "text": "5 Years Experience",
+                        "font": "caption",
+                        "fontWeight": "medium",
+                        "foregroundColor": "#6B7280"
                       }
                     ]
                   }
@@ -170,14 +176,14 @@
           },
           {
             "type": "vstack",
-            "spacing": 16,
-            "padding": 20,
+            "spacing": 12,
+            "padding": 16,
             "backgroundColor": "#FFFFFF",
             "cornerRadius": 20,
             "shadowColor": "#000000",
             "shadowRadius": 8,
             "shadowOffset": { "x": 0, "y": 2 },
-            "opacity": 0.08,
+            "shadowOpacity": 0.08,
             "children": [
               {
                 "type": "text",
@@ -189,7 +195,7 @@
               {
                 "type": "grid",
                 "columns": 2,
-                "spacing": 12,
+                "spacing": 10,
                 "children": [
                   {
                     "type": "button",
@@ -198,20 +204,21 @@
                     "children": [
                       {
                         "type": "vstack",
-                        "spacing": 8,
-                        "padding": 18,
+                        "spacing": 6,
+                        "padding": 14,
                         "backgroundColor": "#EEF7FF",
                         "cornerRadius": 16,
                         "shadowColor": "#0066CC",
                         "shadowRadius": 3,
                         "shadowOffset": { "x": 0, "y": 1 },
-                        "opacity": 0.1,
+                        "shadowOpacity": 0.1,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "pencil.circle.fill",
                             "foregroundColor": "#0066CC",
-                            "font": "bodyMedium"
+                            "width": 24,
+                            "height": 24
                           },
                           {
                             "type": "text",
@@ -231,20 +238,21 @@
                     "children": [
                       {
                         "type": "vstack",
-                        "spacing": 8,
-                        "padding": 18,
+                        "spacing": 6,
+                        "padding": 14,
                         "backgroundColor": "#ECFDF5",
                         "cornerRadius": 16,
                         "shadowColor": "#10B981",
                         "shadowRadius": 3,
                         "shadowOffset": { "x": 0, "y": 1 },
-                        "opacity": 0.1,
+                        "shadowOpacity": 0.1,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "calendar",
                             "foregroundColor": "#10B981",
-                            "font": "bodyMedium"
+                            "width": 24,
+                            "height": 24
                           },
                           {
                             "type": "text",
@@ -264,20 +272,21 @@
                     "children": [
                       {
                         "type": "vstack",
-                        "spacing": 8,
-                        "padding": 18,
+                        "spacing": 6,
+                        "padding": 14,
                         "backgroundColor": "#FEF3C7",
                         "cornerRadius": 16,
                         "shadowColor": "#F59E0B",
                         "shadowRadius": 3,
                         "shadowOffset": { "x": 0, "y": 1 },
-                        "opacity": 0.1,
+                        "shadowOpacity": 0.1,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "clock.fill",
                             "foregroundColor": "#F59E0B",
-                            "font": "bodyMedium"
+                            "width": 24,
+                            "height": 24
                           },
                           {
                             "type": "text",
@@ -297,20 +306,21 @@
                     "children": [
                       {
                         "type": "vstack",
-                        "spacing": 8,
-                        "padding": 18,
+                        "spacing": 6,
+                        "padding": 14,
                         "backgroundColor": "#F3F4F6",
                         "cornerRadius": 16,
                         "shadowColor": "#6366F1",
                         "shadowRadius": 3,
                         "shadowOffset": { "x": 0, "y": 1 },
-                        "opacity": 0.1,
+                        "shadowOpacity": 0.1,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "rosette",
                             "foregroundColor": "#6366F1",
-                            "font": "bodyMedium"
+                            "width": 24,
+                            "height": 24
                           },
                           {
                             "type": "text",
@@ -330,18 +340,18 @@
           {
             "type": "vstack",
             "spacing": 0,
-            "padding": 0,
+            "padding": 16,
             "backgroundColor": "#FFFFFF",
             "cornerRadius": 20,
             "shadowColor": "#000000",
             "shadowRadius": 8,
             "shadowOffset": { "x": 0, "y": 2 },
-            "opacity": 0.08,
+            "shadowOpacity": 0.08,
             "children": [
               {
                 "type": "hstack",
                 "spacing": 12,
-                "padding": 20,
+                "padding": 0,
                 "children": [
                   {
                     "type": "text",
@@ -363,20 +373,21 @@
                   {
                     "type": "hstack",
                     "spacing": 12,
-                    "padding": 16,
+                    "padding": 12,
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 0,
-                        "padding": 6,
+                        "padding": 4,
                         "backgroundColor": "#FEE2E2",
-                        "cornerRadius": 8,
+                        "cornerRadius": 6,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "bell",
                             "foregroundColor": "#EF4444",
-                            "font": "bodyMedium"
+                            "width": 18,
+                            "height": 18
                           }
                         ]
                       },
@@ -394,7 +405,8 @@
                         "type": "image",
                         "imageName": "chevron.right",
                         "foregroundColor": "#9CA3AF",
-                        "font": "bodySmall"
+                        "width": 14,
+                        "height": 14
                       }
                     ]
                   }
@@ -412,20 +424,21 @@
                   {
                     "type": "hstack",
                     "spacing": 12,
-                    "padding": 16,
+                    "padding": 12,
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 0,
-                        "padding": 6,
+                        "padding": 4,
                         "backgroundColor": "#EEF7FF",
-                        "cornerRadius": 8,
+                        "cornerRadius": 6,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "lock.shield",
                             "foregroundColor": "#0066CC",
-                            "font": "bodyMedium"
+                            "width": 18,
+                            "height": 18
                           }
                         ]
                       },
@@ -443,7 +456,8 @@
                         "type": "image",
                         "imageName": "chevron.right",
                         "foregroundColor": "#9CA3AF",
-                        "font": "bodySmall"
+                        "width": 14,
+                        "height": 14
                       }
                     ]
                   }
@@ -461,20 +475,21 @@
                   {
                     "type": "hstack",
                     "spacing": 12,
-                    "padding": 16,
+                    "padding": 12,
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 0,
-                        "padding": 6,
+                        "padding": 4,
                         "backgroundColor": "#ECFDF5",
-                        "cornerRadius": 8,
+                        "cornerRadius": 6,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "questionmark.circle",
                             "foregroundColor": "#10B981",
-                            "font": "bodyMedium"
+                            "width": 18,
+                            "height": 18
                           }
                         ]
                       },
@@ -492,7 +507,8 @@
                         "type": "image",
                         "imageName": "chevron.right",
                         "foregroundColor": "#9CA3AF",
-                        "font": "bodySmall"
+                        "width": 14,
+                        "height": 14
                       }
                     ]
                   }
@@ -510,20 +526,21 @@
                   {
                     "type": "hstack",
                     "spacing": 12,
-                    "padding": 16,
+                    "padding": 12,
                     "children": [
                       {
                         "type": "vstack",
                         "spacing": 0,
-                        "padding": 6,
+                        "padding": 4,
                         "backgroundColor": "#F3F4F6",
-                        "cornerRadius": 8,
+                        "cornerRadius": 6,
                         "children": [
                           {
                             "type": "image",
                             "imageName": "info.circle",
                             "foregroundColor": "#6B7280",
-                            "font": "bodyMedium"
+                            "width": 18,
+                            "height": 18
                           }
                         ]
                       },
@@ -552,7 +569,8 @@
                             "type": "image",
                             "imageName": "chevron.right",
                             "foregroundColor": "#9CA3AF",
-                            "font": "bodySmall"
+                            "width": 14,
+                            "height": 14
                           }
                         ]
                       }
@@ -574,7 +592,7 @@
             "shadowColor": "#DC2626",
             "shadowRadius": 4,
             "shadowOffset": { "x": 0, "y": 2 },
-            "opacity": 0.12
+            "shadowOpacity": 0.12
           },
           {
             "type": "spacer",

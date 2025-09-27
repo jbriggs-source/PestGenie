@@ -5,7 +5,7 @@ import CoreLocation
 
 /// Represents a health tracking session for a specific job
 struct JobHealthSession: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let jobId: UUID
     let customerName: String
     let startTime: Date
@@ -79,7 +79,7 @@ struct JobHealthSession: Identifiable, Codable {
 
 /// Daily steps data for weekly statistics
 struct DailyStepsData: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let date: Date
     let steps: Int
 
@@ -96,7 +96,7 @@ struct DailyStepsData: Identifiable, Codable {
 
 /// Daily distance data for weekly statistics
 struct DailyDistanceData: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let date: Date
     let distanceMeters: Double
 
@@ -240,7 +240,7 @@ enum ActivityStatus {
 
 /// Health insights and recommendations
 struct HealthInsight: Identifiable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let description: String
     let recommendation: String
@@ -299,6 +299,7 @@ struct WeeklyHealthReport {
         // Step count insights
         if report.averageDailySteps > 10000 {
             insights.append(HealthInsight(
+                id: UUID(),
                 title: "Excellent Activity Level",
                 description: "You're averaging \(report.averageDailySteps) steps per day, well above the recommended 10,000 steps.",
                 recommendation: "Keep up the great work! This level of activity is excellent for cardiovascular health.",
@@ -307,6 +308,7 @@ struct WeeklyHealthReport {
             ))
         } else if report.averageDailySteps < 5000 {
             insights.append(HealthInsight(
+                id: UUID(),
                 title: "Low Activity Alert",
                 description: "Your daily average of \(report.averageDailySteps) steps is below recommended levels.",
                 recommendation: "Try to take short walks during breaks between jobs to increase daily activity.",
@@ -319,6 +321,7 @@ struct WeeklyHealthReport {
         let averageDailyMiles = (report.averageDailyDistance * 0.000621371) // Convert to miles
         if averageDailyMiles > 5.0 {
             insights.append(HealthInsight(
+                id: UUID(),
                 title: "High Mobility Work",
                 description: String(format: "You're walking an average of %.1f miles per day during jobs.", averageDailyMiles),
                 recommendation: "Ensure you're wearing comfortable, supportive footwear for long walking periods.",

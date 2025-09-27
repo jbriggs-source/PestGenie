@@ -135,26 +135,60 @@ struct SDUITextRenderer: SDUIComponentRenderer {
 
 struct SDUIButtonRenderer: SDUIComponentRenderer {
     static func render(component: SDUIComponent, context: SDUIContext) -> AnyView {
-        let labelStr = SDUIDataResolver.resolveLabel(component: component, context: context)
         let actionId = component.actionId
+        let isTransparentButton = component.backgroundColor?.lowercased() == "transparent"
 
-        let baseButton = Button(labelStr) {
-            if let id = actionId, let action = context.actions[id] {
-                action(context.currentJob)
+        // Check if button has custom children content
+        if let children = component.children, !children.isEmpty {
+            // Render button with custom content
+            let buttonContent = Button(action: {
+                if let id = actionId, let action = context.actions[id] {
+                    action(context.currentJob)
+                }
+            }) {
+                // Render children as button content
+                ForEach(children, id: \.id) { child in
+                    SDUIScreenRenderer.render(component: child, context: context)
+                }
             }
-        }
-        .buttonStyle(.bordered)
+            .buttonStyle(PlainButtonStyle()) // Use plain style for custom content
 
-        let buttonView: AnyView
-        if let fg = component.foregroundColor {
-            let color = SDUIStyleResolver.resolveColor(fg, job: context.currentJob)
-            buttonView = AnyView(baseButton.tint(color))
+            // For transparent buttons, apply minimal styling to avoid conflicts
+            if isTransparentButton {
+                // Apply only padding and spacing, skip background-related styling
+                var modifiedButton = AnyView(buttonContent)
+
+                if let padding = component.padding {
+                    modifiedButton = AnyView(modifiedButton.padding(padding))
+                }
+
+                return SDUIAnimationApplicator.apply(animation: component, to: modifiedButton)
+            } else {
+                let styledView = SDUIStyleApplicator.apply(styling: component, to: AnyView(buttonContent), job: context.currentJob)
+                return SDUIAnimationApplicator.apply(animation: component, to: styledView)
+            }
         } else {
-            buttonView = AnyView(baseButton)
-        }
+            // Original text-based button rendering
+            let labelStr = component.text ?? SDUIDataResolver.resolveLabel(component: component, context: context)
 
-        let styledView = SDUIStyleApplicator.apply(styling: component, to: buttonView, job: context.currentJob)
-        return SDUIAnimationApplicator.apply(animation: component, to: styledView)
+            let baseButton = Button(labelStr) {
+                if let id = actionId, let action = context.actions[id] {
+                    action(context.currentJob)
+                }
+            }
+            .buttonStyle(.bordered)
+
+            let buttonView: AnyView
+            if let fg = component.foregroundColor {
+                let color = SDUIStyleResolver.resolveColor(fg, job: context.currentJob)
+                buttonView = AnyView(baseButton.tint(color))
+            } else {
+                buttonView = AnyView(baseButton)
+            }
+
+            let styledView = SDUIStyleApplicator.apply(styling: component, to: buttonView, job: context.currentJob)
+            return SDUIAnimationApplicator.apply(animation: component, to: styledView)
+        }
     }
 }
 
@@ -806,7 +840,7 @@ struct DuplicateSDUIEquipmentRenderer: SDUIComponentRenderer {
             )
         }
 
-        let template = component.checklistTemplate
+        _ = component.checklistTemplate
 
         let inspectorView = AnyView(
             ErrorBoundaryView {
@@ -839,9 +873,9 @@ struct DuplicateSDUIEquipmentRenderer: SDUIComponentRenderer {
     }
 
     private static func renderEquipmentSelector(component: SDUIComponent, context: SDUIContext) -> AnyView {
-        let equipmentType = component.equipmentType
-        let allowMultiple = component.allowMultipleSelection ?? false
-        let showOnlyAvailable = component.showOnlyAvailable ?? true
+        _ = component.equipmentType
+        _ = component.allowMultipleSelection ?? false
+        _ = component.showOnlyAvailable ?? true
 
         let selectorView = AnyView(
             Text("Equipment Selector temporarily disabled")
@@ -1164,6 +1198,7 @@ struct DuplicateQRScannerInterface: View {
         .sheet(isPresented: $showingManualEntry) {
             ManualQREntryView { value in
                 let result = QRScanResult(
+                    id: UUID(),
                     code: value,
                     type: QRCodeType.fromString(value),
                     rawType: "manual",

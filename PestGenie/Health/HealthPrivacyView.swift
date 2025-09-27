@@ -165,7 +165,7 @@ struct PrivacyToggleRow: View {
 
             Toggle("", isOn: $isOn)
                 .labelsHidden()
-                .onChange(of: isOn) { _ in
+                .onChange(of: isOn) {
                     onChange()
                 }
         }

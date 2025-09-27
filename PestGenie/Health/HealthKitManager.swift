@@ -164,6 +164,7 @@ final class HealthKitManager: ObservableObject {
 
         // Create new session
         activeJobSession = JobHealthSession(
+            id: UUID(),
             jobId: job.id,
             customerName: job.customerName,
             startTime: Date(),
@@ -338,7 +339,7 @@ final class HealthKitManager: ObservableObject {
 
             collection.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
                 let steps = Int(statistics.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0)
-                let data = DailyStepsData(date: statistics.startDate, steps: steps)
+                let data = DailyStepsData(id: UUID(), date: statistics.startDate, steps: steps)
                 weeklyData.append(data)
             }
 
@@ -376,7 +377,7 @@ final class HealthKitManager: ObservableObject {
 
             collection.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
                 let distance = statistics.sumQuantity()?.doubleValue(for: HKUnit.meter()) ?? 0
-                let data = DailyDistanceData(date: statistics.startDate, distanceMeters: distance)
+                let data = DailyDistanceData(id: UUID(), date: statistics.startDate, distanceMeters: distance)
                 weeklyData.append(data)
             }
 

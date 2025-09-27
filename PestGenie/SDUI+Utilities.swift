@@ -8,7 +8,8 @@ struct SDUIDataResolver {
         if let key = component.key, let job = context.currentJob {
             return valueForKey(key: key, job: job) ?? ""
         } else if let text = component.text {
-            return text
+            // Check if the text contains template variables like {{user.email}}
+            return resolveTemplateVariables(text: text, context: context)
         }
         return ""
     }
@@ -59,6 +60,37 @@ struct SDUIDataResolver {
         default: return nil
         }
     }
+
+    /// Resolves template variables in text strings like {{user.email}}
+    static func resolveTemplateVariables(text: String, context: SDUIContext) -> String {
+        var resolvedText = text
+
+        // Find all template variables in the format {{variable}}
+        let pattern = "\\{\\{([^}]+)\\}\\}"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return text
+        }
+
+        let matches = regex.matches(in: text, range: NSRange(text.startIndex..., in: text))
+
+        // Process matches in reverse order to maintain string indices
+        for match in matches.reversed() {
+            guard let range = Range(match.range, in: text),
+                  let variableRange = Range(match.range(at: 1), in: text) else {
+                continue
+            }
+
+            let variable = String(text[variableRange])
+
+            // Look up the value from the RouteViewModel's text values
+            let value = context.routeViewModel.textFieldValues[variable] ?? ""
+
+            // Replace the template with the actual value
+            resolvedText.replaceSubrange(range, with: value)
+        }
+
+        return resolvedText
+    }
 }
 
 // MARK: - Style Resolution Utilities
@@ -68,15 +100,32 @@ struct SDUIStyleResolver {
     static func resolveFont(_ fontName: String?) -> Font {
         guard let name = fontName else { return .body }
         switch name.lowercased() {
+        // Standard SwiftUI fonts
         case "headline": return .headline
         case "subheadline": return .subheadline
         case "caption": return .caption
+        case "caption2": return .caption2
         case "footnote": return .footnote
         case "title": return .title
         case "title2": return .title2
         case "title3": return .title3
         case "largetitle": return .largeTitle
         case "callout": return .callout
+        case "body": return .body
+
+        // Custom semantic fonts for the design system
+        case "headlinelarge": return .title
+        case "headlinemedium": return .title2
+        case "headlinesmall": return .title3
+        case "bodylarge": return .body
+        case "bodymedium": return .callout
+        case "bodysmall": return .caption
+        case "captionemphasis": return .caption.bold()
+        case "displaylarge": return .largeTitle
+        case "displaysmall": return .title
+        case "titlemedium": return .title2
+        case "titlelarge": return .title
+
         default: return .body
         }
     }
@@ -116,7 +165,7 @@ struct SDUIStyleResolver {
         case "secondary": return .secondary
         case "primary": return .primary
         case "accent": return .accentColor
-        case "clear": return .clear
+        case "clear", "transparent": return .clear
         default:
             // Try to parse hex colors like #RRGGBB
             if lower.hasPrefix("#"), let hexColor = Color(hexString: lower) {
@@ -168,14 +217,17 @@ struct SDUIStyleApplicator {
             modified = AnyView(modified.padding(padding))
         }
 
-        // Background and corner radius
-        if let bgName = component.backgroundColor {
+        // Background and corner radius - skip if transparent
+        if let bgName = component.backgroundColor, bgName.lowercased() != "transparent" {
             let bgColor = SDUIStyleResolver.resolveColor(bgName, job: job)
-            if let radius = component.cornerRadius {
-                modified = AnyView(modified
-                    .background(RoundedRectangle(cornerRadius: radius).fill(bgColor)))
-            } else {
-                modified = AnyView(modified.background(bgColor))
+            // Only apply background if it's not clear/transparent
+            if bgColor != .clear {
+                if let radius = component.cornerRadius {
+                    modified = AnyView(modified
+                        .background(RoundedRectangle(cornerRadius: radius).fill(bgColor)))
+                } else {
+                    modified = AnyView(modified.background(bgColor))
+                }
             }
         }
 

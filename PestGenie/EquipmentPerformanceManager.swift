@@ -176,6 +176,7 @@ final class EquipmentPerformanceManager: ObservableObject {
         // Overdue maintenance check
         if let summary = summary, summary.hoursSinceLastMaintenance >= summary.maintenanceIntervalHours {
             recommendations.append(MaintenanceRecommendation(
+                id: UUID(),
                 type: .routine,
                 priority: .high,
                 description: "Routine maintenance is overdue",
@@ -186,6 +187,7 @@ final class EquipmentPerformanceManager: ObservableObject {
         // Efficiency degradation check
         if let efficiency = efficiency, efficiency.currentEfficiency < 0.8 {
             recommendations.append(MaintenanceRecommendation(
+                id: UUID(),
                 type: .corrective,
                 priority: .medium,
                 description: "Equipment efficiency has degraded to \(Int(efficiency.currentEfficiency * 100))%",
@@ -196,6 +198,7 @@ final class EquipmentPerformanceManager: ObservableObject {
         // High failure risk check
         if failureRisk == .high || failureRisk == .critical {
             recommendations.append(MaintenanceRecommendation(
+                id: UUID(),
                 type: .preventive,
                 priority: .high,
                 description: "High failure risk detected - preventive maintenance recommended",
@@ -516,6 +519,7 @@ final class EquipmentPerformanceManager: ObservableObject {
 
         while currentDate <= endDate {
             trends.append(PerformanceTrend(
+                id: UUID(),
                 date: currentDate,
                 efficiency: Double.random(in: 0.85...0.95),
                 usageHours: Double.random(in: 6...12),
@@ -733,7 +737,7 @@ struct EquipmentPerformanceSummary: Codable {
 
 /// Performance trend data point
 struct PerformanceTrend: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let date: Date
     let efficiency: Double
     let usageHours: Double
@@ -789,7 +793,7 @@ enum FailureRisk: String, CaseIterable, Codable {
 
 /// Maintenance recommendation
 struct MaintenanceRecommendation: Identifiable, Codable {
-    let id = UUID()
+    let id: UUID
     let type: MaintenanceType
     let priority: MaintenancePriority
     let description: String

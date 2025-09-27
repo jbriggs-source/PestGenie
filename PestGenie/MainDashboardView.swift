@@ -45,6 +45,9 @@ struct MainDashboardView: View {
     // Loading states
     @State private var isUpdatingProfile = false
 
+    // Job card expansion states
+    @State private var expandedJobIds: Set<String> = []
+
     let persistenceController = PersistenceController.shared
 
     var body: some View {
@@ -221,8 +224,16 @@ struct MainDashboardView: View {
             switch menuItem {
             case .dashboard:
                 homeDashboardView
+                    .onAppear {
+                        selectedMenuItem = nil
+                        selectedTab = .home
+                    }
             case .route:
                 routeView
+                    .onAppear {
+                        selectedMenuItem = nil
+                        selectedTab = .route
+                    }
             case .equipment:
                 equipmentView
             case .chemicals:
@@ -712,7 +723,7 @@ struct MainDashboardView: View {
     // MARK: - Route Management Components
 
     private var routeHeaderCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
                     Text("Today's Route")
@@ -768,7 +779,7 @@ struct MainDashboardView: View {
     }
 
     private var routeMetricsCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack {
                 Image(systemName: "speedometer")
                     .foregroundColor(.blue)
@@ -822,7 +833,7 @@ struct MainDashboardView: View {
     }
 
     private var emergencyAlertCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.red)
@@ -846,8 +857,9 @@ struct MainDashboardView: View {
                 Button("Respond") {
                     showingEmergencyAlert = true
                 }
-                .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
-                .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
+                .font(PestGenieDesignSystem.Typography.caption)
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
                 .background(Color.red)
                 .foregroundColor(.white)
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
@@ -862,57 +874,50 @@ struct MainDashboardView: View {
     }
 
     private var routeActionsCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             Text("Quick Actions")
                 .font(PestGenieDesignSystem.Typography.headlineSmall)
                 .fontWeight(.semibold)
                 .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: PestGenieDesignSystem.Spacing.sm) {
-                if !routeViewModel.isRouteStarted {
-                    routeActionButton(
-                        title: "Start Route",
-                        icon: "play.circle.fill",
-                        color: PestGenieDesignSystem.Colors.success
-                    ) {
-                        showingRouteStartView = true
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                    if !routeViewModel.isRouteStarted {
+                        compactRouteActionButton(
+                            title: "Start Route",
+                            icon: "play.circle.fill",
+                            color: PestGenieDesignSystem.Colors.success
+                        ) {
+                            showingRouteStartView = true
+                        }
+                    } else {
+                        compactRouteActionButton(
+                            title: "End Route",
+                            icon: "stop.circle.fill",
+                            color: PestGenieDesignSystem.Colors.error
+                        ) {
+                            routeViewModel.endRoute()
+                        }
                     }
-                } else {
-                    routeActionButton(
-                        title: "End Route",
-                        icon: "stop.circle.fill",
-                        color: PestGenieDesignSystem.Colors.error
+
+                    compactRouteActionButton(
+                        title: "Navigation",
+                        icon: "map.fill",
+                        color: .blue
                     ) {
-                        routeViewModel.endRoute()
+                        // Open navigation to next job
                     }
-                }
 
-                routeActionButton(
-                    title: "Navigation",
-                    icon: "map.fill",
-                    color: .blue
-                ) {
-                    // Open navigation to next job
-                }
+                    compactRouteActionButton(
+                        title: "Weather",
+                        icon: "cloud.sun.fill",
+                        color: .cyan
+                    ) {
+                        // Show weather details
+                    }
 
-                routeActionButton(
-                    title: "Weather",
-                    icon: "cloud.sun.fill",
-                    color: .cyan
-                ) {
-                    // Show weather details
                 }
-
-                routeActionButton(
-                    title: "Emergency",
-                    icon: "exclamationmark.triangle.fill",
-                    color: .red
-                ) {
-                    routeViewModel.loadEmergencyScenario()
-                }
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
             }
         }
         .pestGenieCard()
@@ -930,24 +935,52 @@ struct MainDashboardView: View {
                     .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
             .background(color.opacity(0.1))
             .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
         }
         .buttonStyle(PlainButtonStyle())
     }
 
+    private func compactRouteActionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(color)
+                    .frame(width: 16, height: 16)
+
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.labelSmall)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                    .fill(color.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                            .stroke(color.opacity(0.3), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
     private func routeMetricItem(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
             HStack {
                 Image(systemName: icon)
                     .foregroundColor(color)
-                    .font(.title3)
+                    .font(.system(size: 16))
                 Spacer()
             }
 
             Text(value)
-                .font(PestGenieDesignSystem.Typography.headlineSmall)
+                .font(PestGenieDesignSystem.Typography.titleSmall)
                 .fontWeight(.bold)
                 .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
 
@@ -955,13 +988,13 @@ struct MainDashboardView: View {
                 .font(PestGenieDesignSystem.Typography.caption)
                 .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
         }
-        .padding(PestGenieDesignSystem.Spacing.sm)
+        .padding(PestGenieDesignSystem.Spacing.xs)
         .background(PestGenieDesignSystem.Colors.surface)
         .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
     }
 
     private var jobListSection: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             HStack {
                 Text("Today's Jobs")
                     .font(PestGenieDesignSystem.Typography.headlineSmall)
@@ -975,8 +1008,10 @@ struct MainDashboardView: View {
                     .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
             }
 
-            ForEach(routeViewModel.jobs, id: \.id) { job in
-                jobCard(job)
+            LazyVStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                ForEach(routeViewModel.jobs, id: \.id) { job in
+                    compactJobCard(job)
+                }
             }
         }
         .pestGenieCard()
@@ -1079,6 +1114,189 @@ struct MainDashboardView: View {
         )
     }
 
+    private func compactJobCard(_ job: Job) -> some View {
+        let isExpanded = expandedJobIds.contains(job.id.uuidString)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            // Compact header (always visible)
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    if isExpanded {
+                        expandedJobIds.remove(job.id.uuidString)
+                    } else {
+                        expandedJobIds.insert(job.id.uuidString)
+                    }
+                }
+            }) {
+                HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                    // Expand/collapse chevron
+                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                        .frame(width: 16, height: 16)
+
+                    // Customer name and key info
+                    VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                        Text(job.customerName)
+                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .fontWeight(.semibold)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                            .lineLimit(1)
+
+                        Text(job.scheduledDate, style: .time)
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    }
+
+                    Spacer()
+
+                    // Status badge and quick actions
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        jobStatusBadge(job.status)
+
+                        if job.status == .pending {
+                            Button(action: {
+                                routeViewModel.start(job: job)
+                            }) {
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .frame(width: 24, height: 24)
+                                    .background(PestGenieDesignSystem.Colors.success)
+                                    .clipShape(Circle())
+                            }
+                        } else if job.status == .inProgress {
+                            Button(action: {
+                                let signature = "Demo Signature".data(using: .utf8) ?? Data()
+                                routeViewModel.complete(job: job, signature: signature)
+                            }) {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .frame(width: 24, height: 24)
+                                    .background(PestGenieDesignSystem.Colors.primary)
+                                    .clipShape(Circle())
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            // Expanded details (conditionally visible)
+            if isExpanded {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+                    Divider()
+                        .background(PestGenieDesignSystem.Colors.border)
+
+                    // Address
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                            .frame(width: 16)
+
+                        Text(job.address)
+                            .font(PestGenieDesignSystem.Typography.bodySmall)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+
+                        Spacer()
+
+                        Button("Navigate") {
+                            // Open navigation to this job
+                        }
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                        .padding(.vertical, PestGenieDesignSystem.Spacing.xxs)
+                        .background(Color.blue.opacity(0.15))
+                        .foregroundColor(.blue)
+                        .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+                    }
+
+                    // Notes (if any)
+                    if let notes = job.notes {
+                        HStack(alignment: .top, spacing: PestGenieDesignSystem.Spacing.xs) {
+                            Image(systemName: "note.text")
+                                .font(.system(size: 14))
+                                .foregroundColor(PestGenieDesignSystem.Colors.textTertiary)
+                                .frame(width: 16)
+
+                            Text(notes)
+                                .font(PestGenieDesignSystem.Typography.caption)
+                                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        }
+                    }
+
+                    // Pinned notes (if any)
+                    if let pinnedNotes = job.pinnedNotes {
+                        HStack(alignment: .top, spacing: PestGenieDesignSystem.Spacing.xs) {
+                            Image(systemName: "pin.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                                .frame(width: 16)
+
+                            Text(pinnedNotes)
+                                .font(PestGenieDesignSystem.Typography.caption)
+                                .foregroundColor(PestGenieDesignSystem.Colors.accent)
+                        }
+                    }
+
+                    // Action buttons
+                    HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                        if job.status == .pending {
+                            Button("Start Job") {
+                                routeViewModel.start(job: job)
+                            }
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                            .background(PestGenieDesignSystem.Colors.success)
+                            .foregroundColor(.white)
+                            .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+
+                            Button("Skip") {
+                                routeViewModel.skip(job: job)
+                            }
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                            .background(PestGenieDesignSystem.Colors.warning)
+                            .foregroundColor(.white)
+                            .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+                        } else if job.status == .inProgress {
+                            Button("Complete Job") {
+                                let signature = "Demo Signature".data(using: .utf8) ?? Data()
+                                routeViewModel.complete(job: job, signature: signature)
+                            }
+                            .font(PestGenieDesignSystem.Typography.caption)
+                            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                            .background(PestGenieDesignSystem.Colors.primary)
+                            .foregroundColor(.white)
+                            .cornerRadius(PestGenieDesignSystem.BorderRadius.xs)
+                        }
+
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+                .padding(.bottom, PestGenieDesignSystem.Spacing.sm)
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .top)),
+                    removal: .opacity.combined(with: .move(edge: .top))
+                ))
+            }
+        }
+        .background(job.status == .inProgress ? PestGenieDesignSystem.Colors.primary.opacity(0.05) : PestGenieDesignSystem.Colors.surface)
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .stroke(job.status == .inProgress ? PestGenieDesignSystem.Colors.primary.opacity(0.3) : PestGenieDesignSystem.Colors.border, lineWidth: 1)
+        )
+    }
+
     private func jobStatusBadge(_ status: JobStatus) -> some View {
         Text(status.displayName)
             .font(PestGenieDesignSystem.Typography.captionEmphasis)
@@ -1090,39 +1308,35 @@ struct MainDashboardView: View {
     }
 
     private var demoControlsCard: some View {
-        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
             Text("Demo Controls")
                 .font(PestGenieDesignSystem.Typography.headlineSmall)
                 .fontWeight(.semibold)
                 .foregroundColor(.blue)
 
-            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
-                Button("Load Demo Data") {
+            HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                Button("Load Demo") {
                     routeViewModel.loadDemoData()
                 }
+                .font(PestGenieDesignSystem.Typography.caption)
                 .frame(maxWidth: .infinity)
-                .padding()
+                .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
                 .background(Color.blue.opacity(0.1))
                 .foregroundColor(.blue)
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
 
-                Button("Start Demo Progression") {
+                Button("Progress") {
                     routeViewModel.progressDemoJobs()
                 }
+                .font(PestGenieDesignSystem.Typography.caption)
                 .frame(maxWidth: .infinity)
-                .padding()
+                .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
                 .background(Color.green.opacity(0.1))
                 .foregroundColor(.green)
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
 
-                Button("Emergency Scenario") {
-                    routeViewModel.loadEmergencyScenario()
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.red.opacity(0.1))
-                .foregroundColor(.red)
-                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
             }
         }
         .pestGenieCard()
@@ -1155,7 +1369,7 @@ struct MainDashboardView: View {
     private var routeView: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
+                VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
                     // Route Header with Status
                     routeHeaderCard
 
@@ -1180,7 +1394,7 @@ struct MainDashboardView: View {
                         demoControlsCard
                     }
                 }
-                .padding(PestGenieDesignSystem.Spacing.md)
+                .padding(PestGenieDesignSystem.Spacing.sm)
             }
             .navigationTitle("Route Management")
             .navigationBarTitleDisplayMode(.inline)
@@ -1198,63 +1412,1235 @@ struct MainDashboardView: View {
     }
 
     private var equipmentView: some View {
-        VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
-            Text("Equipment Center")
-                .font(PestGenieDesignSystem.Typography.displayMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-            Text("Equipment management and inspections")
-                .font(PestGenieDesignSystem.Typography.bodyLarge)
-                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+        NavigationView {
+            ScrollView {
+                VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
+                    // Header with Live Status
+                    equipmentHeaderCard
 
-            // Enhanced equipment content would go here
-            Spacer()
-        }
-        .padding(PestGenieDesignSystem.Spacing.md)
-    }
+                    // Key Metrics Dashboard
+                    equipmentMetricsGrid
 
-    private var chemicalView: some View {
-        VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
-            Text("Chemical Management")
-                .font(PestGenieDesignSystem.Typography.displayMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-            Text("Chemical inventory and safety management")
-                .font(PestGenieDesignSystem.Typography.bodyLarge)
-                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    // Smart Alerts Section
+                    smartAlertsSection
 
-            // Enhanced chemical content would go here
-            Spacer()
-        }
-        .padding(PestGenieDesignSystem.Spacing.md)
-    }
+                    // Equipment Fleet Overview
+                    equipmentFleetSection
 
-    private var profileView: some View {
-        Group {
-            if let screen = loadProfileScreen() {
-                let context = createProfileSDUIContext()
-                SDUIScreenRenderer.render(screen: screen, context: context)
-                    .onAppear {
-                        populateProfileData()
+                    // Quick Actions
+                    equipmentQuickActions
+
+                    // AI Insights Section
+                    aiInsightsSection
+                }
+                .padding()
+            }
+            .background(PestGenieDesignSystem.Colors.background)
+            .navigationTitle("Equipment Center")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        // Demo: Trigger equipment sync
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(PestGenieDesignSystem.Colors.primary)
                     }
-            } else {
-                fallbackProfileView
+                }
             }
         }
     }
 
-    private var fallbackProfileView: some View {
-        VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
-            Text("Profile & Settings")
-                .font(PestGenieDesignSystem.Typography.displayMedium)
-                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
-            Text("User profile and application settings")
-                .font(PestGenieDesignSystem.Typography.bodyLarge)
-                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+    // MARK: - Equipment Center Components
 
-            // Enhanced profile content would go here
-            Spacer()
+    private var equipmentHeaderCard: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("Fleet Status")
+                        .font(PestGenieDesignSystem.Typography.headlineLarge)
+                        .fontWeight(.bold)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 8, height: 8)
+                        Text("All Systems Operational")
+                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("42")
+                        .font(PestGenieDesignSystem.Typography.displaySmall)
+                        .fontWeight(.bold)
+                        .foregroundColor(PestGenieDesignSystem.Colors.primary)
+                    Text("Active Units")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+
+            // Performance Bar
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                HStack {
+                    Text("Fleet Efficiency")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Spacer()
+                    Text("94%")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                }
+
+                ProgressView(value: 0.94)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                    .scaleEffect(x: 1, y: 2, anchor: .center)
+            }
         }
-        .padding(PestGenieDesignSystem.Spacing.md)
+        .pestGenieCard()
     }
+
+    private var equipmentMetricsGrid: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.md) {
+            equipmentMetricCard(
+                title: "Utilization Rate",
+                value: "87%",
+                change: "+5%",
+                changePositive: true,
+                icon: "chart.bar.fill",
+                color: .blue
+            )
+
+            equipmentMetricCard(
+                title: "Maintenance Cost",
+                value: "$2,340",
+                change: "-12%",
+                changePositive: true,
+                icon: "wrench.and.screwdriver.fill",
+                color: .orange
+            )
+
+            equipmentMetricCard(
+                title: "Avg Response Time",
+                value: "4.2 min",
+                change: "-0.8 min",
+                changePositive: true,
+                icon: "clock.fill",
+                color: .green
+            )
+
+            equipmentMetricCard(
+                title: "Predictive Savings",
+                value: "$8,750",
+                change: "+18%",
+                changePositive: true,
+                icon: "brain.head.profile",
+                color: .purple
+            )
+        }
+    }
+
+    private func equipmentMetricCard(title: String, value: String, change: String, changePositive: Bool, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
+
+                Spacer()
+
+                HStack(spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Image(systemName: changePositive ? "arrow.up.right" : "arrow.down.right")
+                        .font(.caption)
+                        .foregroundColor(changePositive ? .green : .red)
+                    Text(change)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(changePositive ? .green : .red)
+                        .fontWeight(.medium)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                Text(value)
+                    .font(PestGenieDesignSystem.Typography.headlineLarge)
+                    .fontWeight(.bold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    .lineLimit(1)
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private var smartAlertsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Text("Smart Alerts")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Button("View All") {
+                    // Demo: Show all alerts
+                }
+                .font(PestGenieDesignSystem.Typography.bodySmall)
+                .foregroundColor(PestGenieDesignSystem.Colors.primary)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                smartAlertItem(
+                    icon: "exclamationmark.triangle.fill",
+                    title: "Calibration Due",
+                    subtitle: "Moisture Meter #MT-2041 requires calibration",
+                    priority: .medium,
+                    action: "Schedule"
+                )
+
+                smartAlertItem(
+                    icon: "gear.badge.checkmark",
+                    title: "Maintenance Complete",
+                    subtitle: "Backpack Sprayer #BS-1025 serviced successfully",
+                    priority: .low,
+                    action: "Review"
+                )
+
+                smartAlertItem(
+                    icon: "brain.head.profile",
+                    title: "AI Recommendation",
+                    subtitle: "Optimize sprayer routes for 15% efficiency gain",
+                    priority: .high,
+                    action: "Apply"
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func smartAlertItem(icon: String, title: String, subtitle: String, priority: EquipmentAlertPriority, action: String) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(priority.color)
+                .frame(width: 24, height: 24)
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.bodyMedium)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Text(subtitle)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            Button(action) {
+                // Demo: Handle alert action
+            }
+            .font(PestGenieDesignSystem.Typography.bodySmall)
+            .fontWeight(.medium)
+            .foregroundColor(PestGenieDesignSystem.Colors.primary)
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+            .background(PestGenieDesignSystem.Colors.primary.opacity(0.1))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+    }
+
+    private var equipmentFleetSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Text("Equipment Fleet")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Button(action: {
+                    // Demo: Show equipment scanner
+                }) {
+                    Image(systemName: "qrcode.viewfinder")
+                        .font(.title3)
+                        .foregroundColor(PestGenieDesignSystem.Colors.primary)
+                }
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.sm) {
+                equipmentFleetCard(
+                    name: "Backpack Sprayer",
+                    model: "BS-1025",
+                    status: .operational,
+                    efficiency: 0.94,
+                    lastMaintenance: "3 days ago"
+                )
+
+                equipmentFleetCard(
+                    name: "Tank Sprayer",
+                    model: "TS-2041",
+                    status: .operational,
+                    efficiency: 0.87,
+                    lastMaintenance: "1 week ago"
+                )
+
+                equipmentFleetCard(
+                    name: "Moisture Meter",
+                    model: "MM-3012",
+                    status: .needsAttention,
+                    efficiency: 0.76,
+                    lastMaintenance: "2 weeks ago"
+                )
+
+                equipmentFleetCard(
+                    name: "Fogger Unit",
+                    model: "FG-4033",
+                    status: .operational,
+                    efficiency: 0.91,
+                    lastMaintenance: "5 days ago"
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func equipmentFleetCard(name: String, model: String, status: EquipmentDemoStatus, efficiency: Double, lastMaintenance: String) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                    Text(name)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                        .lineLimit(1)
+
+                    Text(model)
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+
+                Spacer()
+
+                Circle()
+                    .fill(status.color)
+                    .frame(width: 12, height: 12)
+            }
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                HStack {
+                    Text("Efficiency")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Spacer()
+                    Text("\(Int(efficiency * 100))%")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(efficiency > 0.85 ? .green : .orange)
+                }
+
+                ProgressView(value: efficiency)
+                    .progressViewStyle(LinearProgressViewStyle(tint: efficiency > 0.85 ? .green : .orange))
+                    .scaleEffect(x: 1, y: 1.5, anchor: .center)
+            }
+
+            Text("Last service: \(lastMaintenance)")
+                .font(PestGenieDesignSystem.Typography.caption)
+                .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(PestGenieDesignSystem.Colors.cardBackground)
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.md)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.md)
+                .stroke(status == .needsAttention ? Color.orange.opacity(0.3) : Color.clear, lineWidth: 1)
+        )
+    }
+
+    private var equipmentQuickActions: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            Text("Quick Actions")
+                .font(PestGenieDesignSystem.Typography.headlineMedium)
+                .fontWeight(.semibold)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: PestGenieDesignSystem.Spacing.sm) {
+                equipmentQuickActionButton(
+                    icon: "qrcode.viewfinder",
+                    title: "Scan QR",
+                    color: .blue
+                ) {
+                    // Demo: QR Scanner
+                }
+
+                equipmentQuickActionButton(
+                    icon: "wrench.and.screwdriver",
+                    title: "Maintenance",
+                    color: .orange
+                ) {
+                    // Demo: Maintenance log
+                }
+
+                equipmentQuickActionButton(
+                    icon: "chart.line.uptrend.xyaxis",
+                    title: "Analytics",
+                    color: .purple
+                ) {
+                    // Demo: Analytics view
+                }
+
+                equipmentQuickActionButton(
+                    icon: "calendar.badge.plus",
+                    title: "Schedule",
+                    color: .green
+                ) {
+                    // Demo: Scheduling
+                }
+
+                equipmentQuickActionButton(
+                    icon: "doc.text.magnifyingglass",
+                    title: "Inspect",
+                    color: .indigo
+                ) {
+                    // Demo: Inspection form
+                }
+
+                equipmentQuickActionButton(
+                    icon: "gearshape.arrow.triangle.2.circlepath",
+                    title: "Calibrate",
+                    color: .teal
+                ) {
+                    // Demo: Calibration
+                }
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func equipmentQuickActionButton(icon: String, title: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
+                    .frame(width: 32, height: 32)
+
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .background(color.opacity(0.05))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.md)
+            .overlay(
+                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.md)
+                    .stroke(color.opacity(0.2), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private var aiInsightsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "brain.head.profile")
+                    .font(.title3)
+                    .foregroundColor(.purple)
+
+                Text("AI Insights")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("Powered by ML")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(.purple)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.purple.opacity(0.1))
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                aiInsightCard(
+                    icon: "chart.line.uptrend.xyaxis",
+                    title: "Optimization Opportunity",
+                    description: "Reroute sprayer assignments to reduce travel time by 23 minutes daily",
+                    impact: "$340/month savings",
+                    confidence: 94
+                )
+
+                aiInsightCard(
+                    icon: "calendar.badge.clock",
+                    title: "Predictive Maintenance",
+                    description: "Tank Sprayer TS-2041 shows early wear patterns. Schedule maintenance in 2 weeks",
+                    impact: "Prevent $850 repair",
+                    confidence: 87
+                )
+
+                aiInsightCard(
+                    icon: "person.2.badge.gearshape",
+                    title: "Training Recommendation",
+                    description: "Technician efficiency could improve 18% with calibration refresher training",
+                    impact: "15 hrs/month saved",
+                    confidence: 91
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func aiInsightCard(icon: String, title: String, description: String, impact: String, confidence: Int) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack(alignment: .top, spacing: PestGenieDesignSystem.Spacing.sm) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(.purple)
+                    .frame(width: 24, height: 24)
+
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text(title)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Text(description)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Impact")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Text(impact)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Confidence")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Text("\(confidence)%")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.medium)
+                        .foregroundColor(confidence > 85 ? .green : .orange)
+                }
+            }
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(Color.purple.opacity(0.03))
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .stroke(Color.purple.opacity(0.15), lineWidth: 1)
+        )
+    }
+
+    private var chemicalView: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
+                    // Safety Status Header
+                    chemicalSafetyHeader
+
+                    // Critical Safety Alerts
+                    safetyAlertsSection
+
+                    // Technician's Chemical Assignments
+                    technicianChemicalsSection
+
+                    // Environmental Intelligence
+                    environmentalIntelligenceSection
+
+                    // Regulatory Compliance
+                    regulatoryComplianceSection
+
+                    // Smart Insights
+                    chemicalInsightsSection
+
+                    // Quick Actions
+                    chemicalQuickActions
+                }
+                .padding()
+            }
+            .background(PestGenieDesignSystem.Colors.background)
+            .navigationTitle("Chemical Center")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        // Demo: Emergency protocols
+                    }) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Chemical Center Components
+
+    private var chemicalSafetyHeader: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("Safety Status")
+                        .font(PestGenieDesignSystem.Typography.headlineLarge)
+                        .fontWeight(.bold)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    HStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                        Image(systemName: "shield.checkered.fill")
+                            .foregroundColor(.green)
+                            .font(.caption)
+                        Text("All EPA Protocols Active")
+                            .font(PestGenieDesignSystem.Typography.bodyMedium)
+                            .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text("127")
+                        .font(PestGenieDesignSystem.Typography.displaySmall)
+                        .fontWeight(.bold)
+                        .foregroundColor(.orange)
+                    Text("Chemicals Tracked")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                }
+            }
+
+            // Risk Assessment Bar
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                HStack {
+                    Text("Overall Risk Level")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Spacer()
+                    Text("Low Risk")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                }
+
+                ProgressView(value: 0.23)
+                    .progressViewStyle(LinearProgressViewStyle(tint: .green))
+                    .scaleEffect(x: 1, y: 2, anchor: .center)
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private var safetyAlertsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.title3)
+                    .foregroundColor(.red)
+
+                Text("Critical Safety Alerts")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("2 Active")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(.red)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                chemicalSafetyAlert(
+                    icon: "clock.fill",
+                    title: "Diquat Dibromide - Re-entry Restriction",
+                    subtitle: "48-hour re-entry period active at Johnson Property until 3:30 PM",
+                    severity: .high,
+                    action: "View Details"
+                )
+
+                chemicalSafetyAlert(
+                    icon: "calendar.badge.exclamationmark",
+                    title: "Carbaryl 50WP Expiring Soon",
+                    subtitle: "Batch #CB-2024-089 expires in 12 days. Schedule disposal.",
+                    severity: .medium,
+                    action: "Schedule"
+                )
+
+                chemicalSafetyAlert(
+                    icon: "checkmark.shield.fill",
+                    title: "PPE Compliance Verified",
+                    subtitle: "All Category I chemicals have proper protective equipment assigned",
+                    severity: .low,
+                    action: "Review"
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func chemicalSafetyAlert(icon: String, title: String, subtitle: String, severity: ChemicalAlertSeverity, action: String) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(severity.color)
+                .frame(width: 24, height: 24)
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xxs) {
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.bodyMedium)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Text(subtitle)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            Button(action) {
+                // Demo: Handle safety alert action
+            }
+            .font(PestGenieDesignSystem.Typography.bodySmall)
+            .fontWeight(.medium)
+            .foregroundColor(severity.color)
+            .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+            .background(severity.color.opacity(0.1))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+    }
+
+    private var technicianChemicalsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Text("My Chemicals")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Button("View All") {
+                    // Demo: Show full chemical list
+                }
+                .font(PestGenieDesignSystem.Typography.bodySmall)
+                .foregroundColor(PestGenieDesignSystem.Colors.primary)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                technicianChemicalRow(
+                    name: "Termidor SC",
+                    activeIngredient: "Fipronil 9.1%",
+                    quantity: "2.5 gal",
+                    signalWord: .warning,
+                    needsAttention: false
+                )
+
+                technicianChemicalRow(
+                    name: "Premise 2",
+                    activeIngredient: "Imidacloprid 21.4%",
+                    quantity: "1.2 gal",
+                    signalWord: .caution,
+                    needsAttention: false
+                )
+
+                technicianChemicalRow(
+                    name: "Diquat Dibromide",
+                    activeIngredient: "Diquat 37.3%",
+                    quantity: "0.8 gal",
+                    signalWord: .danger,
+                    needsAttention: true
+                )
+
+                technicianChemicalRow(
+                    name: "Roundup Pro",
+                    activeIngredient: "Glyphosate 50.2%",
+                    quantity: "3.0 gal",
+                    signalWord: .caution,
+                    needsAttention: false
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func technicianChemicalRow(name: String, activeIngredient: String, quantity: String, signalWord: SignalWordDemo, needsAttention: Bool) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            // Signal word indicator
+            Rectangle()
+                .fill(signalWord.color)
+                .frame(width: 4, height: 44)
+                .cornerRadius(2)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(name)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    if needsAttention {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+
+                    Spacer()
+
+                    Text(quantity)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                }
+
+                Text(activeIngredient)
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+            }
+
+            Button(action: {
+                // Demo: Show chemical details
+            }) {
+                Image(systemName: "info.circle")
+                    .font(.title3)
+                    .foregroundColor(PestGenieDesignSystem.Colors.primary)
+            }
+        }
+        .padding(.vertical, PestGenieDesignSystem.Spacing.xs)
+    }
+
+    private var environmentalIntelligenceSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "cloud.sun.rain.fill")
+                    .font(.title3)
+                    .foregroundColor(.blue)
+
+                Text("Environmental Intelligence")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("Live Data")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(.blue)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: PestGenieDesignSystem.Spacing.sm) {
+                environmentalMetricCard(
+                    title: "Wind Speed",
+                    value: "3.2 mph",
+                    status: "Safe for Application",
+                    statusColor: .green,
+                    icon: "wind"
+                )
+
+                environmentalMetricCard(
+                    title: "Temperature",
+                    value: "72°F",
+                    status: "Optimal Range",
+                    statusColor: .green,
+                    icon: "thermometer.medium"
+                )
+
+                environmentalMetricCard(
+                    title: "Humidity",
+                    value: "68%",
+                    status: "Good Conditions",
+                    statusColor: .green,
+                    icon: "humidity.fill"
+                )
+
+                environmentalMetricCard(
+                    title: "Drift Risk",
+                    value: "Low",
+                    status: "Safe Buffer Zones",
+                    statusColor: .green,
+                    icon: "location.north.circle.fill"
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func environmentalMetricCard(title: String, value: String, status: String, statusColor: Color, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(.blue)
+
+                Spacer()
+
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 8, height: 8)
+            }
+
+            VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+
+                Text(value)
+                    .font(PestGenieDesignSystem.Typography.headlineSmall)
+                    .fontWeight(.bold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Text(status)
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(statusColor)
+                    .fontWeight(.medium)
+            }
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(Color.blue.opacity(0.02))
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .stroke(Color.blue.opacity(0.15), lineWidth: 1)
+        )
+    }
+
+    private var regulatoryComplianceSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.title3)
+                    .foregroundColor(.purple)
+
+                Text("Regulatory Compliance")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("EPA Verified")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(.purple)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.purple.opacity(0.1))
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                complianceStatusRow(
+                    title: "EPA Registration Status",
+                    value: "127/127 Verified",
+                    status: .compliant,
+                    icon: "checkmark.circle.fill"
+                )
+
+                complianceStatusRow(
+                    title: "Label Compliance Check",
+                    value: "All Current",
+                    status: .compliant,
+                    icon: "doc.text.magnifyingglass"
+                )
+
+                complianceStatusRow(
+                    title: "Re-entry Intervals",
+                    value: "2 Active Timers",
+                    status: .monitoring,
+                    icon: "timer"
+                )
+
+                complianceStatusRow(
+                    title: "PHI Tracking",
+                    value: "5 Sites Monitored",
+                    status: .monitoring,
+                    icon: "calendar.badge.clock"
+                )
+
+                complianceStatusRow(
+                    title: "Restricted Use Permits",
+                    value: "Valid Until 12/2024",
+                    status: .compliant,
+                    icon: "key.fill"
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func complianceStatusRow(title: String, value: String, status: ChemicalComplianceStatus, icon: String) -> some View {
+        HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(status.color)
+                .frame(width: 24, height: 24)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.bodyMedium)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Text(value)
+                    .font(PestGenieDesignSystem.Typography.bodySmall)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+            }
+
+            Spacer()
+
+            Text(status.displayText)
+                .font(PestGenieDesignSystem.Typography.caption)
+                .fontWeight(.medium)
+                .foregroundColor(status.color)
+                .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                .padding(.vertical, 2)
+                .background(status.color.opacity(0.1))
+                .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        }
+        .padding(.vertical, 2)
+    }
+
+    private var chemicalInsightsSection: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            HStack {
+                Image(systemName: "brain.head.profile")
+                    .font(.title3)
+                    .foregroundColor(.indigo)
+
+                Text("Smart Chemical Insights")
+                    .font(PestGenieDesignSystem.Typography.headlineMedium)
+                    .fontWeight(.semibold)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                Spacer()
+
+                Text("AI Powered")
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .foregroundColor(.indigo)
+                    .padding(.horizontal, PestGenieDesignSystem.Spacing.xs)
+                    .padding(.vertical, 2)
+                    .background(Color.indigo.opacity(0.1))
+                    .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+            }
+
+            VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
+                chemicalInsightCard(
+                    icon: "chart.line.downtrend.xyaxis",
+                    title: "Resistance Management Alert",
+                    description: "Rotate to different mode of action for aphid control. Current Group 4A usage: 73%",
+                    impact: "Prevent resistance",
+                    confidence: 92
+                )
+
+                chemicalInsightCard(
+                    icon: "dollarsign.circle.fill",
+                    title: "Cost Optimization",
+                    description: "Switch to generic formulation for 2,4-D applications to save $340/month",
+                    impact: "$4,080/year savings",
+                    confidence: 88
+                )
+
+                chemicalInsightCard(
+                    icon: "leaf.circle.fill",
+                    title: "Environmental Impact",
+                    description: "Reduce neonicotinoid usage near pollinator habitats by 40% with targeted timing",
+                    impact: "Protect beneficial insects",
+                    confidence: 95
+                )
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func chemicalInsightCard(icon: String, title: String, description: String, impact: String, confidence: Int) -> some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.sm) {
+            HStack(alignment: .top, spacing: PestGenieDesignSystem.Spacing.sm) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(.indigo)
+                    .frame(width: 24, height: 24)
+
+                VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
+                    Text(title)
+                        .font(PestGenieDesignSystem.Typography.bodyMedium)
+                        .fontWeight(.medium)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+                    Text(description)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Impact")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Text(impact)
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Confidence")
+                        .font(PestGenieDesignSystem.Typography.caption)
+                        .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
+                    Text("\(confidence)%")
+                        .font(PestGenieDesignSystem.Typography.bodySmall)
+                        .fontWeight(.medium)
+                        .foregroundColor(confidence > 85 ? .green : .orange)
+                }
+            }
+        }
+        .padding(PestGenieDesignSystem.Spacing.sm)
+        .background(Color.indigo.opacity(0.03))
+        .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
+        .overlay(
+            RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.sm)
+                .stroke(Color.indigo.opacity(0.15), lineWidth: 1)
+        )
+    }
+
+    private var chemicalQuickActions: some View {
+        VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
+            Text("Quick Actions")
+                .font(PestGenieDesignSystem.Typography.headlineMedium)
+                .fontWeight(.semibold)
+                .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: PestGenieDesignSystem.Spacing.sm) {
+                chemicalQuickActionButton(
+                    icon: "barcode.viewfinder",
+                    title: "Scan Label",
+                    color: .blue
+                ) {
+                    // Demo: Label scanner
+                }
+
+                chemicalQuickActionButton(
+                    icon: "exclamationmark.triangle.fill",
+                    title: "Safety Check",
+                    color: .red
+                ) {
+                    // Demo: Safety verification
+                }
+
+                chemicalQuickActionButton(
+                    icon: "doc.text.below.ecg",
+                    title: "SDS Lookup",
+                    color: .purple
+                ) {
+                    // Demo: Safety data sheets
+                }
+
+                chemicalQuickActionButton(
+                    icon: "drop.circle.fill",
+                    title: "Mix Calculator",
+                    color: .cyan
+                ) {
+                    // Demo: Mixing calculator
+                }
+
+                chemicalQuickActionButton(
+                    icon: "calendar.badge.clock",
+                    title: "PHI Tracker",
+                    color: .green
+                ) {
+                    // Demo: Pre-harvest intervals
+                }
+
+                chemicalQuickActionButton(
+                    icon: "person.badge.shield.checkmark",
+                    title: "PPE Guide",
+                    color: .orange
+                ) {
+                    // Demo: PPE requirements
+                }
+            }
+        }
+        .pestGenieCard()
+    }
+
+    private func chemicalQuickActionButton(icon: String, title: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: PestGenieDesignSystem.Spacing.xs) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundColor(color)
+                    .frame(width: 32, height: 32)
+
+                Text(title)
+                    .font(PestGenieDesignSystem.Typography.caption)
+                    .fontWeight(.medium)
+                    .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, PestGenieDesignSystem.Spacing.md)
+            .background(color.opacity(0.05))
+            .cornerRadius(PestGenieDesignSystem.BorderRadius.md)
+            .overlay(
+                RoundedRectangle(cornerRadius: PestGenieDesignSystem.BorderRadius.md)
+                    .stroke(color.opacity(0.2), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private var profileView: some View {
+        ProfileView()
+            .environmentObject(routeViewModel)
+    }
+
 
     // MARK: - Bottom Navigation
 
@@ -1269,6 +2655,7 @@ struct MainDashboardView: View {
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             selectedTab = tab
+                            selectedMenuItem = nil
                         }
                     }) {
                         VStack(spacing: PestGenieDesignSystem.Components.Navigation.BottomTab.spacing) {
@@ -1552,20 +2939,6 @@ struct MainDashboardView: View {
         }
     }
 
-    private func loadProfileScreen() -> SDUIScreen? {
-        guard let url = Bundle.main.url(forResource: "ProfileScreen", withExtension: "json"),
-              let data = try? Data(contentsOf: url) else {
-            print("Failed to load ProfileScreen.json")
-            return nil
-        }
-
-        do {
-            return try JSONDecoder().decode(SDUIScreen.self, from: data)
-        } catch {
-            print("Failed to decode ProfileScreen.json: \(error)")
-            return nil
-        }
-    }
 
     private func createSDUIContext() -> SDUIContext {
         let actions: [String: (Job?) -> Void] = [
@@ -1611,49 +2984,6 @@ struct MainDashboardView: View {
         )
     }
 
-    private func createProfileSDUIContext() -> SDUIContext {
-        let profileActions: [String: (Job?) -> Void] = [
-            "edit_profile": { _ in
-                self.showProfileEditSheet()
-            },
-            "account_settings": { _ in
-                self.selectedMenuItem = .settingsPreferences
-            },
-            "security_settings": { _ in
-                self.showSecuritySettings()
-            },
-            "privacy_settings": { _ in
-                self.showPrivacySettings()
-            },
-            "data_export": { _ in
-                self.showDataExportSheet()
-            },
-            "notification_preferences": { _ in
-                self.showNotificationSettings()
-            },
-            "offline_data": { _ in
-                self.showOfflineDataManagement()
-            },
-            "help_support": { _ in
-                self.selectedMenuItem = .helpSupport
-            },
-            "sdui_demo": { _ in
-                self.showSDUIDemo()
-            },
-            "sign_out": { _ in
-                self.handleSignOut()
-            }
-        ]
-
-        return SDUIContext(
-            jobs: routeViewModel.jobs,
-            routeViewModel: routeViewModel,
-            actions: profileActions,
-            currentJob: nil,
-            persistenceController: persistenceController,
-            authManager: authManager
-        )
-    }
 
     private func setupInitialData() {
         // Set up UserProfileManager with AuthenticationManager
@@ -2031,6 +3361,88 @@ enum NavigationTab: String, CaseIterable {
         case .equipment: return PestGenieDesignSystem.Colors.primary
         case .chemicals: return PestGenieDesignSystem.Colors.warning
         case .profile: return PestGenieDesignSystem.Colors.secondary
+        }
+    }
+}
+
+// MARK: - Equipment Demo Supporting Types
+
+enum EquipmentAlertPriority {
+    case low, medium, high
+
+    var color: Color {
+        switch self {
+        case .low: return .green
+        case .medium: return .orange
+        case .high: return .red
+        }
+    }
+}
+
+enum EquipmentDemoStatus {
+    case operational, needsAttention, offline
+
+    var color: Color {
+        switch self {
+        case .operational: return .green
+        case .needsAttention: return .orange
+        case .offline: return .red
+        }
+    }
+}
+
+enum ChemicalAlertSeverity {
+    case low, medium, high
+
+    var color: Color {
+        switch self {
+        case .low: return .green
+        case .medium: return .orange
+        case .high: return .red
+        }
+    }
+}
+
+enum ChemicalRiskLevel {
+    case low, medium, high
+
+    var color: Color {
+        switch self {
+        case .low: return .green
+        case .medium: return .orange
+        case .high: return .red
+        }
+    }
+}
+
+enum ChemicalComplianceStatus {
+    case compliant, monitoring, warning
+
+    var color: Color {
+        switch self {
+        case .compliant: return .green
+        case .monitoring: return .blue
+        case .warning: return .orange
+        }
+    }
+
+    var displayText: String {
+        switch self {
+        case .compliant: return "Compliant"
+        case .monitoring: return "Monitoring"
+        case .warning: return "Warning"
+        }
+    }
+}
+
+enum SignalWordDemo {
+    case danger, warning, caution
+
+    var color: Color {
+        switch self {
+        case .danger: return .red
+        case .warning: return .orange
+        case .caution: return .yellow
         }
     }
 }

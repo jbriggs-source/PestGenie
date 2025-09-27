@@ -114,3 +114,8 @@ Config-Production.xcconfig
 secrets.plist
 api-keys.plist
 firebase-config.json
+
+# Xcode build artifacts that cause GUID corruption
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+Package.resolved
+.swiftpm/
