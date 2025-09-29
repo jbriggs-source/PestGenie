@@ -5,14 +5,14 @@ import SwiftUI
 /// dismissed. This component is used both for skipping and reordering jobs.
 struct ReasonPickerView: View {
     @Binding var reason: ReasonCode?
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(ReasonCode.allCases) { code in
                     Button(code.rawValue) {
                         reason = code
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

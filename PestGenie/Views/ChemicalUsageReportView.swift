@@ -21,7 +21,7 @@ struct ChemicalUsageReportView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     // Timeframe Selector

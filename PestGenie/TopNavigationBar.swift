@@ -75,7 +75,7 @@ struct TopNavigationBar: View {
                         .fill(PestGenieDesignSystem.Colors.surface)
                 )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel("Menu")
         .accessibilityHint("Open navigation menu")
     }
@@ -155,7 +155,7 @@ struct TopNavigationBar: View {
                     .fill(PestGenieDesignSystem.Colors.surface)
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel("Weather status: \(weatherAccessibilityLabel)")
         .accessibilityHint("Tap to view detailed weather information")
     }
@@ -184,7 +184,7 @@ struct TopNavigationBar: View {
             }
             .frame(width: 28, height: 28)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel("Sync status: \(syncAccessibilityLabel)")
         .accessibilityHint("Tap to sync data")
     }
@@ -219,7 +219,7 @@ struct TopNavigationBar: View {
                     .fill(PestGenieDesignSystem.Colors.surface.opacity(0.8))
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel("Notifications: \(notificationManager.unreadCount) unread")
         .accessibilityHint("Tap to view notifications")
     }
@@ -316,7 +316,7 @@ struct TopNavigationBar: View {
     // MARK: - Sheet Views
 
     private var weatherDetailsSheet: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Current weather
@@ -345,7 +345,7 @@ struct TopNavigationBar: View {
     }
 
     private var notificationsSheet: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(notificationManager.recentNotifications) { notification in
                     NotificationRowView(notification: notification)

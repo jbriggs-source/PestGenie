@@ -370,7 +370,7 @@ struct BundleOptimizerDebugView: View {
     @State private var downloadedResources: Set<BundleOptimizer.ResourceTag> = []
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section("Bundle Analysis") {
                     if let analysis = bundleAnalysis {

@@ -9,7 +9,7 @@ struct EmergencyProtocolView: View {
     @State private var completedSteps: Set<Int> = []
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Protocol Header
@@ -262,7 +262,7 @@ struct ProtocolStepRow: View {
                     }
                 }
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             // Step text
             Text(stepText)

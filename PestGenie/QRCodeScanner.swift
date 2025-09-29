@@ -337,7 +337,7 @@ struct QRScannerInterface: View {
     let onScanComplete: (QRScanResult) -> Void
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
 

@@ -13,7 +13,7 @@ struct TrainingResourcesView: View {
     @StateObject private var trainingManager = TrainingManager()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Progress overview banner
                 if selectedTab == .courses {
@@ -161,7 +161,7 @@ struct TrainingResourcesView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
         .background(PestGenieDesignSystem.Colors.surface)
@@ -271,7 +271,7 @@ struct TrainingResourcesView: View {
             .background(color.opacity(0.1))
             .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private var featuredCoursesSection: some View {
@@ -768,7 +768,7 @@ struct TrainingResourcesView: View {
                     .background(PestGenieDesignSystem.Colors.error.opacity(0.1))
                     .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
 
                 Button(action: { viewReportHistory() }) {
                     HStack(spacing: PestGenieDesignSystem.Spacing.sm) {
@@ -794,7 +794,7 @@ struct TrainingResourcesView: View {
                     .background(PestGenieDesignSystem.Colors.info.opacity(0.1))
                     .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
         .pestGenieCard()
@@ -963,7 +963,7 @@ struct TrainingResourcesView: View {
     // MARK: - Sheets
 
     private func courseDetailsSheet(_ course: TrainingCourse) -> some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Course header
@@ -1032,7 +1032,7 @@ struct TrainingResourcesView: View {
     }
 
     private func certificationDetailsSheet(_ certification: TrainingCertification) -> some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     Text("Certification details would be displayed here")

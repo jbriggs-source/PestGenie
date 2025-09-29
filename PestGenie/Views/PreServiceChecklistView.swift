@@ -12,7 +12,7 @@ struct PreServiceChecklistView: View {
     @State private var canStartRoute = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     // Header Section
@@ -123,7 +123,7 @@ struct PreServiceChecklistView: View {
             .onAppear {
                 updateCanStartRoute()
             }
-            .onChange(of: routeViewModel.equipmentInspections) { _ in
+            .onChange(of: routeViewModel.equipmentInspections) {
                 updateCanStartRoute()
             }
         }
@@ -221,7 +221,7 @@ struct EquipmentCheckRow: View {
             .background(Color(.systemGray6))
             .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private var statusIcon: String {

@@ -17,7 +17,7 @@ struct CustomerCommunicationView: View {
     @StateObject private var communicationManager = CustomerCommunicationManager()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Tab selection - positioned optimally below navigation/search
                 VStack(spacing: 0) {
@@ -166,7 +166,7 @@ struct CustomerCommunicationView: View {
                     .contentShape(Rectangle())
                     .scaleEffect(selectedTab == tab ? 1.02 : 1.0)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -251,14 +251,14 @@ struct CustomerCommunicationView: View {
                             .font(.system(size: 16))
                             .foregroundColor(PestGenieDesignSystem.Colors.primary)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
 
                     Button(action: { callCustomer(message) }) {
                         Image(systemName: "phone")
                             .font(.system(size: 16))
                             .foregroundColor(PestGenieDesignSystem.Colors.accent)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
 
                     Spacer()
 
@@ -391,7 +391,7 @@ struct CustomerCommunicationView: View {
                     .stroke(color.opacity(0.3), lineWidth: 0.5)
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private func notificationCard(_ notification: CustomerNotification) -> some View {
@@ -490,7 +490,7 @@ struct CustomerCommunicationView: View {
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(PestGenieDesignSystem.Colors.primary)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .buttonStyle(.plain)
                     }
 
                     Spacer()
@@ -643,7 +643,7 @@ struct CustomerCommunicationView: View {
     // MARK: - Sheets
 
     private var newMessageSheet: some View {
-        NavigationView {
+        NavigationStack {
             Text("New Message Composer")
                 .navigationTitle("New Message")
                 .navigationBarTitleDisplayMode(.inline)
@@ -665,7 +665,7 @@ struct CustomerCommunicationView: View {
     }
 
     private var notificationComposerSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
                     Text("Title")
@@ -709,7 +709,7 @@ struct CustomerCommunicationView: View {
     }
 
     private var messageDetailsSheet: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if let message = selectedMessage {
                     ScrollView {
@@ -807,7 +807,7 @@ struct CustomerCommunicationView: View {
     }
 
     private var feedbackResponseSheet: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if let feedback = selectedFeedback {
                     VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.md) {

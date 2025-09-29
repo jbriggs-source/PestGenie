@@ -12,7 +12,7 @@ struct EquipmentInspectionView: View {
     @State private var checklistItems: [InspectionChecklistItem] = []
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     // Equipment Header
@@ -357,7 +357,7 @@ struct InspectionChecklistRow: View {
                         .font(.title3)
                         .foregroundColor(item.isCompleted ? .green : .gray)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack {

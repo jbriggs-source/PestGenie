@@ -11,7 +11,7 @@ struct AnalyticsDashboardView: View {
     @StateObject private var analyticsManager = AnalyticsManager()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Timeframe selector
                 timeframeSelectorView
@@ -98,7 +98,7 @@ struct AnalyticsDashboardView: View {
                         .frame(width: 80)
                         .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -589,7 +589,7 @@ struct AnalyticsDashboardView: View {
     // MARK: - Detail Sheet
 
     private func metricDetailSheet(_ metric: AnalyticsMetric) -> some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Metric header

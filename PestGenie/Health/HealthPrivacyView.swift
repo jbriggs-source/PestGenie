@@ -9,7 +9,7 @@ struct HealthPrivacyView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Privacy Controls Section
@@ -454,7 +454,7 @@ struct InsightsSection: View {
                 .background(PestGenieDesignSystem.Colors.cardBackground)
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.md)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
         }
     }
 }

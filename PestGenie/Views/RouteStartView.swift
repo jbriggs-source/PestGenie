@@ -9,7 +9,7 @@ struct RouteStartView: View {
     @State private var showingSafetyChecklist = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
                     // Header Section

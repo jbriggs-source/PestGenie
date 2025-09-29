@@ -12,7 +12,7 @@ struct EmergencyActionView: View {
     @State private var selectedProtocol: EmergencyProtocol?
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Emergency Header
                 emergencyHeader
@@ -119,7 +119,7 @@ struct EmergencyActionView: View {
                         }
                         .foregroundColor(selectedCategory == category ? Color(category.color) : .secondary)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal)

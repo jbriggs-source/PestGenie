@@ -21,7 +21,7 @@ struct ReorderManagementView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 if !reorderRecommendations.isEmpty {
                     Section {
@@ -136,7 +136,7 @@ struct ReorderRecommendationRow: View {
                     .foregroundColor(isSelected ? .blue : .gray)
                     .font(.title3)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(recommendation.chemical.name)

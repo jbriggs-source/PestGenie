@@ -263,7 +263,7 @@ struct HealthSettingsView: View {
     @State private var showingPrivacySheet = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section(header: Text("Health Tracking")) {
                     Toggle("Enable Health Tracking", isOn: .constant(healthManager.isTrackingEnabled))
@@ -346,7 +346,7 @@ struct HealthPrivacySettingsView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section(header: Text("Tracking Preferences")) {
                     Toggle("Allow Health Tracking", isOn: $settings.allowHealthTracking)

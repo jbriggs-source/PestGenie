@@ -18,7 +18,7 @@ struct EmergencyReportView: View {
     @State private var showingCompletionAlert = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Incident Header
@@ -70,8 +70,8 @@ struct EmergencyReportView: View {
             Text("Your emergency report has been submitted and relevant contacts have been notified.")
         }
         .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedPhotos, maxSelectionCount: 5, matching: .images)
-        .onChange(of: selectedPhotos) { items in
-            loadPhotos(from: items)
+        .onChange(of: selectedPhotos) {
+            loadPhotos(from: selectedPhotos)
         }
         .onAppear {
             setupDefaultValues()
@@ -139,7 +139,7 @@ struct EmergencyReportView: View {
                         .background(severity == level ? Color(level.color).opacity(0.1) : Color.clear)
                         .cornerRadius(8)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
         }

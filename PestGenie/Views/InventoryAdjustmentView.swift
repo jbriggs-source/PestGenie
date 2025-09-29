@@ -13,7 +13,7 @@ struct InventoryAdjustmentView: View {
     @State private var alertMessage = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section("Chemical Selection") {
                     Picker("Chemical", selection: $selectedChemicalId) {

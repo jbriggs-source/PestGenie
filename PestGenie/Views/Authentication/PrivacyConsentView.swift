@@ -12,7 +12,7 @@ struct PrivacyConsentView: View {
     @State private var isProcessingConsent = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
                     // Header Section

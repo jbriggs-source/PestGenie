@@ -12,7 +12,7 @@ struct HelpSupportView: View {
     @StateObject private var helpManager = HelpSupportManager()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Quick actions header
                 quickActionsHeader
@@ -171,7 +171,7 @@ struct HelpSupportView: View {
                     .foregroundColor(PestGenieDesignSystem.Colors.textPrimary)
             }
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
     }
 
@@ -202,7 +202,7 @@ struct HelpSupportView: View {
                         .frame(minWidth: 100)
                         .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -1067,7 +1067,7 @@ struct HelpSupportView: View {
             .background(color.opacity(0.1))
             .cornerRadius(PestGenieDesignSystem.BorderRadius.md)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private func hourRow(_ day: String, _ hours: String) -> some View {
@@ -1132,7 +1132,7 @@ struct HelpSupportView: View {
     // MARK: - Sheets
 
     private var contactFormSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Contact support form would appear here")
                     .font(PestGenieDesignSystem.Typography.bodyMedium)
@@ -1156,7 +1156,7 @@ struct HelpSupportView: View {
     }
 
     private var feedbackFormSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Feedback form would appear here")
                     .font(PestGenieDesignSystem.Typography.bodyMedium)
@@ -1180,7 +1180,7 @@ struct HelpSupportView: View {
     }
 
     private var chatSupportSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Live chat interface would appear here")
                     .font(PestGenieDesignSystem.Typography.bodyMedium)

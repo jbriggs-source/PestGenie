@@ -590,7 +590,7 @@ struct MaintenanceScheduleView: View {
     @State private var showingNewMaintenance = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 // Filter buttons
                 filterButtons
@@ -755,7 +755,7 @@ struct NewMaintenanceScheduleView: View {
     @State private var recurrenceType: RecurrenceType = .monthly
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section("Equipment") {
                     if let equipment = selectedEquipment {
@@ -860,7 +860,7 @@ struct MaintenanceDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // Header info

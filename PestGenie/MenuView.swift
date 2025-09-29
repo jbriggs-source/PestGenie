@@ -386,7 +386,7 @@ struct MenuView: View {
                         .foregroundColor(PestGenieDesignSystem.Colors.textSecondary)
                 }
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             // Sign out button
             Button(action: {
@@ -404,7 +404,7 @@ struct MenuView: View {
                 .background(PestGenieDesignSystem.Colors.error.opacity(0.1))
                 .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
         }
     }
@@ -473,7 +473,7 @@ struct MenuView: View {
                     .contentShape(Rectangle())
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityHint("Navigate to \(title)")
         .accessibilityValue(badge != nil ? "Has \(badge!) notifications" : "")
@@ -482,7 +482,7 @@ struct MenuView: View {
     // MARK: - App Info Sheet
 
     private var appInfoSheet: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.lg) {
                     // App icon and info

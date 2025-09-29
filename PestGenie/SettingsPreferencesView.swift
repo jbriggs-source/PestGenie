@@ -11,7 +11,7 @@ struct SettingsPreferencesView: View {
     @State private var showingResetConfirmation = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Category selector
                 categorySelector
@@ -104,7 +104,7 @@ struct SettingsPreferencesView: View {
                         .frame(minWidth: 100)
                         .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -1178,7 +1178,7 @@ struct SettingsPreferencesView: View {
     // MARK: - Sheets
 
     private var accountDetailsSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Account details editing would appear here")
                     .font(PestGenieDesignSystem.Typography.bodyMedium)
@@ -1202,7 +1202,7 @@ struct SettingsPreferencesView: View {
     }
 
     private var dataExportSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Data export options would appear here")
                     .font(PestGenieDesignSystem.Typography.bodyMedium)

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileEditView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var routeViewModel: RouteViewModel
     @EnvironmentObject private var authManager: AuthenticationManager
 
@@ -11,7 +11,7 @@ struct ProfileEditView: View {
     @State private var jobTitle = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section(header: Text("Personal Information")) {
                     HStack {
@@ -66,14 +66,14 @@ struct ProfileEditView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         saveProfile()
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                     .fontWeight(.semibold)
                 }

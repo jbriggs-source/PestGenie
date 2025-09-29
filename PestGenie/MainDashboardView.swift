@@ -201,7 +201,7 @@ struct MainDashboardView: View {
             RouteStartView(routeViewModel: routeViewModel)
         }
         .sheet(isPresented: $showingDemoPanel) {
-            NavigationView {
+            NavigationStack {
                 ScrollView {
                     DemoControlPanel(routeViewModel: routeViewModel)
                         .padding()
@@ -307,7 +307,7 @@ struct MainDashboardView: View {
     }
 
     private func menuFeatureWrapper<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        NavigationView {
+        NavigationStack {
             content()
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -325,11 +325,10 @@ struct MainDashboardView: View {
                     }
                 }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
+            }
 
     private func placeholderFeatureView(for menuItem: MenuItem) -> some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Image(systemName: "hammer.fill")
                     .font(.system(size: 64))
@@ -374,8 +373,7 @@ struct MainDashboardView: View {
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
+            }
 
     // MARK: - Home Dashboard
 
@@ -556,7 +554,7 @@ struct MainDashboardView: View {
                 y: 2
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityHint("Tap to \(title.lowercased())")
     }
@@ -749,7 +747,7 @@ struct MainDashboardView: View {
             )
             .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
         .shadow(color: .red.opacity(0.3), radius: 8, x: 0, y: 4)
     }
@@ -973,7 +971,7 @@ struct MainDashboardView: View {
             .background(color.opacity(0.1))
             .cornerRadius(PestGenieDesignSystem.BorderRadius.sm)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private func compactRouteActionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
@@ -1001,7 +999,7 @@ struct MainDashboardView: View {
                     )
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private func routeMetricItem(title: String, value: String, icon: String, color: Color) -> some View {
@@ -1217,7 +1215,7 @@ struct MainDashboardView: View {
                 .padding(.horizontal, PestGenieDesignSystem.Spacing.sm)
                 .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
 
             // Expanded details (conditionally visible)
             if isExpanded {
@@ -1401,7 +1399,7 @@ struct MainDashboardView: View {
     // MARK: - Navigation Views
 
     private var routeView: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: PestGenieDesignSystem.Spacing.sm) {
                     // Route Header with Status
@@ -1446,7 +1444,7 @@ struct MainDashboardView: View {
     }
 
     private var equipmentView: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Header with Live Status
@@ -2159,7 +2157,7 @@ struct MainDashboardView: View {
                     .stroke(color.opacity(0.2), lineWidth: 1)
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private var aiInsightsSection: some View {
@@ -2271,7 +2269,7 @@ struct MainDashboardView: View {
     }
 
     private var chemicalView: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                     // Safety Status Header
@@ -2925,7 +2923,7 @@ struct MainDashboardView: View {
                     .stroke(color.opacity(0.2), lineWidth: 1)
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 
     private var profileView: some View {
@@ -2970,7 +2968,7 @@ struct MainDashboardView: View {
                                 .fill(selectedTab == tab ? tab.designSystemColor.opacity(0.1) : Color.clear)
                         )
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)
                     .accessibilityLabel(tab.title)
                     .accessibilityHint("Navigate to \(tab.title.lowercased()) section")
                     .padding(.horizontal, PestGenieDesignSystem.Components.Navigation.BottomTab.horizontalPadding)
@@ -2985,7 +2983,7 @@ struct MainDashboardView: View {
     // MARK: - Detail Views
 
     private var routeDetailView: some View {
-        NavigationView {
+        NavigationStack {
             Text("Route Details")
                 .navigationTitle("Today's Route")
                 .navigationBarTitleDisplayMode(.inline)
@@ -3000,7 +2998,7 @@ struct MainDashboardView: View {
     }
 
     private var equipmentDetailView: some View {
-        NavigationView {
+        NavigationStack {
             Text("Equipment Details")
                 .navigationTitle("Equipment")
                 .navigationBarTitleDisplayMode(.inline)
@@ -3015,7 +3013,7 @@ struct MainDashboardView: View {
     }
 
     private var chemicalDetailView: some View {
-        NavigationView {
+        NavigationStack {
             Text("Chemical Details")
                 .navigationTitle("Chemicals")
                 .navigationBarTitleDisplayMode(.inline)
@@ -3030,7 +3028,7 @@ struct MainDashboardView: View {
     }
 
     private var profileDetailView: some View {
-        NavigationView {
+        NavigationStack {
             Text("Profile Details")
                 .navigationTitle("Profile")
                 .navigationBarTitleDisplayMode(.inline)
@@ -3047,7 +3045,7 @@ struct MainDashboardView: View {
     // MARK: - Profile Sheets
 
     private var profileEditSheet: some View {
-        NavigationView {
+        NavigationStack {
             Group {
                 if let screen = loadProfileEditScreen() {
                     let context = createProfileEditSDUIContext()
@@ -3088,7 +3086,7 @@ struct MainDashboardView: View {
     }
 
     private var securitySettingsSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Text("Security Settings")
                     .font(PestGenieDesignSystem.Typography.displayMedium)
@@ -3112,7 +3110,7 @@ struct MainDashboardView: View {
     }
 
     private var privacySettingsSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Text("Privacy Settings")
                     .font(PestGenieDesignSystem.Typography.displayMedium)
@@ -3136,7 +3134,7 @@ struct MainDashboardView: View {
     }
 
     private var dataExportSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Text("Data Export & Privacy")
                     .font(PestGenieDesignSystem.Typography.displayMedium)
@@ -3160,7 +3158,7 @@ struct MainDashboardView: View {
     }
 
     private var notificationSettingsSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Text("Notification Preferences")
                     .font(PestGenieDesignSystem.Typography.displayMedium)
@@ -3184,7 +3182,7 @@ struct MainDashboardView: View {
     }
 
     private var offlineDataSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.xl) {
                 Text("Offline Data Management")
                     .font(PestGenieDesignSystem.Typography.displayMedium)

@@ -19,7 +19,7 @@ struct SafetyChecklistView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Header with progress
                 checklistHeader
@@ -333,7 +333,7 @@ struct CategoryTab: View {
             }
             .foregroundColor(isSelected ? Color(category.color) : .secondary)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -541,7 +541,7 @@ struct SafetyChecklistItemRow: View {
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-        .onChange(of: selectedPhotos) { _ in
+        .onChange(of: selectedPhotos) {
             Task {
                 photoData = []
                 for item in selectedPhotos {
@@ -681,7 +681,7 @@ struct ViolationSummaryCard: View {
             .background(Color.red.opacity(0.1))
             .cornerRadius(8)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -695,7 +695,7 @@ struct ViolationDetailView: View {
     @State private var resolutionNotes: String = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Violation header

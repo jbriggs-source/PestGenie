@@ -346,7 +346,7 @@ struct ProfileQuickActionButton: View {
             .cornerRadius(12)
             .shadow(color: iconColor.opacity(0.05), radius: 1, x: 0, y: 0.5)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -409,7 +409,7 @@ struct SettingsRowView<TrailingContent: View>: View {
             .padding(.horizontal, 12)
             .contentShape(Rectangle())
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
 
@@ -446,7 +446,7 @@ extension Color {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ProfileView()
                 .environmentObject(RouteViewModel())
         }

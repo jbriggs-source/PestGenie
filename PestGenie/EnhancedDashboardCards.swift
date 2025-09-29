@@ -620,7 +620,7 @@ struct QuickActionButton: View {
                 y: 2
             )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
         .accessibilityLabel(title)
         .accessibilityHint("Tap to \(title.lowercased())")
     }
@@ -669,17 +669,17 @@ struct EquipmentItem: Identifiable {
 // MARK: - Sheet Views
 
 struct WeatherDetailsSheet: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Text("Detailed Weather Information")
                 .navigationTitle("Weather Details")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
-                            presentationMode.wrappedValue.dismiss()
+                            dismiss()
                         }
                     }
                 }
@@ -688,11 +688,11 @@ struct WeatherDetailsSheet: View {
 }
 
 struct NotificationsSheet: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var notificationManager: NotificationManager
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(notificationManager.recentNotifications) { notification in
                     NotificationRow(notification: notification)
@@ -704,7 +704,7 @@ struct NotificationsSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

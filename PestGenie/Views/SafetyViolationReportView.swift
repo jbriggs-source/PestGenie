@@ -19,7 +19,7 @@ struct SafetyViolationReportView: View {
     @State private var showingEmergencyAlert = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     // Violation Header
@@ -331,7 +331,7 @@ struct SafetyViolationReportView: View {
                 }
             }
         }
-        .onChange(of: selectedPhotos) { _ in
+        .onChange(of: selectedPhotos) {
             Task {
                 evidencePhotos = []
                 for item in selectedPhotos {
@@ -357,8 +357,8 @@ struct SafetyViolationReportView: View {
 
                 Toggle("Emergency Response Required", isOn: $emergencyResponseRequired)
                     .toggleStyle(SwitchToggleStyle(tint: .red))
-                    .onChange(of: emergencyResponseRequired) { newValue in
-                        if newValue {
+                    .onChange(of: emergencyResponseRequired) {
+                        if emergencyResponseRequired {
                             showingEmergencyAlert = true
                         }
                     }

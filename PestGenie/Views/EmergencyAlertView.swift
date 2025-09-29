@@ -10,7 +10,7 @@ struct EmergencyAlertView: View {
     @State private var emergencyResolved = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
                     // Emergency Header

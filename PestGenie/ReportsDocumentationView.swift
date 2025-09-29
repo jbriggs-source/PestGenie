@@ -13,7 +13,7 @@ struct ReportsDocumentationView: View {
     @State private var filterDateRange: DateRange = .thisWeek
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Tab selection and filters
                 VStack(spacing: 0) {
@@ -108,7 +108,7 @@ struct ReportsDocumentationView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, PestGenieDesignSystem.Spacing.sm)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
         .background(PestGenieDesignSystem.Colors.surface)
@@ -685,7 +685,7 @@ struct ReportsDocumentationView: View {
     // MARK: - Sheets
 
     private var newReportSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Create New Report")
                     .font(PestGenieDesignSystem.Typography.headlineLarge)
@@ -719,7 +719,7 @@ struct ReportsDocumentationView: View {
     }
 
     private var filtersSheet: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: PestGenieDesignSystem.Spacing.lg) {
                 Text("Advanced Filters")
                     .font(PestGenieDesignSystem.Typography.headlineLarge)

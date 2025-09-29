@@ -151,7 +151,7 @@ struct SDUIButtonRenderer: SDUIComponentRenderer {
                     SDUIScreenRenderer.render(component: child, context: context)
                 }
             }
-            .buttonStyle(PlainButtonStyle()) // Use plain style for custom content
+            .buttonStyle(.plain) // Use plain style for custom content
 
             // For transparent buttons, apply minimal styling to avoid conflicts
             if isTransparentButton {
@@ -1001,7 +1001,7 @@ struct ChemicalSelectorRow: View {
                     }
                 }
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
         }
         .padding(.vertical, 8)
         .background(isSelected ? Color.blue.opacity(0.1) : Color.clear)
@@ -1152,7 +1152,7 @@ struct DuplicateQRScannerInterface: View {
     @State private var manualEntry = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 20) {
                 // QR Scanner view would go here
                 // For now, showing a placeholder
@@ -1217,7 +1217,7 @@ struct ManualQREntryView: View {
     @State private var entryText = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Enter QR Code Value")
                     .font(.headline)

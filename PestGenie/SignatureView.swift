@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SignatureView: View {
     var onSigned: (Data) -> Void
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @State private var currentDrawing: [CGPoint] = []
     @State private var drawings: [[CGPoint]] = []
     var body: some View {
@@ -53,7 +53,7 @@ struct SignatureView: View {
                     if let img = renderer.uiImage, let data = img.pngData() {
                         onSigned(data)
                     }
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 }
                 .padding()
             }
