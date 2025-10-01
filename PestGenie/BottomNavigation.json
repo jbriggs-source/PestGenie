@@ -137,8 +137,8 @@
           },
           {
             "type": "button",
-            "action": "navigate_chemicals",
-            "backgroundColor": "{{navigation.chemicals.isSelected ? '#FFF3E0' : 'transparent'}}",
+            "action": "navigate_messages",
+            "backgroundColor": "{{navigation.messages.isSelected ? '#FFF3E0' : 'transparent'}}",
             "cornerRadius": 12,
             "padding": {
               "top": 8,
@@ -154,17 +154,17 @@
                 "children": [
                   {
                     "type": "image",
-                    "imageName": "testtube.2",
+                    "imageName": "message.circle.fill",
                     "width": 24,
                     "height": 24,
-                    "foregroundColor": "{{navigation.chemicals.isSelected ? '#F57C00' : '#9E9E9E'}}"
+                    "foregroundColor": "{{navigation.messages.isSelected ? '#F57C00' : '#9E9E9E'}}"
                   },
                   {
                     "type": "text",
-                    "text": "Chemicals",
+                    "text": "Messages",
                     "font": "caption",
                     "weight": "medium",
-                    "foregroundColor": "{{navigation.chemicals.isSelected ? '#F57C00' : '#9E9E9E'}}"
+                    "foregroundColor": "{{navigation.messages.isSelected ? '#F57C00' : '#9E9E9E'}}"
                   }
                 ]
               }

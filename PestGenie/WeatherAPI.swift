@@ -36,7 +36,7 @@ final class WeatherAPI: ObservableObject {
     @Published var lastError: WeatherAPIError?
 
     private let apiKey = "YOUR_WEATHER_API_KEY" // Configure in production
-    private let baseURL = "https://api.openweathermap.org/data/2.5"
+    private let baseURL = "https://api.openweathermap.org/data/3.0"
     private let session: URLSession
     private var cancellables = Set<AnyCancellable>()
 
@@ -89,7 +89,7 @@ final class WeatherAPI: ObservableObject {
             let url = buildCurrentWeatherURL(for: location)
             let (data, _) = try await session.data(from: url)
 
-            let response = try JSONDecoder().decode(OpenWeatherMapResponse.self, from: data)
+            let response = try JSONDecoder().decode(OpenWeatherMapOneCallResponse.self, from: data)
             let weatherData = convertToWeatherData(response)
 
             // Cache the result
@@ -144,7 +144,7 @@ final class WeatherAPI: ObservableObject {
             let url = buildForecastURL(for: location, days: days)
             let (data, _) = try await session.data(from: url)
 
-            let response = try JSONDecoder().decode(OpenWeatherMapForecastResponse.self, from: data)
+            let response = try JSONDecoder().decode(OpenWeatherMapOneCallResponse.self, from: data)
             let forecasts = convertToWeatherForecasts(response)
 
             self.forecast = forecasts
@@ -242,7 +242,7 @@ final class WeatherAPI: ObservableObject {
     // MARK: - URL Building
 
     private func buildCurrentWeatherURL(for location: CLLocationCoordinate2D) -> URL {
-        var components = URLComponents(string: "\(baseURL)/weather")!
+        var components = URLComponents(string: "\(baseURL)/onecall")!
         components.queryItems = [
             URLQueryItem(name: "lat", value: String(location.latitude)),
             URLQueryItem(name: "lon", value: String(location.longitude)),
@@ -254,50 +254,50 @@ final class WeatherAPI: ObservableObject {
     }
 
     private func buildForecastURL(for location: CLLocationCoordinate2D, days: Int) -> URL {
-        var components = URLComponents(string: "\(baseURL)/forecast")!
+        var components = URLComponents(string: "\(baseURL)/onecall")!
         components.queryItems = [
             URLQueryItem(name: "lat", value: String(location.latitude)),
             URLQueryItem(name: "lon", value: String(location.longitude)),
             URLQueryItem(name: "appid", value: apiKey),
             URLQueryItem(name: "units", value: "imperial"),
-            URLQueryItem(name: "cnt", value: String(days * 8)) // 3-hour intervals
+            URLQueryItem(name: "exclude", value: "current,minutely,alerts") // Get daily forecast
         ]
         return components.url!
     }
 
     // MARK: - Data Conversion
 
-    private func convertToWeatherData(_ response: OpenWeatherMapResponse) -> WeatherData {
+    private func convertToWeatherData(_ response: OpenWeatherMapOneCallResponse) -> WeatherData {
         return WeatherData(
             id: UUID(),
-            temperature: response.main.temp,
-            feelsLike: response.main.feels_like,
-            humidity: response.main.humidity,
-            pressure: response.main.pressure,
-            windSpeed: response.wind?.speed ?? 0,
-            windDirection: response.wind?.deg ?? 0,
-            uvIndex: 0, // Would need separate UV API call
-            precipitationProbability: 0, // Not in current weather
-            visibility: Double(response.visibility ?? 10000),
-            cloudCover: response.clouds?.all ?? 0,
-            condition: response.weather.first?.main ?? "Unknown",
-            description: response.weather.first?.description ?? "",
-            timestamp: Date(timeIntervalSince1970: TimeInterval(response.dt)),
+            temperature: response.current.temp,
+            feelsLike: response.current.feels_like,
+            humidity: response.current.humidity,
+            pressure: Double(response.current.pressure),
+            windSpeed: response.current.wind_speed,
+            windDirection: Double(response.current.wind_deg),
+            uvIndex: response.current.uvi,
+            precipitationProbability: Int((response.current.rain?.oneHour ?? 0.0) * 100),
+            visibility: Double(response.current.visibility),
+            cloudCover: response.current.clouds,
+            condition: response.current.weather.first?.main ?? "Unknown",
+            description: response.current.weather.first?.description ?? "",
+            timestamp: Date(timeIntervalSince1970: TimeInterval(response.current.dt)),
             location: CLLocationCoordinate2D(
-                latitude: response.coord?.lat ?? 0,
-                longitude: response.coord?.lon ?? 0
+                latitude: response.lat,
+                longitude: response.lon
             )
         )
     }
 
-    private func convertToWeatherForecasts(_ response: OpenWeatherMapForecastResponse) -> [WeatherForecast] {
-        return response.list.map { item in
+    private func convertToWeatherForecasts(_ response: OpenWeatherMapOneCallResponse) -> [WeatherForecast] {
+        return response.daily.prefix(5).map { item in
             WeatherForecast(
                 id: UUID(),
                 date: Date(timeIntervalSince1970: TimeInterval(item.dt)),
-                temperature: item.main.temp,
-                humidity: item.main.humidity,
-                windSpeed: item.wind?.speed ?? 0,
+                temperature: item.temp.day,
+                humidity: item.humidity,
+                windSpeed: item.wind_speed,
                 precipitationProbability: Int(item.pop * 100),
                 condition: item.weather.first?.main ?? "Unknown",
                 description: item.weather.first?.description ?? ""
@@ -500,54 +500,102 @@ enum WeatherAPIError: LocalizedError {
     }
 }
 
-// MARK: - OpenWeatherMap API Response Types
+// MARK: - OpenWeatherMap One Call API 3.0 Response Types
 
-struct OpenWeatherMapResponse: Codable {
-    let coord: Coord?
-    let weather: [Weather]
-    let main: Main
-    let visibility: Int?
-    let wind: Wind?
-    let clouds: Clouds?
-    let dt: Int
+struct OpenWeatherMapOneCallResponse: Codable {
+    let lat: Double
+    let lon: Double
+    let timezone: String
+    let timezoneOffset: Int
+    let current: CurrentWeather
+    let daily: [DailyWeather]
 
-    struct Coord: Codable {
-        let lon: Double
-        let lat: Double
+    enum CodingKeys: String, CodingKey {
+        case lat, lon, timezone
+        case timezoneOffset = "timezone_offset"
+        case current, daily
     }
 
-    struct Weather: Codable {
-        let main: String
-        let description: String
-        let icon: String
-    }
-
-    struct Main: Codable {
+    struct CurrentWeather: Codable {
+        let dt: Int
+        let sunrise: Int
+        let sunset: Int
         let temp: Double
         let feels_like: Double
+        let pressure: Int
         let humidity: Int
-        let pressure: Double
+        let dew_point: Double
+        let uvi: Double
+        let clouds: Int
+        let visibility: Int
+        let wind_speed: Double
+        let wind_deg: Int
+        let wind_gust: Double?
+        let weather: [Weather]
+        let rain: Rain?
+        let snow: Snow?
+
+        struct Weather: Codable {
+            let id: Int
+            let main: String
+            let description: String
+            let icon: String
+        }
+
+        struct Rain: Codable {
+            let oneHour: Double
+
+            enum CodingKeys: String, CodingKey {
+                case oneHour = "1h"
+            }
+        }
+
+        struct Snow: Codable {
+            let oneHour: Double
+
+            enum CodingKeys: String, CodingKey {
+                case oneHour = "1h"
+            }
+        }
     }
 
-    struct Wind: Codable {
-        let speed: Double
-        let deg: Double?
-    }
-
-    struct Clouds: Codable {
-        let all: Int
-    }
-}
-
-struct OpenWeatherMapForecastResponse: Codable {
-    let list: [ForecastItem]
-
-    struct ForecastItem: Codable {
+    struct DailyWeather: Codable {
         let dt: Int
-        let main: OpenWeatherMapResponse.Main
-        let weather: [OpenWeatherMapResponse.Weather]
-        let wind: OpenWeatherMapResponse.Wind?
-        let pop: Double // Probability of precipitation
+        let sunrise: Int
+        let sunset: Int
+        let moonrise: Int
+        let moonset: Int
+        let moon_phase: Double
+        let temp: Temperature
+        let feels_like: FeelsLike
+        let pressure: Int
+        let humidity: Int
+        let dew_point: Double
+        let wind_speed: Double
+        let wind_deg: Int
+        let wind_gust: Double?
+        let weather: [CurrentWeather.Weather]
+        let clouds: Int
+        let pop: Double
+        let rain: Double?
+        let snow: Double?
+        let uvi: Double
+
+        struct Temperature: Codable {
+            let day: Double
+            let min: Double
+            let max: Double
+            let night: Double
+            let eve: Double
+            let morn: Double
+        }
+
+        struct FeelsLike: Codable {
+            let day: Double
+            let night: Double
+            let eve: Double
+            let morn: Double
+        }
     }
 }
 

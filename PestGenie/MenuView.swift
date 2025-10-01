@@ -222,13 +222,6 @@ struct MenuView: View {
             sectionHeader("Quick Actions")
 
             menuItem(
-                title: "Customer Communications",
-                icon: "message.circle.fill",
-                badge: customerCommunicationsBadge,
-                item: .customerCommunication
-            )
-
-            menuItem(
                 title: "Call Dispatch",
                 icon: "phone.circle.fill",
                 badge: nil,
@@ -264,6 +257,13 @@ struct MenuView: View {
     private var safetyResourcesSection: some View {
         VStack(alignment: .leading, spacing: PestGenieDesignSystem.Spacing.xs) {
             sectionHeader("Safety & Resources")
+
+            menuItem(
+                title: "Chemicals",
+                icon: "testtube.2",
+                badge: nil,
+                item: .chemicals
+            )
 
             menuItem(
                 title: "Safety Checklist",

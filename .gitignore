@@ -119,3 +119,47 @@ firebase-config.json
 *.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 Package.resolved
 .swiftpm/
+
+# Build logs and output
+build_output.log
+*.log
+
+# Go backend build artifacts (if building locally)
+SDUIBackend/bin/
+SDUIBackend/dist/
+SDUIBackend/*.exe
+SDUIBackend/*.dll
+SDUIBackend/*.so
+SDUIBackend/*.dylib
+
+# Go module cache and build cache
+SDUIBackend/vendor/
+SDUIBackend/.cache/
+
+# Additional Xcode user data
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Additional build artifacts
+*.app
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.xcarchive
+
+# Additional temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Additional IDE files
+.vscode/
+.idea/
+*.xcuserstate

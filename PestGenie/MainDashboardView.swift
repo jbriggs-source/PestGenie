@@ -88,8 +88,8 @@ struct MainDashboardView: View {
                             routeView
                         case .equipment:
                             equipmentView
-                        case .chemicals:
-                            chemicalView
+                        case .messages:
+                            messagesView
                         case .profile:
                             profileView
                         }
@@ -515,7 +515,7 @@ struct MainDashboardView: View {
                     openQRScanner()
                 }
                 actionButton(title: "Chemicals", icon: "testtube.2", color: PestGenieDesignSystem.Colors.warning) {
-                    selectedTab = .chemicals
+                    selectedMenuItem = .chemicals
                 }
             }
             .padding(.horizontal, PestGenieDesignSystem.Spacing.md)
@@ -2311,6 +2311,14 @@ struct MainDashboardView: View {
         }
     }
 
+    private var messagesView: some View {
+        NavigationStack {
+            CustomerCommunicationView()
+                .navigationTitle("Messages")
+                .navigationBarTitleDisplayMode(.large)
+        }
+    }
+
     // MARK: - Chemical Center Components
 
     private var chemicalSafetyHeader: some View {
@@ -3253,8 +3261,8 @@ struct MainDashboardView: View {
             "navigate_equipment": { _ in
                 selectedTab = .equipment
             },
-            "navigate_chemicals": { _ in
-                selectedTab = .chemicals
+            "navigate_messages": { _ in
+                selectedTab = .messages
             },
             "navigate_profile": { _ in
                 selectedTab = .profile
@@ -3613,7 +3621,7 @@ enum NavigationTab: String, CaseIterable {
     case home = "home"
     case route = "route"
     case equipment = "equipment"
-    case chemicals = "chemicals"
+    case messages = "messages"
     case profile = "profile"
 
     var title: String {
@@ -3621,7 +3629,7 @@ enum NavigationTab: String, CaseIterable {
         case .home: return "Home"
         case .route: return "Route"
         case .equipment: return "Equipment"
-        case .chemicals: return "Chemicals"
+        case .messages: return "Messages"
         case .profile: return "Profile"
         }
     }
@@ -3631,7 +3639,7 @@ enum NavigationTab: String, CaseIterable {
         case .home: return "house.fill"
         case .route: return "map.fill"
         case .equipment: return "wrench.and.screwdriver.fill"
-        case .chemicals: return "testtube.2"
+        case .messages: return "message.circle.fill"
         case .profile: return "person.fill"
         }
     }
@@ -3641,7 +3649,7 @@ enum NavigationTab: String, CaseIterable {
         case .home: return .blue
         case .route: return .green
         case .equipment: return .purple
-        case .chemicals: return .orange
+        case .messages: return .orange
         case .profile: return .cyan
         }
     }
@@ -3651,7 +3659,7 @@ enum NavigationTab: String, CaseIterable {
         case .home: return PestGenieDesignSystem.Colors.accent
         case .route: return PestGenieDesignSystem.Colors.success
         case .equipment: return PestGenieDesignSystem.Colors.primary
-        case .chemicals: return PestGenieDesignSystem.Colors.warning
+        case .messages: return PestGenieDesignSystem.Colors.warning
         case .profile: return PestGenieDesignSystem.Colors.secondary
         }
     }

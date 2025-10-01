@@ -24,11 +24,13 @@ let package = Package(
             dependencies: [
                 .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
                 .product(name: "GoogleSignInSwift", package: "GoogleSignIn-iOS")
-            ]
+            ],
+            path: "PestGenie"
         ),
         .testTarget(
             name: "PestGenieTests",
-            dependencies: ["PestGenie"]
+            dependencies: ["PestGenie"],
+            path: "PestGenieTests"
         ),
     ]
 )
