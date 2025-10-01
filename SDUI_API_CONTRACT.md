@@ -11,6 +11,7 @@ This document captures the data contracts that the PestGenie iOS client expects 
 ### 1.2 Component Schema
 Each node in the component tree conforms to `SDUIComponent` (`PestGenie/SDUI.swift:81`). Common fields:
 - `id`: string identifier (auto-generated if missing, but servers should supply stable IDs).
+- `type`: string enum. Layout, form, weather, equipment, and chemical categories are enumerated in `SDUIComponentType` (`PestGenie/SDUI.swift:12`). Unsupported values trigger an error card.
 - `children`: array of child components for container types.
 - `itemView`: required template object for `list` types; rendered once for each `Job` in the route (`PestGenie/SDUIRenderer.swift:309`).
 - `key`: binds display text to a property on the current `Job` (see §1.3).
