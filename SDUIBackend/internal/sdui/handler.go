@@ -2,12 +2,14 @@ package sdui
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 
+	"log/slog"
+
+	"github.com/your-org/pestgenie-sdui/internal/http/respond"
 	"github.com/your-org/pestgenie-sdui/internal/middleware"
 	"github.com/your-org/pestgenie-sdui/internal/models"
 )
@@ -26,7 +28,7 @@ func NewHandler(service *Service) *Handler {
 func (h *Handler) GetScreen(w http.ResponseWriter, r *http.Request) {
 	screenID := chi.URLParam(r, "screenId")
 	if screenID == "" {
-		http.Error(w, "missing screenId", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "missing screenId", "screenId path parameter is required")
 		return
 	}
 
@@ -51,13 +53,15 @@ func (h *Handler) GetScreen(w http.ResponseWriter, r *http.Request) {
 
 	screen, err := h.service.GetScreen(r.Context(), req)
 	if err != nil {
-		log.Printf("get screen failed (corr=%s, screen=%s, user=%s): %v", middleware.FromContext(r.Context()), screenID, req.UserID, err)
-		http.Error(w, "failed to resolve screen", http.StatusInternalServerError)
+		logger := middleware.LoggerFrom(r.Context())
+		logger.Error("failed to resolve screen", slog.String("screen", screenID), slog.String("user", req.UserID), slog.Any("error", err))
+		respond.Error(w, http.StatusInternalServerError, "failed to resolve screen", "temporary error, please retry")
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(screen); err != nil {
-		log.Printf("encode screen failed (corr=%s): %v", middleware.FromContext(r.Context()), err)
+		logger := middleware.LoggerFrom(r.Context())
+		logger.Error("failed to encode screen", slog.Any("error", err))
 	}
 }

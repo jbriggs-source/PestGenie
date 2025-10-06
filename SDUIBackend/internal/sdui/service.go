@@ -6,51 +6,69 @@ import (
 	"path/filepath"
 	"time"
 
+	"log/slog"
+
 	"github.com/google/uuid"
 
+	domain "github.com/your-org/pestgenie-sdui/internal/domain/models"
+	"github.com/your-org/pestgenie-sdui/internal/domain/repository"
 	"github.com/your-org/pestgenie-sdui/internal/models"
 )
 
 // Service encapsulates logic for selecting and personalising SDUI screens.
 type Service struct {
 	templateDir string
+	repos       repository.Repository
+	logger      *slog.Logger
 }
 
 // NewService creates a service pointing at the on-disk template directory. When
 // templateDir is empty the service falls back to programmatic defaults.
-func NewService(templateDir string) *Service {
-	return &Service{templateDir: templateDir}
+func NewService(templateDir string, repos repository.Repository, logger *slog.Logger) *Service {
+	return &Service{templateDir: templateDir, repos: repos, logger: logger}
 }
 
 // GetScreen resolves the requested screen and applies contextual data (user,
 // route, device) before returning it to the caller.
 func (s *Service) GetScreen(ctx context.Context, req models.ScreenRequest) (*models.SDUIScreen, error) {
-	_ = ctx // reserved for future use (e.g., datastore lookups)
+	tech, _ := s.repos.Technicians.GetByID(req.UserID)
 
-	screen := s.buildDefaultTechnicianScreen(req)
+	var route domain.Route
+	if !req.ServiceDate.IsZero() {
+		if r, err := s.repos.Routes.GetRoute(req.UserID, req.ServiceDate); err == nil {
+			route = r
+		}
+	}
 
-	// TODO: Attempt to load an override template from disk. This is left as an
-	// exercise for future iterations once templates are authored externally.
+	screen := s.buildDefaultTechnicianScreen(req, tech, route)
+
 	_ = filepath.Join(s.templateDir, fmt.Sprintf("%s.json", req.ScreenID))
 
 	return &screen, nil
 }
 
-func (s *Service) buildDefaultTechnicianScreen(req models.ScreenRequest) models.SDUIScreen {
+func (s *Service) buildDefaultTechnicianScreen(req models.ScreenRequest, tech domain.Technician, route domain.Route) models.SDUIScreen {
 	serviceDate := req.ServiceDate
 	if serviceDate.IsZero() {
 		serviceDate = time.Now()
 	}
 
 	routeLabel := "No route assigned"
-	if req.RouteID != "" {
+	if route.ID != "" {
+		routeLabel = fmt.Sprintf("Route %s", route.ID)
+	} else if req.RouteID != "" {
 		routeLabel = fmt.Sprintf("Route %s", req.RouteID)
+	}
+
+	greeting := "Good day, Technician"
+	if tech.DisplayName != "" {
+		greeting = fmt.Sprintf("Good day, %s", tech.DisplayName)
 	}
 
 	header := models.SDUIComponent{
 		ID:   uuid.NewString(),
 		Type: "text",
-		Text: "Good day, {{user.name}}",
+		Text: greeting,
 		Font: "title2",
 	}
 
@@ -131,6 +149,37 @@ func (s *Service) buildDefaultTechnicianScreen(req models.ScreenRequest) models.
 				},
 			},
 		},
+	}
+
+	if len(route.CustomerStops) > 0 {
+		jobList.ItemView = nil
+		jobList.Type = "vstack"
+		jobList.Children = make([]models.SDUIComponent, 0, len(route.CustomerStops))
+		for _, stop := range route.CustomerStops {
+			jobList.Children = append(jobList.Children, models.SDUIComponent{
+				ID:   uuid.NewString(),
+				Type: "vstack",
+				Children: []models.SDUIComponent{
+					{
+						Type: "text",
+						Text: stop.CustomerName,
+						Font: "headline",
+					},
+					{
+						Type:  "text",
+						Text:  stop.Address,
+						Font:  "subheadline",
+						Color: "secondary",
+					},
+					{
+						Type:  "text",
+						Text:  stop.WindowStart.Format("3:04 PM"),
+						Font:  "caption",
+						Color: "secondary",
+					},
+				},
+			})
+		}
 	}
 
 	communicationSection := models.SDUIComponent{

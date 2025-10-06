@@ -1,0 +1,618 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PestGenie SDUI API",
+    "description": "Server-driven UI and sync endpoints for the PestGenie technician application.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/screens/{screenId}": {
+      "get": {
+        "summary": "Get personalised SDUI screen",
+        "parameters": [
+          {
+            "name": "screenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Identifier of the screen template (e.g. technician-home)"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "routeId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "serviceDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "deviceModel",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appVersion",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Personalised screen returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SDUIScreen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/jobs": {
+      "post": {
+        "summary": "Queue a job update for sync",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUploadData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chemicals": {
+      "post": {
+        "summary": "Queue a chemical update",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChemicalUploadData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Chemical accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chemical-treatments": {
+      "post": {
+        "summary": "Queue a chemical treatment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChemicalTreatmentUploadData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Treatment accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/devices/register": {
+      "post": {
+        "summary": "Register a device token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Token queued"
+          }
+        }
+      }
+    },
+    "/v1/updates": {
+      "get": {
+        "summary": "Fetch server updates since timestamp",
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO-8601 timestamp"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updates returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerUpdates"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SDUIScreen": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "example": 5
+          },
+          "component": {
+            "$ref": "#/components/schemas/SDUIComponent"
+          }
+        }
+      },
+      "SDUIComponent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "example": "vstack"
+          },
+          "text": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "actionId": {
+            "type": "string"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SDUIComponent"
+            }
+          }
+        }
+      },
+      "JobUploadData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "scheduledDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "address",
+          "scheduledDate",
+          "status"
+        ]
+      },
+      "ChemicalUploadData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "activeIngredient": {
+            "type": "string"
+          },
+          "manufacturerName": {
+            "type": "string"
+          },
+          "epaRegistrationNumber": {
+            "type": "string"
+          },
+          "concentration": {
+            "type": "number",
+            "format": "double"
+          },
+          "unitOfMeasure": {
+            "type": "string"
+          },
+          "quantityInStock": {
+            "type": "number",
+            "format": "double"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "activeIngredient",
+          "manufacturerName",
+          "epaRegistrationNumber",
+          "concentration",
+          "unitOfMeasure",
+          "quantityInStock",
+          "expirationDate",
+          "lastModified"
+        ]
+      },
+      "ChemicalTreatmentUploadData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "chemicalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applicatorName": {
+            "type": "string"
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applicationMethod": {
+            "type": "string"
+          },
+          "targetPests": {
+            "type": "string"
+          },
+          "quantityUsed": {
+            "type": "number",
+            "format": "double"
+          },
+          "dosageRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "dilutionRatio": {
+            "type": "string"
+          },
+          "environmentalConditions": {
+            "type": "string"
+          },
+          "weatherConditions": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "jobId",
+          "chemicalId",
+          "applicatorName",
+          "applicationDate",
+          "applicationMethod",
+          "targetPests",
+          "quantityUsed",
+          "dosageRate",
+          "dilutionRatio",
+          "environmentalConditions",
+          "lastModified"
+        ]
+      },
+      "DeviceRegistration": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "example": "ios"
+          },
+          "bundleId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "platform",
+          "bundleId"
+        ]
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "serverId": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerUpdates": {
+        "type": "object",
+        "properties": {
+          "jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobUpdateData"
+            }
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RouteUpdateData"
+            }
+          },
+          "chemicals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChemicalUpdateData"
+            }
+          },
+          "chemicalTreatments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChemicalTreatmentUpdateData"
+            }
+          }
+        }
+      },
+      "JobUpdateData": {
+        "type": "object",
+        "properties": {
+          "serverId": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "scheduledDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RouteUpdateData": {
+        "type": "object",
+        "properties": {
+          "serverId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "technicianId": {
+            "type": "string"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChemicalUpdateData": {
+        "type": "object",
+        "properties": {
+          "serverId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "activeIngredient": {
+            "type": "string"
+          },
+          "manufacturerName": {
+            "type": "string"
+          },
+          "epaRegistrationNumber": {
+            "type": "string"
+          },
+          "concentration": {
+            "type": "number",
+            "format": "double"
+          },
+          "unitOfMeasure": {
+            "type": "string"
+          },
+          "quantityInStock": {
+            "type": "number",
+            "format": "double"
+          },
+          "expirationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ChemicalTreatmentUpdateData": {
+        "type": "object",
+        "properties": {
+          "serverId": {
+            "type": "string"
+          },
+          "jobServerId": {
+            "type": "string"
+          },
+          "chemicalServerId": {
+            "type": "string"
+          },
+          "applicationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applicationMethod": {
+            "type": "string"
+          },
+          "targetPests": {
+            "type": "string"
+          },
+          "quantityUsed": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

@@ -17,15 +17,18 @@ This service emits server-driven UI (SDUI) payloads and synchronisation endpoint
    ```
 2. **Start a container**
    ```bash
-   docker run --rm -p 8080:8080 pestgenie-sdui:dev
-   ```
-   Services are now available at `http://localhost:8080`.
+ docker run --rm -p 8080:8080 pestgenie-sdui:dev
+  ```
+  Services are now available at `http://localhost:8080`.
 
 3. **Test endpoints**
-   ```bash
-   curl http://localhost:8080/healthz
-   curl 'http://localhost:8080/v1/screens/technician-home?userId=demo&routeId=route-001'
-   ```
+  ```bash
+  curl http://localhost:8080/healthz
+  curl 'http://localhost:8080/v1/screens/technician-home?userId=demo&routeId=route-001'
+  ```
+
+4. **Interactive docs**
+   Open [http://localhost:8080/swagger](http://localhost:8080/swagger) in a browser to explore and test every endpoint via Swagger UI. The OpenAPI document is served from `/swagger/doc.json`.
 
 Docker Desktop will display the container in its UI; stop it there or with `Ctrl+C` in the terminal.
 

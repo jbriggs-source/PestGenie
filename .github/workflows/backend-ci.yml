@@ -1,0 +1,44 @@
+name: Backend CI
+
+on:
+  pull_request:
+    paths:
+      - 'SDUIBackend/**'
+      - '.github/workflows/backend-ci.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'SDUIBackend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Go fmt check
+        working-directory: SDUIBackend
+        run: |
+          files=$(gofmt -l ./)
+          if [[ -n "$files" ]]; then
+            echo "The following files are not gofmt'd:" >&2
+            echo "$files" >&2
+            exit 1
+          fi
+
+      - name: Go test
+        working-directory: SDUIBackend
+        env:
+          GOCACHE: ${{ github.workspace }}/SDUIBackend/.cache
+        run: go test ./...
+
+      - name: Docker build
+        working-directory: SDUIBackend
+        run: docker build -t pestgenie-sdui-ci .
